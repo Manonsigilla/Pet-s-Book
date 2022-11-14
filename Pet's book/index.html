@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500&display=swap" rel="stylesheet"> 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand&display=swap" rel="stylesheet"> 
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pet's Book</title>
+</head>
+<body>
+    <header>
+        <div id="root">
+            <div id="topnav" class="topnav">
+                <a id="home_link" href="index.html"><img src="Pets_Book.png" alt="Logo"></a>
+               
+                <!--Menu Classique--> 
+                <nav role="navigation" id="topnav_menu">
+                    <a class="topnav_link" href="profil.html">Profil</a>
+                    <a class="topnav_link" href="petsshop.html">Pet's Shop</a>
+                    <a class="topnav_link" href="perduretrouve.html">Je suis perdu/Retrouve moi</a>
+                    <a class="topnav_link" href="apropos.html">A propos</a>
+                    <form action="/search" id="searchthis" method="get"><input id="search" name="q" type="text" placeholder="Rechercher"/><input id="search-btn" type="submit" value="Recherche"></form>
+                </nav>
+                <a id="topnav_hamburger_icon" href="javascript:void(0);" onclick="showResponsiveMenu()">
+                    <!--Some spans to act as a hamburger-->
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </a>
+
+                <!--Responsive Menu-->
+                <nav role="navigation" id="topnav_responsive_menu">
+                    <ul>
+                        <li><a href="profil.html">Profil</a></li>
+                        <li><a href="petsshop.html">Pet's Shop</a></li>
+                        <li><a href="perduretrouve.html">Je suis perdu/Retrouve moi</a></li>
+                        <li><a href="apropos.html">A propos</a></li>
+                        <li><a href="evenement.html">Évènements</a></li>
+                        <li><a href="suggestionsplaintes.html">Suggestions/Plaintes</a></li>
+                        <li><a href="contact.html">Adresses/Contacts</a></li>
+                        <li><a href="sponsors.html">Sponsors</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+    <main>
+        <section id="Apropos">
+            <h1 class="qui">Qui sommes-nous ?</h1>
+            <p>Des <strong>millions</strong> de chats sont abandonnés chaque année, la conséquence des ces abandons sont des chatons sauvages, <strong>beaucoup de chatons sauvages</strong>. La plupart du temps les femelles ne sont pas stérilisées par manque d’argent ou de volonté de la part des propriétaires. <strong>Pet’s Book</strong> a été imaginé par <em>Manon Sigaud</em> à la suite de plusieurs sauvetages de chats et chatons abandonnés. Tony, en particulier... <a href="/apropos.html">Voir plus</a></p>
+        </section>
+        <section id="Photospopulaires">
+            <h1>Les photos les plus appréciées des internautes ...</h1>
+            <div class="slideshow-container">
+                <div class="mySlides fade">
+                    <div class="numbertext">1 / 5</div>
+                    <img src="im1.jpg" class="photopopu">
+                    <div class="text">César</div>
+                </div>
+                <div class="mySlides fade">
+                    <div class="numbertext">2 / 5</div>
+                    <img src="im2.jpg" class="photopopu">
+                    <div class="text">Léon</div>
+                </div>
+                <div class="mySlides fade">
+                    <div class="numbertext">3 / 5</div>
+                    <img src="im3.jpg" class="photopopu">
+                    <div class="text">Lily</div>
+                </div>
+                <div class="mySlides fade">
+                    <div class="numbertext">4 / 5</div>
+                    <img src="im4.jpg" class="photopopu">
+                    <div class="text">Ginette</div>
+                </div>
+                <div class="mySlides fade">
+                    <div class="numbertext">5 / 5</div>
+                    <img src="im5.jpg" class="photopopu">
+                    <div class="text">Bubulle et Bouboule</div>
+                </div>
+                <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+                <a class="next" onclick="plusSlides(1)">&#10095;</a>
+            </div>
+            <br>
+            <div style="text-align:center">
+                <span class="dot" onclick="currentSlide(1)"></span>
+                <span class="dot" onclick="currentSlide(2)"></span>
+                <span class="dot" onclick="currentSlide(3)"></span>
+            </div>
+        </section>
+        <section id="Statutcontact">
+            <h1>Aujourd'hui j'ai ...</h1>
+            <section class="containerajd">
+                <div class="ajdcards">
+                    <div class="cardajd">
+                        <div class="cardajd-imageajd card-1"></div>
+                            <h2>Roméo</h2>
+                            <p>Joyeux noël !</p>
+                            <a rel="noreferrer">J'aime</a>
+                        </div>
+                        <div class="cardajd">
+                            <div class="cardajd-imageajd card-2"></div>
+                            <h2>Robby</h2>
+                            <p>C'est parti mon Kiki</p>
+                            <a rel="noreferrer">J'aime</a>
+                        </div>
+                        <div class="cardajd">
+                            <div class="cardajd-imageajd card-3"></div>
+                            <h2>Caramel</h2>
+                            <p>Qu'est-ce que tu m'veux toi ?</p>
+                            <a rel="noreferrer">J'aime</a>
+                        </div>
+                    </div>
+                <div class="voirplusbtn"><a rel="noreferrer">Voir plus...</a></div>
+            </section>
+        </section>
+        <section id="Evenement">
+            <div><h1 class="evenement-titre">Évènements</h1></div>
+            <div class="evenement">
+                <img src="1239178606555846351297985671250702037938067o.jpg" alt="promenade" class="promenade">
+                <div class="balade">
+                    <h2>Balades</h2>
+                    <h3>La Vallée de la Solières</h3>
+                    <p>Cette promenade commence au parking du restaurant Elysée-Beaufort, en bordure de forêt le long de la grande route. Laissez votre voiture et préparez-vous à vivre une belle expérience nature avec cette balade, à deux pas de Huy ! Le ruisseau de la Solière vous accompagnera tout au long du parcours. Ne manquez pas de grimper jusqu'au Trou Manto, la maison légendaire des petits êtres magiques de la forêt, et qui sert aujourd'hui de refuge aux nombreuses chauves-souris. La vallée de la Solières est un site protégé, merci de tenir votre fidèle compagnon en laisse.</p>
+                </div>
+            </div>
+            <div class="voirplusbtn"><a rel="noreferrer" href="/evenement.html">Voir plus...</a></div>
+        </section>
+        <br>
+    </main>
+    <footer>
+        <section id="Contact">
+            <div class="wrapper">
+                <div class="contact"><h2>Adresses/Contacts</h2></div>   
+                <div class="carousel owl-carousel">
+                   <div class="card active"><a href="https://feelingdog.be/">
+                      <img src="img1.jpg"></a>
+                   </div>
+                   <div class="card"><a href="https://teamvetcare.be/">
+                       <img src="img2.jpg"></a>
+                   </div>
+                   <div class="card"><a href="https://be.holidog.com/pet-sitter--liege--wlg">
+                       <img src="img3.jpg"></a>
+                   </div>
+                   <div class="card"><a href="https://www.comportementalisteduchien.com/">
+                       <img src="img4.jpg"></a>
+                   </div>
+                   <div class="card"><a href="https://tipaw.com/professionnel/veterinaire/cabinet-veterinaire-dr-florence-halkin">
+                       <img src="img5.jpg"></a>
+                   </div>
+                   <div class="card "><a href="https://www.toutous.be/">
+                       <img src="img6.jpg"></a>
+                   </div>
+                </div>
+        </section>
+        <section id="footerbar">
+            <div class="content-footer">
+                <div class="bloc footer-services">
+                    <p>
+                        <a href="/suggestionsplaintes.html">Suggestion/plainte</a>
+                    </p>
+                    <p>
+                        <a href="/sponsors.html">Sponsors</a>
+                    </p>
+                    <p>
+                        <a href="/evenement.html">Évènements</a>
+                    </p>
+                    <p>
+                        <a href="/contact.html">Contacts</a>
+                    </p>
+                </div>
+                <div class="services">
+                    <div id="conteneur">
+                        <div class="element">
+                            <a href="/mentionslegales.html">Mentions légales</a>
+                        </div>
+                        <div class="element">|</div>
+                            <a href="/condgen.html">Conditions générales</a>
+                        </div>
+        
+                        <div id="conteneur2">
+                            <div class="imgfooter"><img src="im6.png" alt="Bancontact"></div>
+                            <div class="imgfooter"><img src="im7.png" alt="Visa"></div>
+                            <div class="imgfooter"><img src="im8.jpg" alt="Mastercard"></div>
+                            <div class="imgfooter"><img src="im9.png" alt="Maestro"></div>
+                        </div>
+                    </div>
+                    <div class="bloc footer-medias">
+                        <h3>Nos réseaux sociaux</h3>
+                            <ul class="media-list">
+                                <li>
+                                    <a> 
+                                        <svg aria-hidden="true"
+                                            focusable="false"
+                                            data-prefix="fab"
+                                            data-icon="facebook"
+                                            class="svg-inline--fa fa-facebook fa-w-16"
+                                            role="img"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            viewBox="0 0 512 512">
+                                        <path fill="currentColor"
+                                                d="M504 256C504 119 393 8 256 8S8 119 8 256c0 123.78 90.69 226.38 209.25 245V327.69h-63V256h63v-54.64c0-62.15 37-96.48 93.67-96.48 27.14 0 55.52 4.84 55.52 4.84v61h-31.28c-30.8 0-40.41 19.12-40.41 38.73V256h68.78l-11 71.69h-57.78V501C413.31 482.38 504 379.78 504 256z"></path>
+                                        </svg>
+                                    Facebook</a>
+                                </li>
+                                <li>
+                                    <a>
+                                        <svg
+                                            aria-hidden="true"
+                                            focusable="false"
+                                            data-prefix="fab"
+                                            data-icon="instagram"
+                                            class="svg-inline--fa fa-instagram fa-w-14"
+                                            role="img"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            viewBox="0 0 448 512"
+                                        >
+                                        <path
+                                            fill="currentColor"
+                                            d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"
+                                        ></path>
+                                        </svg>
+                                    Instagram</a>
+                                </li>
+                    
+                                <li>
+                                    <a>
+                                        <svg
+                                            aria-hidden="true"
+                                            focusable="false"
+                                            data-prefix="fab"
+                                            data-icon="youtube"
+                                            class="svg-inline--fa fa-youtube fa-w-18"
+                                            role="img"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            viewBox="0 0 576 512"
+                                        >
+                                        <path
+                                            fill="currentColor"
+                                            d="M549.655 124.083c-6.281-23.65-24.787-42.276-48.284-48.597C458.781 64 288 64 288 64S117.22 64 74.629 75.486c-23.497 6.322-42.003 24.947-48.284 48.597-11.412 42.867-11.412 132.305-11.412 132.305s0 89.438 11.412 132.305c6.281 23.65 24.787 41.5 48.284 47.821C117.22 448 288 448 288 448s170.78 0 213.371-11.486c23.497-6.321 42.003-24.171 48.284-47.821 11.412-42.867 11.412-132.305 11.412-132.305s0-89.438-11.412-132.305zm-317.51 213.508V175.185l142.739 81.205-142.739 81.201z"
+                                        ></path>
+                                        </svg>
+                                    Youtube</a>
+                                </li>
+                            </ul>
+                    </div>
+                </div>
+        </section>
+    </footer>  
+</body>
+<script src="script.js"></script>  
+</html>
