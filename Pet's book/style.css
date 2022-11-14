@@ -1,0 +1,938 @@
+*{
+    margin: 0px;
+    padding: 0px;
+}
+h1, h2, h3 {
+    font-family: 'Cinzel', serif;
+}
+p, a, div {
+    font-family: 'Quicksand', sans-serif;
+    font-size: medium;
+}
+main{
+    text-align: center;
+    background: rgba(217, 214, 210, 0.5);
+    color: #593a28;
+}
+h1 {
+    font-size: 40px;
+}
+/* ******************** NAV BAR ******************** */
+.topnav {
+    background-color: #BF8A6B;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    flex-direction: row;
+    position: relative;
+    top: 0px;
+}
+nav#topnav_menu {
+    display: flex;
+}
+.topnav_link {
+    color: #D9D6D2;
+    padding: 12px;
+    text-decoration: none;
+}
+#home_link img {
+    padding: 0px;
+    height: 100px;
+    width: 100px;
+}
+.topnav_link:hover {
+    background-color: #593A28;
+    border-radius: 8px;
+    color: #D9D6D2;
+}
+/* ***************** Barre de recherche ************* */
+
+#searchthis {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    justify-content: center;
+    position: relative;
+    top: 0px;
+}
+#search {
+    margin-left: 30px;
+    background-color: #BF8A6B;
+    border-style: none;
+    border-bottom-style: solid;
+    border-color: #D9D6D2;
+    color: #D9D6D2;
+    font-style: italic;
+    padding: 5px;
+}
+::-webkit-input-placeholder{
+    color: #593A28;
+}
+:-moz-placeholder {
+    color: #593A28;
+}
+:-ms-input-placeholder {
+    color: #593A28;
+}
+#search-btn {
+    color: #BF8A6B;
+    background-color: #D9D6D2;
+    padding: 5px;
+    letter-spacing: 1px;
+    border-radius: 8px;
+    border-color: #D9D6D2;
+    margin-left: 10px;
+}
+#search-btn:hover {
+    background-color: #BF8A6B;
+    color: #D9D6D2;
+    border-color: #593A28;
+}
+#search:hover {
+    border: #D9D6D2;
+    border-style: solid;
+    border-radius: 8px;
+}
+/* hide responsive menu */
+#topnav_hamburger_icon,
+#topnav_responsive_menu {
+    display: none;
+}
+
+#Apropos {
+    padding: 25px;
+}
+#Apropos h1 {
+    font-size: 45px;
+}
+.qui {
+    padding: 40px;
+}
+#Photospopulaires{
+    box-sizing: border-box;
+    margin-top: 40px;
+}
+#Photospopulaires h1 {
+    background-color: #BF8A6B ;
+    color: #D9D6D2;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 40px;
+}
+.mySlides {
+    display: none
+}
+.photopopu{
+    vertical-align: middle;
+    height: 400px;
+    width: 600px;
+    border-radius: 8px;
+}
+/* Slideshow container */
+.slideshow-container {
+    max-width: 80%;
+    position: relative;
+    margin: auto;
+}
+/* Next & previous buttons */
+.prev, .next {
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    width: auto;
+    padding: 16px;
+    margin-top: -22px;
+    color: #593A28;
+    font-weight: bold;
+    font-size: 30px;
+    transition: 0.6s ease;
+    border-radius: 0 3px 3px 0;
+    user-select: none;
+}
+/* Position the "next button" to the right */
+.next {
+    border-radius: 3px 0 0 3px;
+    right: 100px;
+}
+.prev {
+    left: 100px;
+}
+/* On hover, add a black background color with a little bit see-through */
+.prev:hover, .next:hover {
+    background-color: #BF8A6B;
+    color: #D9D6D2;
+    border-radius: 8px;
+}
+/* Caption text */
+.text {
+    background-color: #BF8A6B;
+    border-radius: 8px;
+    color: #D9D6D2;
+    font-size: 35px;
+    padding: 5px 5px;
+    position: absolute;
+    bottom: 8px;
+    width: auto;
+    margin-left: 0px;
+    margin-right: 0px;
+    text-align: center;
+}
+/* Number text (1/3 etc) */
+.numbertext {
+    color: #D9D6D2;
+    font-size: 12px;
+    padding: 8px 12px;
+    position: absolute;
+    top: 0;
+}
+/* The dots/bullets/indicators */
+.dot {
+    cursor: pointer;
+    height: 15px;
+    width: 15px;
+    margin: 0 2px;
+    background-color: #BF8A6B;
+    border-radius: 50%;
+    display: inline-block;
+    transition: background-color 0.6s ease;
+}
+.dot:hover {
+    background-color: #593A28;
+}
+/* Fading animation */
+.fade {
+    -webkit-animation-name: fade;
+    -webkit-animation-duration: 1.5s;
+    animation-name: fade;
+    animation-duration: 1.5s;
+}
+.contact{
+    vertical-align: middle;
+    margin-top: 20px;
+    font-size: 30px;
+}
+.wrapper{
+  background: #BF8A6B;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+.carousel{
+  max-width: 950px;
+  margin: auto;
+  padding: 0 30px;
+}
+.carousel .card {
+  color: #D9D6D2;
+  text-align: center;
+  margin: 20px 0;
+  line-height: 250px;
+  font-size: 90px;
+  font-weight: 600;
+  border-radius: 10px;
+  box-shadow: 0px 4px 15px rgba(0,0,0,0.2);
+  cursor: pointer;
+}
+.card {
+    border: 4px solid #593A28!important;
+}
+.owl-dots{
+  text-align: center;
+  margin-top: 40px;
+}
+.owl-dot{
+  height: 15px;
+  width: 15px;
+  margin: 0 5px;
+  outline: none;
+  border-radius: 14px;
+  border: 2px solid #593A28!important;
+  box-shadow: 0px 4px 15px rgba(0,0,0,0.2);
+  transition: all 0.3s ease;
+}
+.owl-dot.active,
+.owl-dot:hover{
+  background: #593A28bc!important;
+}
+
+#Statutcontact {
+    box-sizing: border-box;
+}
+#Statutcontact h1 {
+    background-color: #BF8A6B ;
+    color: #D9D6D2;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 40px;
+}
+.containerajd {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    flex-direction: column;
+}
+
+.ajdcards {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+.cardajd {
+    background-color: transparent;
+    width: 300px;
+    height: 300px;
+    margin: 20px;
+    border-radius: 5px;
+    border: 3px solid;
+    border-color: #593A28;
+    padding: 10px;
+}
+.cardajd-imageajd {
+    height: 150px;
+    margin-bottom: 15px;
+    background-size: cover;
+    border-radius: 5px;
+}
+
+.card-1 {
+    background-image: url(https://www.seib.co.uk/content/uploads/2020/12/Christmas-horse-420x280.jpg)
+}
+
+.card-2 {
+    background-image: url(https://cdn.pixabay.com/photo/2019/12/18/17/41/rabbit-4704469__340.jpg)
+}
+
+.card-3 {
+    background-image: url(https://cdn.pixabay.com/photo/2013/05/31/19/36/dog-115078_960_720.jpg)
+}
+
+.cardajd h2 {
+    color: #593A28;
+    font-size: 20px;
+    padding: 5px;
+}
+
+.cardajd p {
+    padding: 10px;
+    color: #593A28;
+}
+
+.cardajd a {
+    background-color: #BF8A6B;
+    border-radius: 10px;
+    color: #593A28;
+    padding: 5px 5px;
+    text-align: center;
+    display: block;
+    margin: 5px 90px;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #593A28;
+    cursor: pointer;
+    transform: scale(1.03);
+}
+
+.voirplusbtn a {
+    border-radius: 10px;
+    border-radius: 10px;
+    color: #593A28;
+    padding: 5px 5px;
+    text-decoration: none;
+    display: flex;
+    justify-content: end;
+}
+/*************** FOOTER BAR ****************/
+
+#footerbar {
+    background: #BF8A6B;
+    box-sizing: border-box;
+}
+.content {
+    /* grow shrink basis */
+    flex: 1 0 auto;
+}
+.content p {
+    padding: 2vw 10vw 5vw;
+    text-align: justify;
+}
+  
+footer {
+    flex-shrink: 0;
+    width: 100%;
+    background: #BF8A6B;
+    color: #593A28;
+}
+.content-footer {
+    max-width: 1000px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    font-size: 15px;
+    padding: 50px 0 100px;
+}
+  
+.bloc {
+    flex-basis: 20%;
+    margin: 0 30px;
+}
+  
+.footer-contact p {
+    padding: 5px 0;
+  
+  
+}
+  
+.media-list {
+    list-style-type: none;
+}
+  
+  
+  /* Medias */
+  
+.media-list {
+    position: relative;
+    right: 10px;
+}
+.media-list svg {
+    width: 30px;
+    margin: 10px 10px;
+}
+.media-list a {
+    text-decoration: none;
+    color: #593A28;
+    display: flex;
+    align-items: center;
+    font-size: 12px;
+}
+  
+.content-footer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    width: 100%;
+}
+  
+.services {
+    display: flex;
+    flex-direction: column;
+}
+  
+a {
+    color:#593A28;
+}
+#conteneur {
+    display: flex;
+    flex-wrap: wrap;
+}
+#conteneur2 {
+    display: flex;
+    flex-direction: row;
+    margin-top: 10px;
+}
+
+.evenement-titre {
+    background-color: #BF8A6B ;
+    color: #D9D6D2;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 40px;
+}
+.element {
+    justify-content: space-around;
+}
+#evenement{
+    display: flex;
+    flex-direction: column;
+}
+.evenement {
+    display: flex;
+    justify-content: flex-start;
+}
+.evenement img {
+    display: flex;
+    margin-left: 40px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+.promenade {
+    height: 400px;
+    width: 500px;
+    border-radius: 8px;
+    border: 4px solid #593a28;
+}
+.balade p {
+    margin: 20px 200px;
+}
+.balade h2 {
+    margin: 20px;
+}
+.balade h3 {
+    margin: 20px;
+}
+/* *************************** Onglet A PROPOS *********************/
+.histoire {
+    display: flex;
+    padding: 25px 40px;
+    text-align: justify;
+}
+.histoire1 {
+    display: flex;
+    flex-direction: row;
+}
+div.montage img {
+    display: flex;
+    border-radius: 8px;
+    margin-right: 45px;
+    margin-top: 25px;
+}
+.slogan {
+    background-color: #BF8A6B;
+    margin: 0px 40px;
+    color: #D9D6D2;
+}
+.titrehistoire {
+    background-color: #BF8A6B;
+    margin: 0px 40px;
+    color: #D9D6D2;
+}
+@media screen and (max-width: 1200px) {
+  
+    .topnav {
+        background-color: #BF8A6B;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        flex-direction: row;
+        position: relative;
+        top: 0px;
+    }
+    nav#topnav_menu {
+        display: flex;
+    }
+
+    .photopopu{
+        vertical-align: middle;
+        height: auto;
+        width:75%
+    }
+
+    .content-footer {
+        max-width: 100%;
+        flex-wrap: wrap;
+    }
+    .bloc {
+        flex-basis: auto;
+        margin: 20px 20px;
+    }
+    .evenement {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+    }
+    .evenement img {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .promenade {
+        height: 300px;
+        width: 400px;
+        border-radius: 8px;
+        border: 4px solid #593a28;
+    }
+    .balade p {
+        margin: 20px;
+    }
+    .balade h2 {
+        margin: 20px;
+    }
+    .balade h3 {
+        margin: 20px;
+    }
+    .card {
+        display: block;
+        margin-left: auto;
+        margin-right: 30px;
+        height: 400px;
+        width: 400px;
+    }
+
+    /* ************** onglet a propos ************* */
+
+    .histoire1 {
+        display: flex;
+        flex-direction: column;
+    }
+    div.montage img {
+        display: flex;
+        border-radius: 8px;
+        align-content: center;
+        margin-left: auto;
+        margin-right: auto;
+        max-width: 400px;
+        max-height: 400px;
+    }
+}
+
+@media only screen and (max-width: 768px) {
+    /* hide classic menu */
+    nav#topnav_menu {
+        display: none;
+    }
+    
+
+    /* position home link at left and hamburger will be positionned at right */
+    .topnav {
+        width           : 100%;
+        display         : flex;
+        align-items     : center;
+    }
+
+    #home_link {
+        flex-grow: 1;
+    }
+
+    /* position responsive menu at the right of the screen */
+    #topnav_responsive_menu {
+        display: block;
+        position: absolute;
+        margin: 0;
+        right: 0;
+        top: 0;
+        width: 100vw;
+        height: 100vh;
+    
+        z-index: 99;
+    
+        transform-origin: 0% 0%;
+        transform: translate(200%, 0);
+    
+        transition: transform 0.5s cubic-bezier(0.77, 0.2, 0.05, 1);
+    }
+    #topnav_responsive_menu ul {
+        display       : flex;
+        flex-direction: column;
+
+        position: absolute;
+        margin  : 0;
+        right   : 0;
+        top     : 0;
+
+        min-width: 50vw;
+        height   : 100vh;
+        padding: 56px 0 0;
+
+        text-align: center;
+
+        background: #D9D6D2;
+        list-style-type: none;
+        -webkit-font-smoothing: antialiased;
+    }
+    #topnav_responsive_menu li {
+        padding: 12px 24px;
+    }
+    #topnav_responsive_menu li:hover{
+        background-color: #BF8A6B;
+        color: #D9D6D2;
+    }
+    #topnav_responsive_menu li a {
+        white-space: nowrap;
+        color: #8C593B;
+        text-decoration: none;
+    }
+    /* disable horizontal scrolling  */
+    #root {
+        position: relative;
+        overflow-x: hidden;
+    }
+    /* and let's slide it in from the right */
+    #topnav_responsive_menu.open {
+        transform: none;
+        position : fixed;
+    }
+    /* ******************** HAMBURGER ICON ******************** */
+    /* define size and position of the hamburger link */
+    #topnav_hamburger_icon {
+        display    : block;
+        position   : relative;
+        margin     : 16px;
+        width      : 33px;
+        height     : 28px;
+        z-index    : 100;
+        -webkit-user-select: none;
+        user-select: none;
+        cursor     : pointer;
+    }
+
+    /* define the style (size, color, position, animation, ...) of the 3 spans */
+    #topnav_hamburger_icon span {
+        display      : block;
+        position     : absolute;
+        height       : 4px;
+        width        : 100%;
+        margin-bottom: 5px;
+        background   : #D9D6D2;
+        border-radius: 3px;
+        z-index      : 100;
+        opacity      : 1;
+        left         : 0;
+        -webkit-transform: rotate(0deg);
+        -moz-transform: rotate(0deg);
+        -o-transform: rotate(0deg);
+        transform : rotate(0deg);
+        -webkit-transition: 0.25s ease-in-out;
+        -moz-transition: 0.25s ease-in-out;
+        -o-transition: 0.25s ease-in-out;
+        transition: .25s ease-in-out;
+    }
+
+    /* set the 3 spans position to look like a hamburger */
+    #topnav_hamburger_icon span:nth-child(1) {
+        top             : 0px;
+        -webkit-transform-origin: left top;
+        -moz-transform-origin: left top;
+        -o-transform-origin: left top;
+        transform-origin: left top;
+    }
+    #topnav_hamburger_icon span:nth-child(2) {
+        top             : 12px;
+        -webkit-transform-origin: left center;
+        -moz-transform-origin: left center;
+        -o-transform-origin: left center;
+        transform-origin: left center;
+    }
+    #topnav_hamburger_icon span:nth-child(3) {
+        top             : 24px;
+        -webkit-transform-origin: left bottom;
+        -moz-transform-origin: left bottom;
+        -o-transform-origin: left bottom;
+        transform-origin: left bottom;
+    }
+    /* change color when opening the menu */
+    #topnav_hamburger_icon.open span {
+        background: #8C593B;
+    }
+
+    /* the first span rotates 45° \ */
+    #topnav_hamburger_icon.open span:nth-child(1) {
+        width    : 110%;
+        -webkit-transform: rotate(45deg);
+        -moz-transform: rotate(45deg);
+        -o-transform: rotate(45deg);
+        transform: rotate(45deg);
+    }
+    /* the second span disappears */
+    #topnav_hamburger_icon.open span:nth-child(2) {
+        width  : 0%;
+        opacity: 0;
+    }
+    /* the last span rotates -45° / */
+    #topnav_hamburger_icon.open span:nth-child(3) {
+        width    : 110%;
+        -webkit-transform: rotate(-45deg);
+        -moz-transform: rotate(-45deg);
+        -o-transform: rotate(-45deg);
+        transform: rotate(-45deg);
+    }
+
+    .photopopu{
+        vertical-align: middle;
+        height: auto;
+        width:75%
+    }
+
+    .containerajd {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        flex-direction: column;
+    }
+    .ajdcards {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .evenement {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+    }
+    .promenade {
+        height: 300px;
+        width: 400px;
+        border-radius: 8px;
+        border: 4px solid #593a28;
+    }
+    .balade p {
+        margin: 20px;
+    }
+    .balade h2 {
+        margin: 20px;
+    }
+    .balade h3 {
+        margin: 20px;
+    }
+    .card {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        height: 250px;
+        width: 250px;
+    }
+    .footer-services {
+        display: none;
+    }
+
+    /* ************** onglet a propos ************* */
+    .histoire1 {
+        display: flex;
+        flex-direction: column;
+    }
+    div.montage img {
+        display: flex;
+        border-radius: 8px;
+        align-content: center;
+        margin-left: auto;
+        margin-right: auto;
+        max-width: 350px;
+        max-height: 350px;
+    }
+        
+}
+@-webkit-keyframes fade {
+    from {opacity: .4} 
+    to {opacity: 1}
+}
+@keyframes fade {
+    from {opacity: .4} 
+    to {opacity: 1}
+}
+@media only screen and (max-width: 500px) {
+    .prev, .next,.text {
+        font-size: 14px
+    }
+    .photopopu{
+        vertical-align: middle;
+        height: auto;
+        width:75%
+    }
+    .card {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        height: 350px;
+        width: 350px;
+    }
+    .content-footer {
+        justify-content: center;
+        padding-top: 30px;
+    }
+    .bloc {
+        flex-basis: 70%;
+        /* margin: 10px; */
+    }
+    #evenement{
+        display: flex;
+        flex-direction: column;
+    }
+    .promenade {
+        height: 150px;
+        width: 200px;
+        border-radius: 8px;
+        border: 4px solid #593a28;
+    }
+    .balade p {
+        margin: 20px;
+    }
+    .balade h2 {
+        margin: 20px;
+    }
+    .balade h3 {
+        margin: 20px;
+    }
+
+    /* ************** onglet a propos ************* */
+
+    .histoire1 {
+        display: flex;
+        flex-direction: column;
+    }
+    div.montage img {
+        display: flex;
+        border-radius: 8px;
+        align-content: center;
+        margin-left: auto;
+        margin-right: auto;
+        max-width: 300px;
+        max-height: 300px;
+    }
+}
+/* On smaller screens, decrease text size */
+@media only screen and (max-width: 300px) {
+    .prev, .next,.text {
+        font-size: 11px
+    }
+    .dot{
+        height: 10px;
+        width: 10px;
+    }   
+    .owl-dot{
+        height: 10px;
+        width: 10px;
+    }
+    .card {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+        height: 200px;
+        width: 200px;
+    }
+    #evenement{
+        display: flex;
+        flex-direction: column;
+    }
+    .promenade {
+        height: 100px;
+        width: 125px;
+        border-radius: 8px;
+        border: 4px solid #593a28;
+    }
+    .balade p {
+        margin: 20px;
+    }
+    .balade h2 {
+        margin: 20px;
+    }
+    .balade h3 {
+        margin: 20px;
+    }
+
+    /* ************** onglet a propos ************* */
+
+    .histoire1 {
+        display: flex;
+        flex-direction: column;
+    }
+    div.montage img {
+        display: flex;
+        border-radius: 8px;
+        align-content: center;
+        margin-left: auto;
+        margin-right: auto;
+        max-width: 200px;
+        max-height: 200px;
+    }
+}
