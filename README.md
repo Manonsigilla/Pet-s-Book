@@ -2,7 +2,7 @@
 
 ## Description générale 
 
-Plateforme de réseau social, référencement pour els animaux domestiques
+Plateforme de réseau social, référencement pour les animaux domestiques
 
 ## Statut du projet
 
@@ -10,7 +10,7 @@ Front end terminé mais back end encore à faire
 
 ## Bugs connus et corrections éventuelles apportées
 
-Caroussel contact non responsive, à corriger
+Carousel contact non responsive, à corriger
 
 ## Droits d'auteur
 
