@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Pet's Book : la plateforme communautaire pour les amoureux des animaux. Profils, perdus/retrouvés, événements et boutique." />
+  <meta name="theme-color" content="#BF8A6B" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Quicksand:wght@400;500;700&display=swap"
+    rel="stylesheet"
+  />
+  <title>Pet's Book — La plateforme des amis des animaux</title>
+</head>
+<body>
+  <a class="skip-link" href="#main">Aller au contenu principal</a>
+
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a class="site-header__logo" href="/index.html" aria-label="Accueil Pet's Book">
+        <img src="/images/Pets_Book.png" alt="" width="80" height="80" />
+        <span class="visually-hidden">Pet's Book</span>
+      </a>
+
+      <button
+        class="nav-toggle"
+        type="button"
+        aria-expanded="false"
+        aria-controls="primary-nav"
+        aria-label="Ouvrir le menu de navigation"
+      >
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <nav class="nav" id="primary-nav" aria-label="Navigation principale">
+        <ul class="nav__list">
+          <li><a class="nav__link" href="/index.html">Accueil</a></li>
+          <li><a class="nav__link" href="/profils.html">Profils</a></li>
+          <li><a class="nav__link" href="/perdus-retrouves.html">Perdus / Retrouvés</a></li>
+          <li><a class="nav__link" href="/evenements.html">Événements</a></li>
+          <li><a class="nav__link" href="/petsshop.html">Pet's Shop</a></li>
+          <li><a class="nav__link" href="/apropos.html">À propos</a></li>
+        </ul>
+        <div class="auth-widget" id="auth-widget" aria-label="Compte utilisateur"></div>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero container" aria-labelledby="hero-title">
+      <h1 class="hero__title" id="hero-title">Bienvenue sur Pet's Book</h1>
+      <p class="hero__text">
+        Des <strong>millions</strong> de chats sont abandonnés chaque année, conséquence des abandons :
+        beaucoup de chatons sauvages. Pet's Book a été imaginé à la suite de plusieurs sauvetages
+        d'animaux abandonnés. Notre mission : créer une communauté bienveillante autour des animaux
+        domestiques, aider à retrouver les compagnons perdus et partager les bons plans des
+        professionnels près de chez vous.
+      </p>
+      <div class="hero__cta">
+        <a class="btn btn--primary" href="/apropos.html">En savoir plus</a>
+        <button class="btn btn--secondary" type="button" id="play-greeting">
+          <span aria-hidden="true">♪</span> Écouter le carillon
+        </button>
+      </div>
+      <audio id="greeting-audio" src="/media/welcome.wav" preload="metadata"></audio>
+    </section>
+
+    <section class="section container" aria-labelledby="video-title">
+      <h2 class="section__title" id="video-title">Découvrez Pet's Book en vidéo</h2>
+      <div class="video-wrapper">
+        <video
+          controls
+          preload="metadata"
+          poster="/images/balade-soliere.jpg"
+          aria-label="Vidéo de présentation de Pet's Book"
+        >
+          <source src="/media/intro.mp4" type="video/mp4" />
+          <p>
+            Votre navigateur ne peut pas lire cette vidéo.
+            <a href="/media/intro.mp4">Téléchargez-la</a> pour la visionner localement.
+          </p>
+        </video>
+      </div>
+    </section>
+
+    <section class="section container" aria-labelledby="featured-title">
+      <h2 class="section__title" id="featured-title">Les profils du moment</h2>
+      <p class="profils__count" id="home-count" aria-live="polite">Chargement...</p>
+      <div id="home-animals" aria-busy="true">
+        <!-- Injecté par home.js -->
+      </div>
+    </section>
+
+    <section class="section container" aria-labelledby="event-title">
+      <h2 class="section__title" id="event-title">Prochain événement</h2>
+      <article class="event-feature">
+        <img
+          class="event-feature__media"
+          src="/images/balade-soliere.jpg"
+          alt="Sentier boisé de la vallée de la Solière"
+          loading="lazy"
+        />
+        <div class="event-feature__body">
+          <h3>Balade dans la vallée de la Solière</h3>
+          <p class="event-feature__meta">
+            <time datetime="2026-06-15">15 juin 2026 — 10h00</time> · Huy, Belgique
+          </p>
+          <p>
+            Promenade nature au départ du parking Elysée-Beaufort, en bordure de forêt.
+            Le ruisseau de la Solière vous accompagnera tout au long du parcours.
+            La vallée est un site protégé, merci de tenir vos fidèles compagnons en laisse.
+          </p>
+          <a class="btn btn--ghost" href="/evenements.html">Voir tous les événements</a>
+        </div>
+      </article>
+    </section>
+
+    <section class="section container" aria-labelledby="partners-title">
+      <h2 class="section__title" id="partners-title">Nos partenaires</h2>
+      <ul class="partners-grid">
+        <li>
+          <a href="https://teamvetcare.be/" target="_blank" rel="noopener noreferrer">
+            <img src="/images/partner-vetcare.jpg" alt="VetCare" loading="lazy" />
+          </a>
+        </li>
+        <li>
+          <a href="https://be.holidog.com/" target="_blank" rel="noopener noreferrer">
+            <img src="/images/partner-holidog.jpg" alt="Holidog" loading="lazy" />
+          </a>
+        </li>
+        <li>
+          <a href="https://www.comportementalisteduchien.com/" target="_blank" rel="noopener noreferrer">
+            <img src="/images/partner-comportementaliste.jpg" alt="Comportementaliste du chien" loading="lazy" />
+          </a>
+        </li>
+        <li>
+          <a href="https://tipaw.com/" target="_blank" rel="noopener noreferrer">
+            <img src="/images/partner-tipaw.jpg" alt="Tipaw" loading="lazy" />
+          </a>
+        </li>
+        <li>
+          <a href="https://www.toutous.be/" target="_blank" rel="noopener noreferrer">
+            <img src="/images/partner-toutous.jpg" alt="Toutous" loading="lazy" />
+          </a>
+        </li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="site-footer__inner">
+      <div class="site-footer__column">
+        <h3>Services</h3>
+        <ul>
+          <li><a href="/evenements.html">Événements</a></li>
+          <li><a href="/petsshop.html">Pet's Shop</a></li>
+          <li><a href="/contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div class="site-footer__column">
+        <h3>Informations</h3>
+        <ul>
+          <li><a href="/apropos.html">À propos</a></li>
+          <li><a href="/mentions-legales.html">Mentions légales</a></li>
+          <li><a href="/conditions-generales.html">Conditions générales</a></li>
+        </ul>
+      </div>
+      <div class="site-footer__column">
+        <h3>Suivez-nous</h3>
+        <ul>
+          <li><a href="https://facebook.com" rel="noopener noreferrer" target="_blank">Facebook</a></li>
+          <li><a href="https://instagram.com" rel="noopener noreferrer" target="_blank">Instagram</a></li>
+          <li><a href="https://youtube.com" rel="noopener noreferrer" target="_blank">YouTube</a></li>
+        </ul>
+      </div>
+      <div class="site-footer__column site-footer__column--payments">
+        <h3>Moyens de paiement</h3>
+        <ul class="payments">
+          <li><img src="/images/payment-bancontact.png" alt="Bancontact" /></li>
+          <li><img src="/images/payment-visa.png" alt="Visa" /></li>
+          <li><img src="/images/payment-mastercard.jpg" alt="Mastercard" /></li>
+          <li><img src="/images/payment-maestro.png" alt="Maestro" /></li>
+        </ul>
+      </div>
+    </div>
+    <p class="site-footer__bottom">&copy; 2026 Pet's Book — Manon Sigaud</p>
+  </footer>
+
+  <script type="module" src="/src/js/pages/home.js"></script>
+</body>
+</html>

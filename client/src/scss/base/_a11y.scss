@@ -1,0 +1,41 @@
+@use '../abstracts' as *;
+
+// Lien "Aller au contenu" affiché uniquement quand il prend le focus clavier
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: $space-2;
+  z-index: $z-toast;
+  padding: $space-2 $space-4;
+  background-color: $color-brand-dark;
+  color: $color-text-inverse;
+  border-radius: $radius-md;
+  transition: top $transition-fast;
+
+  &:focus {
+    top: $space-2;
+    @include focus-ring;
+  }
+}
+
+// Classe utilitaire d'accessibilité
+.visually-hidden {
+  @include visually-hidden;
+}
+
+// Respect du paramètre système "réduire les animations"
+@include respect-motion-preference {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+// Focus visible global cohérent
+:focus-visible {
+  @include focus-ring;
+}

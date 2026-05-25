@@ -1,0 +1,129 @@
+@use '../abstracts' as *;
+
+// =============================================================================
+// Navigation desktop + bouton burger mobile-first
+// =============================================================================
+
+.nav-toggle {
+  @include button-reset;
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 32px;
+  height: 24px;
+  padding: 0;
+
+  @include respond-to('large') {
+    display: none;
+  }
+
+  span {
+    display: block;
+    height: 3px;
+    width: 100%;
+    background-color: $color-text-inverse;
+    border-radius: $radius-full;
+    transition: transform $transition-base, opacity $transition-base;
+  }
+
+  &[aria-expanded='true'] {
+    span:nth-child(1) {
+      transform: translateY(10px) rotate(45deg);
+    }
+    span:nth-child(2) {
+      opacity: 0;
+    }
+    span:nth-child(3) {
+      transform: translateY(-10px) rotate(-45deg);
+    }
+  }
+}
+
+.nav {
+  position: fixed;
+  inset: $header-height 0 0 0;
+  background-color: $color-brand-light;
+  padding: $space-6 $space-4;
+  transform: translateX(100%);
+  transition: transform $transition-base;
+  overflow-y: auto;
+
+  &[data-open='true'] {
+    transform: translateX(0);
+  }
+
+  @include respond-to('large') {
+    position: static;
+    inset: auto;
+    transform: none;
+    background-color: transparent;
+    padding: 0;
+    overflow: visible;
+    display: flex;
+    align-items: center;
+    flex: 1;
+    gap: $space-5;
+  }
+}
+
+.nav__list {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+
+  @include respond-to('large') {
+    flex-direction: row;
+    align-items: center;
+    gap: $space-5;
+  }
+}
+
+.nav__link {
+  display: inline-block;
+  padding: $space-2 $space-3;
+  color: $color-brand-dark;
+  font-weight: $font-weight-medium;
+  border-radius: $radius-md;
+  transition: background-color $transition-fast, color $transition-fast;
+
+  @include respond-to('large') {
+    color: $color-text-inverse;
+  }
+
+  &:hover,
+  &:focus-visible {
+    background-color: $color-brand-dark;
+    color: $color-text-inverse;
+  }
+
+  &[aria-current='page'] {
+    background-color: rgba($color-brand-dark, 0.15);
+
+    @include respond-to('large') {
+      background-color: rgba(0, 0, 0, 0.15);
+    }
+  }
+}
+
+.search-form {
+  display: flex;
+  gap: $space-2;
+  margin-top: $space-4;
+
+  @include respond-to('large') {
+    margin-top: 0;
+  }
+}
+
+.search-form__input {
+  flex: 1;
+  padding: $space-2 $space-3;
+  border: $border-width solid $color-brand-light;
+  background-color: $color-brand;
+  color: $color-text-inverse;
+  border-radius: $radius-md;
+
+  &::placeholder {
+    color: rgba($color-text-inverse, 0.7);
+  }
+}

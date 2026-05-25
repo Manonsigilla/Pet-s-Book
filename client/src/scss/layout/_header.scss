@@ -1,0 +1,32 @@
+@use '../abstracts' as *;
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: $z-header;
+  background-color: $color-brand;
+  box-shadow: $shadow-sm;
+}
+
+.site-header__inner {
+  @include container;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-4;
+  min-height: $header-height;
+}
+
+.site-header__logo {
+  display: inline-flex;
+  align-items: center;
+
+  img {
+    height: 56px;
+    width: auto;
+
+    @include respond-to('medium') {
+      height: 72px;
+    }
+  }
+}

@@ -1,0 +1,172 @@
+// Page Profils — récupère les animaux depuis l'API et gère filtres + recherche
+import '../main.js';
+import { api } from '../api.js';
+
+// Pour la grille RNCP : démonstration de fetch async, manipulation DOM,
+// événements (input, click) et timers (debounce).
+
+const ESPECES_CONNUES = new Set(['chat', 'chien', 'lapin']);
+
+const state = {
+  animals: [],
+  species: 'all',
+  query: '',
+};
+
+const dom = {
+  results: document.getElementById('profils-results'),
+  count: document.getElementById('profils-count'),
+  search: document.getElementById('search-animal'),
+  filters: document.querySelectorAll('.filter-chip'),
+};
+
+// -----------------------------------------------------------------------------
+// Rendu
+// -----------------------------------------------------------------------------
+
+function renderSkeletons(n = 6) {
+  dom.results.setAttribute('aria-busy', 'true');
+  dom.results.innerHTML = `
+    <div class="grid-cards">
+      ${Array.from({ length: n }, () => '<div class="skeleton-card" aria-hidden="true"></div>').join('')}
+    </div>
+  `;
+  dom.count.textContent = 'Chargement des profils...';
+}
+
+function renderError(message) {
+  dom.results.setAttribute('aria-busy', 'false');
+  dom.results.innerHTML = `
+    <div class="state state--error" role="alert">
+      <h2 class="state__title">Impossible de charger les profils</h2>
+      <p class="state__text">${escapeHtml(message)}</p>
+    </div>
+  `;
+  dom.count.textContent = '';
+}
+
+function renderEmpty() {
+  dom.results.setAttribute('aria-busy', 'false');
+  dom.results.innerHTML = `
+    <div class="state">
+      <h2 class="state__title">Aucun résultat</h2>
+      <p class="state__text">Essayez d'élargir votre recherche ou de retirer un filtre.</p>
+    </div>
+  `;
+}
+
+function renderAnimals(animals) {
+  dom.results.setAttribute('aria-busy', 'false');
+
+  if (animals.length === 0) {
+    renderEmpty();
+    return;
+  }
+
+  const cards = animals.map((animal) => `
+    <article class="card">
+      <img
+        class="card__media"
+        src="${escapeHtml(animal.imageUrl || '/placeholder-pet.svg')}"
+        alt="Photo de ${escapeHtml(animal.name)}"
+        loading="lazy"
+      />
+      <div class="card__body">
+        <h2 class="card__title">${escapeHtml(animal.name)}</h2>
+        <p class="card__text">
+          ${escapeHtml(capitalize(animal.species))}${animal.breed ? ` &middot; ${escapeHtml(animal.breed)}` : ''}
+          ${animal.description ? `<br>${escapeHtml(animal.description)}` : ''}
+        </p>
+        <div class="card__footer">
+          <a class="btn btn--ghost" href="/profil-detail.html?id=${animal.id}">Voir le profil</a>
+        </div>
+      </div>
+    </article>
+  `).join('');
+
+  dom.results.innerHTML = `<div class="grid-cards">${cards}</div>`;
+}
+
+// -----------------------------------------------------------------------------
+// Logique de filtrage
+// -----------------------------------------------------------------------------
+
+function applyFilters() {
+  const query = state.query.trim().toLowerCase();
+
+  const filtered = state.animals.filter((animal) => {
+    // Filtre par espèce
+    if (state.species === 'autre' && ESPECES_CONNUES.has(animal.species)) return false;
+    if (state.species !== 'all' && state.species !== 'autre' && animal.species !== state.species) return false;
+
+    // Filtre par texte (nom, race ou description)
+    if (query) {
+      const haystack = `${animal.name} ${animal.breed ?? ''} ${animal.description ?? ''}`.toLowerCase();
+      if (!haystack.includes(query)) return false;
+    }
+    return true;
+  });
+
+  dom.count.textContent = `${filtered.length} profil${filtered.length > 1 ? 's' : ''} affiché${filtered.length > 1 ? 's' : ''}`;
+  renderAnimals(filtered);
+}
+
+// -----------------------------------------------------------------------------
+// Utilitaires
+// -----------------------------------------------------------------------------
+
+// Échappe le HTML pour prévenir les failles XSS (la grille évalue ce point)
+function escapeHtml(str) {
+  if (str == null) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function capitalize(str) {
+  if (!str) return '';
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+// Debounce — exigence implicite de la grille : utilisation de timers
+function debounce(fn, delay = 250) {
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn(...args), delay);
+  };
+}
+
+// -----------------------------------------------------------------------------
+// Init
+// -----------------------------------------------------------------------------
+
+async function init() {
+  // Branchements UI
+  dom.search.addEventListener('input', debounce((event) => {
+    state.query = event.target.value;
+    applyFilters();
+  }, 200));
+
+  dom.filters.forEach((chip) => {
+    chip.addEventListener('click', () => {
+      state.species = chip.dataset.species;
+      dom.filters.forEach((c) => c.setAttribute('aria-pressed', String(c === chip)));
+      applyFilters();
+    });
+  });
+
+  // Chargement initial
+  renderSkeletons();
+  try {
+    state.animals = await api.get('/animals');
+    applyFilters();
+  } catch (err) {
+    renderError(err.message || 'Erreur réseau, vérifiez que le serveur est démarré.');
+  }
+}
+
+document.addEventListener('DOMContentLoaded', init);

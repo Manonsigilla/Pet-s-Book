@@ -1,0 +1,124 @@
+@use '../abstracts' as *;
+
+.admin {
+  padding-block: $space-6;
+}
+
+.admin__intro {
+  background-color: rgba($color-brand-light, 0.4);
+  border-left: 4px solid $color-brand-dark;
+  padding: $space-4;
+  border-radius: $radius-md;
+  margin-bottom: $space-6;
+}
+
+.admin-section {
+  margin-bottom: $space-8;
+
+  &__header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: $space-3;
+    flex-wrap: wrap;
+    margin-bottom: $space-4;
+  }
+
+  &__count {
+    font-size: $font-size-sm;
+    color: $color-text-muted;
+    padding: $space-1 $space-3;
+    background-color: $color-brand-light;
+    border-radius: $radius-full;
+  }
+}
+
+.admin-list {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+}
+
+.admin-item {
+  display: grid;
+  gap: $space-4;
+  padding: $space-4;
+  background-color: $color-surface;
+  border: $border-width solid $color-brand-light;
+  border-radius: $radius-md;
+  grid-template-columns: 1fr;
+
+  @include respond-to('medium') {
+    grid-template-columns: 120px 1fr auto;
+    align-items: center;
+  }
+}
+
+.admin-item__media {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: $radius-md;
+  background-color: $color-brand-light;
+}
+
+.admin-item__info {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+}
+
+.admin-item__title {
+  font-size: $font-size-lg;
+  color: $color-brand-dark;
+}
+
+.admin-item__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2;
+  font-size: $font-size-sm;
+  color: $color-text-muted;
+
+  span {
+    padding: $space-1 $space-2;
+    background-color: $color-brand-light;
+    border-radius: $radius-full;
+  }
+}
+
+.admin-item__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2;
+
+  @include respond-to('medium') {
+    flex-direction: column;
+  }
+}
+
+.btn--success {
+  background-color: $color-success;
+  color: $color-text-inverse;
+
+  &:hover:not(:disabled),
+  &:focus-visible:not(:disabled) {
+    filter: brightness(1.1);
+  }
+}
+
+.btn--danger {
+  background-color: $color-danger;
+  color: $color-text-inverse;
+
+  &:hover:not(:disabled),
+  &:focus-visible:not(:disabled) {
+    filter: brightness(1.1);
+  }
+}
+
+.btn--small {
+  padding: $space-1 $space-3;
+  font-size: $font-size-sm;
+  min-height: 36px;
+}

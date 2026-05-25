@@ -1,0 +1,71 @@
+@use '../abstracts' as *;
+
+.btn {
+  @include button-reset;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-2;
+  padding: $space-2 $space-5;
+  border-radius: $radius-md;
+  font-family: $font-body;
+  font-weight: $font-weight-medium;
+  font-size: $font-size-md;
+  text-decoration: none;
+  line-height: 1;
+  min-height: 44px;            // cible tactile WCAG
+  transition: background-color $transition-base,
+              color $transition-base,
+              transform $transition-fast;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+}
+
+.btn--primary {
+  background-color: $color-brand-dark;
+  color: $color-text-inverse;
+
+  &:hover:not(:disabled),
+  &:focus-visible:not(:disabled) {
+    background-color: $color-brand-medium;
+    color: $color-text-inverse;
+  }
+}
+
+.btn--secondary {
+  background-color: $color-brand-light;
+  color: $color-brand-dark;
+  border: $border-width solid $color-brand-dark;
+
+  &:hover:not(:disabled),
+  &:focus-visible:not(:disabled) {
+    background-color: $color-brand;
+    color: $color-text-inverse;
+  }
+}
+
+.btn--ghost {
+  background-color: transparent;
+  color: $color-brand-dark;
+
+  &:hover:not(:disabled),
+  &:focus-visible:not(:disabled) {
+    background-color: rgba($color-brand-dark, 0.08);
+  }
+}
+
+.btn--block {
+  width: 100%;
+}

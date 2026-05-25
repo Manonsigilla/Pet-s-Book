@@ -1,0 +1,113 @@
+// =============================================================================
+// Variables — design tokens de Pet's Book
+// =============================================================================
+
+// -----------------------------------------------------------------------------
+// Palette (extraite de l'ancien CSS pour conserver l'identité visuelle)
+// -----------------------------------------------------------------------------
+$color-brand-dark:   #593A28;   // marron foncé : texte principal, bordures
+$color-brand-medium: #8C593B;   // marron moyen : éléments secondaires
+$color-brand:        #BF8A6B;   // caramel : accents, fonds d'en-têtes
+$color-brand-light:  #D9D6D2;   // beige clair : fonds, texte sur fond foncé
+
+$color-background:   rgba($color-brand-light, 0.5);
+$color-surface:      #FFFFFF;
+$color-text:         $color-brand-dark;
+$color-text-muted:   $color-brand-medium;
+$color-text-inverse: $color-brand-light;
+
+// États
+$color-success: #4F7942;
+$color-warning: #C68642;
+$color-danger:  #A0522D;
+$color-info:    #6B7A8F;
+
+// -----------------------------------------------------------------------------
+// Typographie
+// -----------------------------------------------------------------------------
+$font-display: 'Cinzel', Georgia, serif;
+$font-body:    'Quicksand', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+$font-size-base: 1rem;          // 16px
+$font-size-xs:   0.75rem;       // 12px
+$font-size-sm:   0.875rem;      // 14px
+$font-size-md:   1rem;          // 16px
+$font-size-lg:   1.125rem;      // 18px
+$font-size-xl:   1.5rem;        // 24px
+$font-size-2xl:  2rem;          // 32px
+$font-size-3xl:  2.5rem;        // 40px
+
+$line-height-tight:   1.2;
+$line-height-base:    1.6;
+$line-height-relaxed: 1.8;
+
+$font-weight-normal: 400;
+$font-weight-medium: 500;
+$font-weight-bold:   700;
+
+// -----------------------------------------------------------------------------
+// Espacements (échelle modulaire de 4px)
+// -----------------------------------------------------------------------------
+$space-0:  0;
+$space-1:  0.25rem;   // 4px
+$space-2:  0.5rem;    // 8px
+$space-3:  0.75rem;   // 12px
+$space-4:  1rem;      // 16px
+$space-5:  1.5rem;    // 24px
+$space-6:  2rem;      // 32px
+$space-7:  2.5rem;    // 40px
+$space-8:  3rem;      // 48px
+$space-10: 4rem;      // 64px
+$space-12: 6rem;      // 96px
+
+// -----------------------------------------------------------------------------
+// Rayons et bordures
+// -----------------------------------------------------------------------------
+$radius-sm:   4px;
+$radius-md:   8px;
+$radius-lg:   16px;
+$radius-full: 9999px;
+
+$border-width: 1px;
+
+// -----------------------------------------------------------------------------
+// Ombres
+// -----------------------------------------------------------------------------
+$shadow-sm: 0 1px 2px rgba($color-brand-dark, 0.08);
+$shadow-md: 0 4px 8px rgba($color-brand-dark, 0.12);
+$shadow-lg: 0 10px 20px rgba($color-brand-dark, 0.16);
+
+// -----------------------------------------------------------------------------
+// Breakpoints (mobile-first → @include respond-to('medium'))
+// -----------------------------------------------------------------------------
+$breakpoints: (
+  'small':   480px,    // grand mobile
+  'medium':  768px,    // tablette
+  'large':   1024px,   // laptop
+  'xlarge':  1280px,   // desktop
+  'xxlarge': 1536px,   // grand écran
+);
+
+// -----------------------------------------------------------------------------
+// Layout
+// -----------------------------------------------------------------------------
+$container-max-width: 1200px;
+$container-padding:   $space-4;
+$header-height:       80px;
+
+// -----------------------------------------------------------------------------
+// Transitions
+// -----------------------------------------------------------------------------
+$transition-fast:   150ms ease-in-out;
+$transition-base:   250ms ease-in-out;
+$transition-slow:   400ms ease-in-out;
+
+// -----------------------------------------------------------------------------
+// Z-index
+// -----------------------------------------------------------------------------
+$z-base:     1;
+$z-dropdown: 10;
+$z-sticky:   100;
+$z-header:   200;
+$z-modal:    1000;
+$z-toast:    2000;

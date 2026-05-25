@@ -1,0 +1,149 @@
+@use '../abstracts' as *;
+
+.lost {
+  padding-block: $space-6;
+}
+
+.lost__intro {
+  margin-bottom: $space-6;
+  max-width: 70ch;
+}
+
+.lost__cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-3;
+  margin-bottom: $space-6;
+  align-items: center;
+}
+
+.lost-grid {
+  display: grid;
+  gap: $space-4;
+  grid-template-columns: 1fr;
+
+  @include respond-to('medium') {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include respond-to('xlarge') {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.lost-card {
+  display: flex;
+  flex-direction: column;
+  background-color: $color-surface;
+  border: $border-width solid $color-brand-light;
+  border-radius: $radius-md;
+  overflow: hidden;
+  transition: transform $transition-base, box-shadow $transition-base;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $shadow-md;
+  }
+
+  &__media {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    background-color: $color-brand-light;
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    gap: $space-2;
+    padding: $space-4;
+    flex: 1;
+  }
+
+  &__badge {
+    align-self: flex-start;
+    padding: $space-1 $space-3;
+    border-radius: $radius-full;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-bold;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+
+    &--lost  { background-color: rgba($color-danger, 0.15);  color: $color-danger; }
+    &--found { background-color: rgba($color-success, 0.15); color: $color-success; }
+    &--closed { background-color: $color-brand-light; color: $color-text-muted; }
+  }
+
+  &__title {
+    font-size: $font-size-lg;
+    color: $color-brand-dark;
+  }
+
+  &__meta {
+    font-size: $font-size-sm;
+    color: $color-text-muted;
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-2;
+  }
+
+  &__contact {
+    margin-top: auto;
+    padding-top: $space-3;
+    border-top: $border-width solid $color-brand-light;
+    font-size: $font-size-sm;
+    color: $color-text;
+  }
+}
+
+// =============================================================================
+// Modal de soumission d'annonce
+// =============================================================================
+
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: $z-modal;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: $space-4;
+  background-color: rgba($color-brand-dark, 0.5);
+
+  &[data-open='true'] {
+    display: flex;
+  }
+}
+
+.modal__dialog {
+  width: 100%;
+  max-width: 560px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background-color: $color-surface;
+  border-radius: $radius-lg;
+  padding: $space-6;
+  box-shadow: $shadow-lg;
+}
+
+.modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-3;
+  margin-bottom: $space-4;
+}
+
+.modal__close {
+  @include button-reset;
+  width: 36px;
+  height: 36px;
+  border-radius: $radius-full;
+  font-size: $font-size-xl;
+  color: $color-text;
+
+  &:hover,
+  &:focus-visible {
+    background-color: $color-brand-light;
+  }
+}

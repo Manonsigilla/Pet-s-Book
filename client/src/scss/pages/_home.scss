@@ -1,0 +1,166 @@
+@use '../abstracts' as *;
+
+.hero {
+  padding-block: $space-8;
+  text-align: center;
+  background-color: rgba($color-brand-light, 0.6);
+}
+
+.hero__title {
+  margin-bottom: $space-4;
+}
+
+.hero__text {
+  max-width: 70ch;
+  margin: 0 auto $space-5;
+  text-align: justify;
+  text-align-last: center;
+
+  @include respond-to('medium') {
+    text-align: center;
+  }
+}
+
+.hero__cta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: $space-3;
+}
+
+// =============================================================================
+// Vidéo importée — wrapper responsive
+// =============================================================================
+.video-wrapper {
+  max-width: 900px;
+  margin: 0 auto;
+  border-radius: $radius-md;
+  overflow: hidden;
+  background-color: $color-brand-light;
+  box-shadow: $shadow-md;
+
+  video {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    background-color: #000;
+  }
+}
+
+// =============================================================================
+// Carte d'événement mise en avant
+// =============================================================================
+.event-feature {
+  display: grid;
+  gap: $space-5;
+  background-color: $color-surface;
+  border: $border-width solid $color-brand-light;
+  border-radius: $radius-md;
+  overflow: hidden;
+  grid-template-columns: 1fr;
+
+  @include respond-to('medium') {
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+  }
+}
+
+.event-feature__media {
+  width: 100%;
+  height: 100%;
+  max-height: 360px;
+  object-fit: cover;
+  border-radius: $radius-md;
+}
+
+.event-feature__body {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+  padding: $space-5;
+
+  h3 {
+    color: $color-brand-dark;
+  }
+}
+
+.event-feature__meta {
+  font-size: $font-size-sm;
+  color: $color-text-muted;
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2;
+
+  time {
+    font-weight: $font-weight-medium;
+    color: $color-brand-dark;
+  }
+}
+
+// =============================================================================
+// Grille des partenaires
+// =============================================================================
+.partners-grid {
+  display: grid;
+  gap: $space-4;
+  grid-template-columns: repeat(2, 1fr);
+
+  @include respond-to('medium') {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @include respond-to('large') {
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+  li {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  a {
+    display: block;
+    padding: $space-3;
+    border-radius: $radius-md;
+    background-color: $color-surface;
+    border: $border-width solid $color-brand-light;
+    transition: transform $transition-base, box-shadow $transition-base;
+
+    &:hover,
+    &:focus-visible {
+      transform: translateY(-3px);
+      box-shadow: $shadow-md;
+    }
+  }
+
+  img {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    border-radius: $radius-sm;
+  }
+}
+
+// =============================================================================
+// Bandeau moyens de paiement (footer)
+// =============================================================================
+.payments {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2;
+  align-items: center;
+
+  img {
+    height: 28px;
+    width: auto;
+    background-color: $color-surface;
+    padding: $space-1;
+    border-radius: $radius-sm;
+  }
+}
+
+.site-footer__column--payments h3 {
+  margin-bottom: $space-3;
+}

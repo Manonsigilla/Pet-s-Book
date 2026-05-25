@@ -1,0 +1,148 @@
+@use '../abstracts' as *;
+
+.profils {
+  padding-block: $space-6;
+}
+
+.profils__toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+  margin-bottom: $space-6;
+
+  @include respond-to('medium') {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.profils__search {
+  position: relative;
+  flex: 1;
+  max-width: 100%;
+
+  @include respond-to('medium') {
+    max-width: 360px;
+  }
+}
+
+.profils__filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2;
+}
+
+.filter-chip {
+  @include button-reset;
+  padding: $space-2 $space-4;
+  border: $border-width solid $color-brand-dark;
+  border-radius: $radius-full;
+  background-color: transparent;
+  color: $color-brand-dark;
+  font-weight: $font-weight-medium;
+  font-size: $font-size-sm;
+  min-height: 36px;
+  transition: background-color $transition-fast, color $transition-fast;
+
+  &:hover,
+  &:focus-visible {
+    background-color: rgba($color-brand-dark, 0.08);
+  }
+
+  &[aria-pressed='true'] {
+    background-color: $color-brand-dark;
+    color: $color-text-inverse;
+  }
+}
+
+.profils__count {
+  font-size: $font-size-sm;
+  color: $color-text-muted;
+  margin-bottom: $space-4;
+}
+
+// États : loading, erreur, vide — affichés en remplacement du contenu
+.state {
+  padding: $space-8 $space-4;
+  text-align: center;
+  border: $border-width dashed $color-brand-medium;
+  border-radius: $radius-md;
+  background-color: rgba($color-brand-light, 0.4);
+
+  &__title {
+    margin-bottom: $space-2;
+  }
+
+  &__text {
+    color: $color-text-muted;
+  }
+
+  &--error {
+    border-color: $color-danger;
+    background-color: rgba($color-danger, 0.05);
+
+    .state__title {
+      color: $color-danger;
+    }
+  }
+}
+
+// Skeleton de chargement (jolie animation pulsée pendant le fetch)
+.skeleton-card {
+  border-radius: $radius-md;
+  background: linear-gradient(
+    90deg,
+    rgba($color-brand-light, 0.6) 25%,
+    rgba($color-brand, 0.3) 50%,
+    rgba($color-brand-light, 0.6) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+  aspect-ratio: 3 / 4;
+}
+
+@keyframes skeleton-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+// Détail animal
+.profil-detail {
+  display: grid;
+  gap: $space-6;
+  padding-block: $space-6;
+
+  @include respond-to('medium') {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+  }
+}
+
+.profil-detail__media {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: $radius-md;
+  border: $border-width solid $color-brand-dark;
+}
+
+.profil-detail__info {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.profil-detail__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2;
+  font-size: $font-size-sm;
+  color: $color-text-muted;
+
+  span {
+    padding: $space-1 $space-3;
+    background-color: $color-brand-light;
+    border-radius: $radius-full;
+  }
+}

@@ -1,0 +1,16 @@
+@use 'sass:map';
+@use 'sass:math';
+@use 'variables' as v;
+
+// Récupère une valeur de breakpoint en levant une erreur si le nom est invalide.
+@function bp($name) {
+  @if not map.has-key(v.$breakpoints, $name) {
+    @error "Breakpoint inconnu: `#{$name}`. Valeurs disponibles: #{map.keys(v.$breakpoints)}.";
+  }
+  @return map.get(v.$breakpoints, $name);
+}
+
+// Convertit un px en rem (base 16).
+@function rem($px) {
+  @return math.div($px, 16px) * 1rem;
+}

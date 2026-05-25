@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300" role="img" aria-label="Image de remplacement d'un animal">
+  <rect width="400" height="300" fill="#D9D6D2"/>
+  <circle cx="200" cy="160" r="60" fill="#BF8A6B"/>
+  <circle cx="170" cy="120" r="22" fill="#8C593B"/>
+  <circle cx="230" cy="120" r="22" fill="#8C593B"/>
+  <circle cx="185" cy="155" r="5" fill="#593A28"/>
+  <circle cx="215" cy="155" r="5" fill="#593A28"/>
+  <path d="M190 180 q10 8 20 0" stroke="#593A28" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <text x="200" y="260" text-anchor="middle" font-family="Quicksand, sans-serif" font-size="14" fill="#593A28">Photo à venir</text>
+</svg>

@@ -1,0 +1,30 @@
+@use '../abstracts' as *;
+
+// Grille de cartes responsive avec auto-fit
+.grid-cards {
+  display: grid;
+  gap: $space-5;
+  grid-template-columns: 1fr;
+
+  @include respond-to('small') {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include respond-to('large') {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @include respond-to('xlarge') {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+// Section verticale standard
+.section {
+  padding-block: $space-8;
+
+  &__title {
+    text-align: center;
+    margin-bottom: $space-6;
+  }
+}

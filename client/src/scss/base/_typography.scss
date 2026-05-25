@@ -1,0 +1,76 @@
+@use '../abstracts' as *;
+
+body {
+  font-family: $font-body;
+  font-size: $font-size-base;
+  font-weight: $font-weight-normal;
+  line-height: $line-height-base;
+  color: $color-text;
+  background-color: $color-background;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: $font-display;
+  font-weight: $font-weight-medium;
+  line-height: $line-height-tight;
+  color: $color-text;
+}
+
+h1 {
+  font-size: $font-size-2xl;
+
+  @include respond-to('medium') {
+    font-size: $font-size-3xl;
+  }
+}
+
+h2 {
+  font-size: $font-size-xl;
+
+  @include respond-to('medium') {
+    font-size: $font-size-2xl;
+  }
+}
+
+h3 {
+  font-size: $font-size-lg;
+
+  @include respond-to('medium') {
+    font-size: $font-size-xl;
+  }
+}
+
+p {
+  font-size: $font-size-md;
+  line-height: $line-height-base;
+}
+
+a {
+  color: $color-brand-medium;
+  transition: color $transition-fast;
+
+  &:hover,
+  &:focus-visible {
+    color: $color-brand-dark;
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+    border-radius: $radius-sm;
+  }
+}
+
+strong,
+b {
+  font-weight: $font-weight-bold;
+}
+
+em,
+i {
+  font-style: italic;
+}

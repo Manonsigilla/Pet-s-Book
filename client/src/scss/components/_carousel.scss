@@ -1,0 +1,96 @@
+@use '../abstracts' as *;
+
+// Carousel d'images simple, mobile-first
+.carousel {
+  position: relative;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  border-radius: $radius-md;
+  overflow: hidden;
+  background-color: $color-brand-light;
+}
+
+.carousel__track {
+  position: relative;
+  aspect-ratio: 16 / 10;
+}
+
+.carousel__slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity $transition-slow;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &[data-active='true'] {
+    opacity: 1;
+  }
+}
+
+.carousel__caption {
+  position: absolute;
+  bottom: $space-4;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: $space-2 $space-4;
+  background-color: rgba($color-brand-dark, 0.85);
+  color: $color-text-inverse;
+  border-radius: $radius-md;
+  font-family: $font-display;
+}
+
+.carousel__control {
+  @include button-reset;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba($color-brand-dark, 0.7);
+  color: $color-text-inverse;
+  border-radius: $radius-full;
+  font-size: $font-size-xl;
+  transition: background-color $transition-fast;
+
+  &:hover,
+  &:focus-visible {
+    background-color: $color-brand-dark;
+  }
+
+  &--prev {
+    left: $space-3;
+  }
+
+  &--next {
+    right: $space-3;
+  }
+}
+
+.carousel__dots {
+  display: flex;
+  justify-content: center;
+  gap: $space-2;
+  margin-top: $space-3;
+}
+
+.carousel__dot {
+  @include button-reset;
+  width: 12px;
+  height: 12px;
+  border-radius: $radius-full;
+  background-color: $color-brand;
+  transition: background-color $transition-fast;
+
+  &[data-active='true'] {
+    background-color: $color-brand-dark;
+  }
+}

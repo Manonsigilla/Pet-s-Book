@@ -1,0 +1,49 @@
+@use '../abstracts' as *;
+
+.card {
+  display: flex;
+  flex-direction: column;
+  background-color: $color-surface;
+  border: $border-width solid $color-brand-dark;
+  border-radius: $radius-md;
+  overflow: hidden;
+  transition: transform $transition-base, box-shadow $transition-base;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: $shadow-md;
+  }
+}
+
+.card__media {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  background-color: $color-brand-light;
+}
+
+.card__body {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  padding: $space-4;
+  flex: 1;
+}
+
+.card__title {
+  color: $color-brand-dark;
+  font-size: $font-size-lg;
+}
+
+.card__text {
+  color: $color-text;
+  @include line-clamp(3);
+}
+
+.card__footer {
+  margin-top: auto;
+  padding-top: $space-3;
+  display: flex;
+  justify-content: flex-end;
+  gap: $space-2;
+}

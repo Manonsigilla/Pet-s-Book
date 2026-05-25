@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Logo Pet's Book">
+  <circle cx="32" cy="34" r="14" fill="#593A28"/>
+  <circle cx="22" cy="22" r="6" fill="#8C593B"/>
+  <circle cx="42" cy="22" r="6" fill="#8C593B"/>
+  <circle cx="14" cy="34" r="5" fill="#8C593B"/>
+  <circle cx="50" cy="34" r="5" fill="#8C593B"/>
+  <circle cx="28" cy="32" r="1.5" fill="#D9D6D2"/>
+  <circle cx="36" cy="32" r="1.5" fill="#D9D6D2"/>
+  <path d="M30 38 q2 2 4 0" stroke="#D9D6D2" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+</svg>

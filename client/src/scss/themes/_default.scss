@@ -1,0 +1,6 @@
+// Définit la base du thème par défaut. Centralisée ici pour permettre
+// ultérieurement un thème sombre via prefers-color-scheme.
+
+:root {
+  color-scheme: light;
+}

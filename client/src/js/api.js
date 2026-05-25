@@ -1,0 +1,39 @@
+// Wrapper fetch centralisé. Ajoute automatiquement le JWT en en-tête si présent
+// et nettoie le stockage local si le serveur signale un token expiré/invalide.
+import { auth } from './auth.js';
+
+const API_BASE = '/api';
+
+async function request(path, { method = 'GET', body, headers = {} } = {}) {
+  const token = auth.getToken();
+  const response = await fetch(`${API_BASE}${path}`, {
+    method,
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...headers,
+    },
+    body: body ? JSON.stringify(body) : undefined,
+  });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ message: response.statusText }));
+    if (response.status === 401 && (error.code === 'TOKEN_EXPIRED' || error.code === 'TOKEN_INVALID')) {
+      auth.clear();
+    }
+    const err = new Error(error.message || `Erreur ${response.status}`);
+    err.status = response.status;
+    err.code = error.code;
+    throw err;
+  }
+
+  if (response.status === 204) return null;
+  return response.json();
+}
+
+export const api = {
+  get:    (path)        => request(path),
+  post:   (path, body)  => request(path, { method: 'POST', body }),
+  put:    (path, body)  => request(path, { method: 'PUT', body }),
+  delete: (path)        => request(path, { method: 'DELETE' }),
+};

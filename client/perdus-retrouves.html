@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Annonces d'animaux perdus et retrouvés près de chez vous. Signalez un animal disparu ou aidez à retrouver son propriétaire." />
+  <meta name="theme-color" content="#BF8A6B" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Quicksand:wght@400;500;700&display=swap"
+    rel="stylesheet"
+  />
+  <title>Perdus / Retrouvés — Pet's Book</title>
+</head>
+<body>
+  <a class="skip-link" href="#main">Aller au contenu principal</a>
+
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a class="site-header__logo" href="/index.html" aria-label="Accueil Pet's Book">
+        <img src="/images/Pets_Book.png" alt="" width="80" height="80" />
+        <span class="visually-hidden">Pet's Book</span>
+      </a>
+
+      <button
+        class="nav-toggle"
+        type="button"
+        aria-expanded="false"
+        aria-controls="primary-nav"
+        aria-label="Ouvrir le menu de navigation"
+      >
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <nav class="nav" id="primary-nav" aria-label="Navigation principale">
+        <ul class="nav__list">
+          <li><a class="nav__link" href="/index.html">Accueil</a></li>
+          <li><a class="nav__link" href="/profils.html">Profils</a></li>
+          <li><a class="nav__link" href="/perdus-retrouves.html">Perdus / Retrouvés</a></li>
+          <li><a class="nav__link" href="/evenements.html">Événements</a></li>
+          <li><a class="nav__link" href="/petsshop.html">Pet's Shop</a></li>
+          <li><a class="nav__link" href="/apropos.html">À propos</a></li>
+        </ul>
+        <div class="auth-widget" id="auth-widget" aria-label="Compte utilisateur"></div>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="container lost">
+    <section aria-labelledby="lost-title">
+      <h1 id="lost-title">Perdus / Retrouvés</h1>
+      <p class="lost__intro">
+        Aidez votre communauté : signalez un animal perdu ou que vous avez retrouvé.
+        Les annonces sont vérifiées par notre équipe avant publication pour éviter les abus.
+      </p>
+
+      <div class="lost__cta">
+        <button class="btn btn--primary" type="button" id="open-form-btn">
+          + Signaler un animal
+        </button>
+        <div class="profils__filters" role="group" aria-label="Filtrer">
+          <button class="filter-chip" type="button" data-status="all" aria-pressed="true">Tous</button>
+          <button class="filter-chip" type="button" data-status="lost" aria-pressed="false">Perdus</button>
+          <button class="filter-chip" type="button" data-status="found" aria-pressed="false">Trouvés</button>
+        </div>
+      </div>
+
+      <p class="profils__count" id="lost-count" aria-live="polite"></p>
+
+      <div id="lost-results" aria-busy="false">
+        <!-- Injecté par perdus-retrouves.js -->
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal de soumission -->
+  <div class="modal" id="report-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-hidden="true">
+    <div class="modal__dialog">
+      <div class="modal__header">
+        <h2 id="modal-title">Signaler un animal</h2>
+        <button class="modal__close" type="button" id="close-modal-btn" aria-label="Fermer">&times;</button>
+      </div>
+
+      <div class="auth-feedback" id="form-feedback" role="alert" aria-live="polite"></div>
+
+      <form class="form" id="report-form" novalidate>
+        <div class="form__field">
+          <label class="form__label" for="status">Type d'annonce</label>
+          <select class="form__select" id="status" name="status" required>
+            <option value="lost">Animal perdu</option>
+            <option value="found">Animal trouvé</option>
+          </select>
+        </div>
+
+        <div class="form__field">
+          <label class="form__label" for="animalName">Nom de l'animal (ou "Inconnu")</label>
+          <input class="form__input" type="text" id="animalName" name="animalName" required maxlength="60" />
+          <p class="form__error" id="animalName-error"></p>
+        </div>
+
+        <div class="form__field">
+          <label class="form__label" for="species">Espèce</label>
+          <select class="form__select" id="species" name="species" required>
+            <option value="chat">Chat</option>
+            <option value="chien">Chien</option>
+            <option value="lapin">Lapin</option>
+            <option value="oiseau">Oiseau</option>
+            <option value="autre">Autre</option>
+          </select>
+        </div>
+
+        <div class="form__field">
+          <label class="form__label" for="lostDate">Date</label>
+          <input class="form__input" type="date" id="lostDate" name="lostDate" required />
+          <p class="form__error" id="lostDate-error"></p>
+        </div>
+
+        <div class="form__field">
+          <label class="form__label" for="location">Lieu</label>
+          <input class="form__input" type="text" id="location" name="location" required minlength="2" maxlength="120" placeholder="Ville, quartier, rue..." />
+          <p class="form__error" id="location-error"></p>
+        </div>
+
+        <div class="form__field">
+          <label class="form__label" for="description">Description</label>
+          <textarea class="form__textarea" id="description" name="description" required minlength="10" maxlength="1000" placeholder="Couleur, taille, signes distinctifs..."></textarea>
+          <p class="form__error" id="description-error"></p>
+        </div>
+
+        <div class="form__field">
+          <label class="form__label" for="contact">Contact (email ou téléphone)</label>
+          <input class="form__input" type="text" id="contact" name="contact" required minlength="3" maxlength="120" />
+          <p class="form__error" id="contact-error"></p>
+        </div>
+
+        <button class="btn btn--primary btn--block" type="submit" id="report-submit-btn">Envoyer l'annonce</button>
+        <p class="form__hint">Votre annonce sera examinée par un administrateur avant publication.</p>
+      </form>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="site-footer__inner">
+      <div class="site-footer__column">
+        <h3>Services</h3>
+        <ul>
+          <li><a href="/evenements.html">Événements</a></li>
+          <li><a href="/contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div class="site-footer__column">
+        <h3>Informations</h3>
+        <ul>
+          <li><a href="/apropos.html">À propos</a></li>
+          <li><a href="/mentions-legales.html">Mentions légales</a></li>
+        </ul>
+      </div>
+    </div>
+    <p class="site-footer__bottom">&copy; 2026 Pet's Book — Manon Sigaud</p>
+  </footer>
+
+  <script type="module" src="/src/js/pages/perdus-retrouves.js"></script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+@use '../abstracts' as *;
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.form__field {
+  display: flex;
+  flex-direction: column;
+  gap: $space-1;
+}
+
+.form__label {
+  font-weight: $font-weight-medium;
+  color: $color-brand-dark;
+}
+
+.form__input,
+.form__textarea,
+.form__select {
+  padding: $space-3;
+  border: $border-width solid $color-brand-medium;
+  border-radius: $radius-md;
+  background-color: $color-surface;
+  color: $color-text;
+  font-family: $font-body;
+  font-size: $font-size-md;
+  transition: border-color $transition-fast, box-shadow $transition-fast;
+
+  &:focus {
+    outline: none;
+    border-color: $color-brand-dark;
+    box-shadow: 0 0 0 3px rgba($color-brand-dark, 0.15);
+  }
+
+  &[aria-invalid='true'] {
+    border-color: $color-danger;
+  }
+}
+
+.form__textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.form__hint {
+  font-size: $font-size-sm;
+  color: $color-text-muted;
+}
+
+.form__error {
+  font-size: $font-size-sm;
+  color: $color-danger;
+  font-weight: $font-weight-medium;
+
+  &:empty {
+    display: none;
+  }
+}

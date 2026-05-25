@@ -1,0 +1,128 @@
+@use '../abstracts' as *;
+
+.auth-widget {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-2;
+  margin-left: auto;
+  font-size: $font-size-sm;
+}
+
+.auth-widget__greeting {
+  color: $color-text-inverse;
+  white-space: nowrap;
+
+  strong {
+    font-weight: $font-weight-bold;
+  }
+}
+
+.auth-widget__link {
+  display: inline-flex;
+  align-items: center;
+  padding: $space-2 $space-3;
+  border-radius: $radius-md;
+  color: $color-text-inverse;
+  font-weight: $font-weight-medium;
+  transition: background-color $transition-fast;
+
+  &:hover,
+  &:focus-visible {
+    background-color: rgba(0, 0, 0, 0.15);
+    color: $color-text-inverse;
+  }
+
+  &--primary {
+    background-color: $color-brand-dark;
+
+    &:hover,
+    &:focus-visible {
+      background-color: $color-brand-medium;
+    }
+  }
+}
+
+.auth-widget__logout {
+  @include button-reset;
+  padding: $space-2 $space-3;
+  border-radius: $radius-md;
+  color: $color-text-inverse;
+  font-weight: $font-weight-medium;
+  border: $border-width solid rgba($color-brand-light, 0.4);
+  transition: background-color $transition-fast;
+
+  &:hover,
+  &:focus-visible {
+    background-color: rgba(0, 0, 0, 0.15);
+  }
+}
+
+// =============================================================================
+// Pages d'auth (login/register) — formulaires centrés
+// =============================================================================
+.auth-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-block: $space-8;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 440px;
+  padding: $space-6;
+  background-color: $color-surface;
+  border: $border-width solid $color-brand-light;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-sm;
+}
+
+.auth-card__title {
+  text-align: center;
+  margin-bottom: $space-2;
+}
+
+.auth-card__subtitle {
+  text-align: center;
+  color: $color-text-muted;
+  margin-bottom: $space-5;
+}
+
+.auth-card__footer {
+  margin-top: $space-5;
+  padding-top: $space-4;
+  border-top: $border-width solid $color-brand-light;
+  text-align: center;
+  font-size: $font-size-sm;
+  color: $color-text-muted;
+
+  a {
+    color: $color-brand-dark;
+    font-weight: $font-weight-medium;
+    text-decoration: underline;
+  }
+}
+
+.auth-feedback {
+  padding: $space-3;
+  border-radius: $radius-md;
+  margin-bottom: $space-4;
+  font-size: $font-size-sm;
+
+  &:empty {
+    display: none;
+  }
+
+  &--error {
+    background-color: rgba($color-danger, 0.08);
+    color: $color-danger;
+    border: $border-width solid rgba($color-danger, 0.3);
+  }
+
+  &--success {
+    background-color: rgba($color-success, 0.08);
+    color: $color-success;
+    border: $border-width solid rgba($color-success, 0.3);
+  }
+}

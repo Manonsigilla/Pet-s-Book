@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="À propos de Pet's Book : notre histoire, notre mission et le sauvetage de Tony, le chat qui a inspiré la création de la plateforme." />
+  <meta name="theme-color" content="#BF8A6B" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Quicksand:wght@400;500;700&display=swap"
+    rel="stylesheet"
+  />
+  <title>À propos — Pet's Book</title>
+</head>
+<body>
+  <a class="skip-link" href="#main">Aller au contenu principal</a>
+
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a class="site-header__logo" href="/index.html" aria-label="Accueil Pet's Book">
+        <img src="/images/Pets_Book.png" alt="" width="80" height="80" />
+        <span class="visually-hidden">Pet's Book</span>
+      </a>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="primary-nav" aria-label="Ouvrir le menu de navigation">
+        <span></span><span></span><span></span>
+      </button>
+      <nav class="nav" id="primary-nav" aria-label="Navigation principale">
+        <ul class="nav__list">
+          <li><a class="nav__link" href="/index.html">Accueil</a></li>
+          <li><a class="nav__link" href="/profils.html">Profils</a></li>
+          <li><a class="nav__link" href="/perdus-retrouves.html">Perdus / Retrouvés</a></li>
+          <li><a class="nav__link" href="/evenements.html">Événements</a></li>
+          <li><a class="nav__link" href="/petsshop.html">Pet's Shop</a></li>
+          <li><a class="nav__link" href="/apropos.html">À propos</a></li>
+        </ul>
+        <div class="auth-widget" id="auth-widget" aria-label="Compte utilisateur"></div>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="container apropos">
+    <h1>À propos de Pet's Book</h1>
+
+    <section class="apropos__slogan" aria-label="Notre slogan">
+      <h2>Notre slogan</h2>
+      <p><em>« Protège ton animal »</em></p>
+    </section>
+
+    <section class="apropos__story" aria-labelledby="histoire-title">
+      <h2 id="histoire-title">Notre histoire</h2>
+
+      <div class="apropos__story-content">
+        <figure class="apropos__figure">
+          <img
+            src="/images/about-cover.jpg"
+            alt="Tony et ses frères et sœurs au moment de leur sauvetage"
+            loading="lazy"
+          />
+          <figcaption>Tony et sa fratrie au moment de leur recueil.</figcaption>
+        </figure>
+
+        <div class="apropos__text">
+          <p>
+            Des <strong>millions d'animaux</strong> sont abandonnés chaque année, conséquence des
+            ces abandons : beaucoup d'<strong>animaux sauvages</strong>. La plupart du temps, les
+            femelles ne sont pas stérilisées par manque d'argent ou de volonté de la part des
+            propriétaires. <strong>Pet's Book</strong> a été imaginé par
+            <em>Manon Sigaud</em> à la suite de plusieurs sauvetages de chats et chatons abandonnés.
+            <strong>Tony</strong>, en particulier, l'a plus touchée.
+          </p>
+
+          <p>
+            Ce petit a été trouvé dans un champ avec son frère et ses sœurs, âgés à peine d'une
+            semaine. Pas de signe de leur maman. Ils ont donc été directement pris en charge pour
+            être biberonnés. Le frère de Toto meurt après 2 jours. Arrivés à leurs 2 semaines chez
+            Manon, elle constate immédiatement un <strong><em>coryza</em></strong>, quelques
+            semaines après, une <strong><em>teigne</em></strong>, une semaine après, la
+            <strong><em>gale des oreilles</em></strong>. Oui, ça fait beaucoup pour des petits
+            âgés d'un mois et demi.
+          </p>
+
+          <p>
+            À deux mois, une des sœurs de Tony décède, elle n'aura pas résisté à toutes ces
+            épreuves. Il ne reste donc que <strong>Tony</strong> et sa sœur <strong>Pom</strong>.
+            Pom est complètement rongée par la teigne et pèse <strong>50 grammes</strong> de moins
+            que Tony. Les petits doivent recevoir un bain tous les jours avec un produit
+            extrêmement chimique, à tel point qu'il faut mettre des gants pour protéger la peau
+            humaine. Les petits détestent ça mais n'ont pas le choix pour pouvoir guérir.
+          </p>
+
+          <p>
+            Un bain + un traitement de fond sont donnés tous les jours pendant 6 semaines à ces
+            petits. Le coryza disparaît lors du premier vaccin. Sauf pour Pom, elle est
+            <strong>trop maigre</strong> pour le recevoir. La gale des oreilles disparaît au bout
+            de deux jours après la prise d'un médicament, et la teigne disparaît pour Tony au bout
+            de 4 mois. Le pauvre petit a eu une récidive 1 mois après la fin de son traitement,
+            âgé de 6 mois. Aujourd'hui, Tony est en bonne santé, court partout, est câlin et fait
+            plein de bêtises !
+          </p>
+
+          <p>
+            Malheureusement, cette histoire n'est pas un cas isolé. Beaucoup d'animaux subissent
+            les mêmes épreuves. C'est pourquoi <em>Manon</em>, avec l'aide d'<em>Alicia Pens</em>,
+            ont créé <strong>Pet's Book</strong> : un endroit où tous les animaux domestiques
+            peuvent être référencés et donc protégés, où les propriétaires peuvent recevoir des
+            conseils, des aides financières mais aussi physiques.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="apropos__gallery" aria-labelledby="galerie-title">
+      <h2 id="galerie-title">En images</h2>
+      <ul class="apropos__gallery-list">
+        <li><img src="/images/about-1.jpg" alt="Photo souvenir 1" loading="lazy" /></li>
+        <li><img src="/images/about-2.jpg" alt="Photo souvenir 2" loading="lazy" /></li>
+        <li><img src="/images/about-3.jpg" alt="Photo souvenir 3" loading="lazy" /></li>
+      </ul>
+    </section>
+
+    <section class="apropos__cta" aria-label="Rejoindre Pet's Book">
+      <h2>Envie de nous rejoindre ?</h2>
+      <p>Créez votre compte gratuitement et commencez à partager les profils de vos animaux.</p>
+      <a class="btn btn--primary" href="/register.html">Créer un compte</a>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="site-footer__inner">
+      <div class="site-footer__column">
+        <h3>Services</h3>
+        <ul>
+          <li><a href="/evenements.html">Événements</a></li>
+          <li><a href="/petsshop.html">Pet's Shop</a></li>
+          <li><a href="/contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div class="site-footer__column">
+        <h3>Informations</h3>
+        <ul>
+          <li><a href="/sponsors.html">Sponsors</a></li>
+          <li><a href="/suggestions-plaintes.html">Suggestions / Plaintes</a></li>
+          <li><a href="/mentions-legales.html">Mentions légales</a></li>
+          <li><a href="/conditions-generales.html">Conditions générales</a></li>
+        </ul>
+      </div>
+      <div class="site-footer__column">
+        <h3>Suivez-nous</h3>
+        <ul>
+          <li><a href="https://facebook.com" rel="noopener noreferrer" target="_blank">Facebook</a></li>
+          <li><a href="https://instagram.com" rel="noopener noreferrer" target="_blank">Instagram</a></li>
+          <li><a href="https://youtube.com" rel="noopener noreferrer" target="_blank">YouTube</a></li>
+        </ul>
+      </div>
+    </div>
+    <p class="site-footer__bottom">&copy; 2026 Pet's Book — Manon Sigaud</p>
+  </footer>
+
+  <script type="module" src="/src/js/main.js"></script>
+</body>
+</html>

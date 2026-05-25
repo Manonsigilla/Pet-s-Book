@@ -1,0 +1,10 @@
+@use '../abstracts' as *;
+
+.container {
+  @include container;
+}
+
+main {
+  min-height: calc(100vh - #{$header-height});
+  padding-block: $space-6;
+}

@@ -1,0 +1,11 @@
+// =============================================================================
+// Pet's Book — feuille de style principale (architecture 7-1)
+// L'ordre des @use est volontaire : base → layout → components → pages → themes
+// =============================================================================
+
+@use 'themes';
+@use 'base';
+@use 'layout';
+@use 'components';
+@use 'pages';
+@use 'vendors';
