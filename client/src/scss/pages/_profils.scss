@@ -146,3 +146,28 @@
     border-radius: $radius-full;
   }
 }
+
+// Tableau de caractéristiques (paires libellé / valeur) sur la page détail
+.profil-detail__facts {
+  display: grid;
+  gap: $space-2;
+  margin-top: $space-2;
+}
+
+.profil-detail__fact {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $space-2;
+  padding-block: $space-2;
+  border-bottom: $border-width solid rgba($color-brand-medium, 0.25);
+
+  dt {
+    font-weight: $font-weight-medium;
+    color: $color-text-muted;
+  }
+
+  dd {
+    color: $color-text;
+    word-break: break-word;
+  }
+}

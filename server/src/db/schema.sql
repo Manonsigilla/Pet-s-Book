@@ -11,16 +11,32 @@ CREATE TABLE IF NOT EXISTS users (
   created_at    DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Schéma unifié issu de l'union verticale des sources externes
+-- (The Cat/Dog API, Austin Animal Center, Pet911) + animaux créés dans l'app.
+-- owner_id : renseigné pour les profils créés par un utilisateur (source 'petsbook') ;
+-- owner_name : nom du propriétaire fourni par la source externe (ex. Pet911).
 CREATE TABLE IF NOT EXISTS animals (
-  id          INTEGER PRIMARY KEY AUTOINCREMENT,
-  owner_id    INTEGER REFERENCES users(id) ON DELETE SET NULL,
-  name        TEXT NOT NULL,
-  species     TEXT NOT NULL,
-  breed       TEXT,
-  birth_year  INTEGER,
-  description TEXT,
-  image_url   TEXT,
-  created_at  DATETIME DEFAULT CURRENT_TIMESTAMP
+  id              INTEGER PRIMARY KEY AUTOINCREMENT,
+  owner_id        INTEGER REFERENCES users(id) ON DELETE SET NULL,
+  animal_id       TEXT,                                   -- identifiant d'origine dans la source
+  source          TEXT NOT NULL DEFAULT 'petsbook',       -- thecatapi|thedogapi|dogceo|austin|pet911|petsbook
+  species         TEXT NOT NULL,
+  breed           TEXT,
+  breed_secondary TEXT,
+  name            TEXT NOT NULL,
+  age             TEXT,
+  gender          TEXT,
+  color           TEXT,
+  physical_desc   TEXT,
+  temperament     TEXT,
+  status          TEXT,
+  owner_name      TEXT,
+  adopted         INTEGER,                                -- 0 | 1 | NULL
+  intake_type     TEXT,
+  location        TEXT,
+  image_url       TEXT,
+  date_listed     TEXT,
+  created_at      DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS lost_reports (
@@ -61,6 +77,8 @@ CREATE TABLE IF NOT EXISTS products (
 );
 
 CREATE INDEX IF NOT EXISTS idx_animals_owner    ON animals(owner_id);
+CREATE INDEX IF NOT EXISTS idx_animals_source   ON animals(source);
+CREATE INDEX IF NOT EXISTS idx_animals_species  ON animals(species);
 CREATE INDEX IF NOT EXISTS idx_lost_status      ON lost_reports(status);
 CREATE INDEX IF NOT EXISTS idx_lost_approved    ON lost_reports(is_approved);
 CREATE INDEX IF NOT EXISTS idx_events_starts_at ON events(starts_at);

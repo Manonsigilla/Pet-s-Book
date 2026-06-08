@@ -1,18 +1,9 @@
 // Page Profil détaillé — récupère un animal par son id passé en query string
 import '../main.js';
 import { api } from '../api.js';
+import { escapeHtml, speciesLine, tagsHtml, sourceLabel } from '../animal-view.js';
 
 const container = document.getElementById('profil-detail');
-
-function escapeHtml(str) {
-  if (str == null) return '';
-  return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
 
 function renderState(html, busy = false) {
   container.setAttribute('aria-busy', String(busy));
@@ -20,11 +11,20 @@ function renderState(html, busy = false) {
 }
 
 function renderAnimal(animal) {
-  const meta = [
-    animal.breed,
-    animal.birthYear ? `Né(e) en ${animal.birthYear}` : null,
-    animal.ownerName ? `Propriétaire : ${animal.ownerName}` : null,
-  ].filter(Boolean);
+  // Tableau de caractéristiques : on n'affiche que les colonnes renseignées.
+  const facts = [
+    ['Espèce et race', speciesLine(animal)],
+    ['Âge', animal.age],
+    ['Sexe', animal.gender],
+    ['Couleur', animal.color],
+    ['Tempérament', animal.temperament],
+    ['Propriétaire', animal.ownerName],
+    ['Type de prise en charge', animal.intakeType],
+    ['Localisation', animal.location],
+    ['Statut', animal.status],
+    ['Signalé le', animal.dateListed],
+    ['Source des données', sourceLabel(animal.source)],
+  ].filter(([, value]) => value);
 
   renderState(`
     <article class="profil-detail">
@@ -34,12 +34,17 @@ function renderAnimal(animal) {
         alt="Photo de ${escapeHtml(animal.name)}"
       />
       <div class="profil-detail__info">
+        ${tagsHtml(animal)}
         <h1>${escapeHtml(animal.name)}</h1>
-        <p class="profil-detail__meta">
-          <span>${escapeHtml(animal.species)}</span>
-          ${meta.map((item) => `<span>${escapeHtml(item)}</span>`).join('')}
-        </p>
-        ${animal.description ? `<p>${escapeHtml(animal.description)}</p>` : ''}
+        ${animal.physicalDesc ? `<p>${escapeHtml(animal.physicalDesc)}</p>` : ''}
+        <dl class="profil-detail__facts">
+          ${facts.map(([label, value]) => `
+            <div class="profil-detail__fact">
+              <dt>${escapeHtml(label)}</dt>
+              <dd>${escapeHtml(value)}</dd>
+            </div>
+          `).join('')}
+        </dl>
       </div>
     </article>
   `);

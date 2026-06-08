@@ -1,18 +1,9 @@
 // Page d'accueil — charge les profils en avant depuis l'API et gère l'audio d'accueil.
 import '../main.js';
 import { api } from '../api.js';
+import { escapeHtml, speciesLine, describe, tagsHtml } from '../animal-view.js';
 
 const FEATURED_COUNT = 3;
-
-function escapeHtml(str) {
-  if (str == null) return '';
-  return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
 
 const container = document.getElementById('home-animals');
 const counter = document.getElementById('home-count');
@@ -34,7 +25,9 @@ function renderAnimals(animals) {
     return;
   }
 
-  const cards = animals.map((animal) => `
+  const cards = animals.map((animal) => {
+    const desc = describe(animal);
+    return `
     <article class="card">
       <img
         class="card__media"
@@ -43,16 +36,17 @@ function renderAnimals(animals) {
         loading="lazy"
       />
       <div class="card__body">
+        ${tagsHtml(animal)}
         <h3 class="card__title">${escapeHtml(animal.name)}</h3>
-        <p class="card__text">
-          ${escapeHtml(animal.description || `${animal.species}${animal.breed ? ' · ' + animal.breed : ''}`)}
-        </p>
+        <p class="card__meta">${escapeHtml(speciesLine(animal))}</p>
+        ${desc ? `<p class="card__text">${escapeHtml(desc)}</p>` : ''}
         <div class="card__footer">
           <a class="btn btn--ghost" href="/profil-detail.html?id=${animal.id}">Voir le profil</a>
         </div>
       </div>
     </article>
-  `).join('');
+  `;
+  }).join('');
 
   container.innerHTML = `<div class="grid-cards">${cards}</div>`;
 }

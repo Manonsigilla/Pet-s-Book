@@ -47,3 +47,41 @@
   justify-content: flex-end;
   gap: $space-2;
 }
+
+// Étiquettes : source de la donnée + statut (adoption / perdu-trouvé)
+.card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-1;
+}
+
+.card__tag {
+  display: inline-block;
+  padding: $space-1 $space-2;
+  border-radius: $radius-full;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  line-height: $line-height-tight;
+  background-color: $color-brand-light;
+  color: $color-brand-dark;
+}
+
+.card__tag--source {
+  background-color: $color-info;
+  color: $color-text-inverse;
+}
+
+.card__tag--adopted {
+  background-color: $color-success;
+  color: $color-text-inverse;
+}
+
+.card__tag--available {
+  background-color: $color-warning;
+  color: $color-text-inverse;
+}
+
+.card__meta {
+  color: $color-text-muted;
+  font-size: $font-size-sm;
+}

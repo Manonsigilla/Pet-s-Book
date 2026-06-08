@@ -5,9 +5,13 @@ import { requireAuth, requireAdmin } from '../middlewares/auth.js';
 const router = Router();
 
 const SELECT_FIELDS = `
-  a.id, a.name, a.species, a.breed, a.birth_year AS birthYear,
-  a.description, a.image_url AS imageUrl,
-  a.owner_id AS ownerId, u.display_name AS ownerName
+  a.id, a.animal_id AS animalId, a.source, a.species, a.breed,
+  a.breed_secondary AS breedSecondary, a.name, a.age, a.gender, a.color,
+  a.physical_desc AS physicalDesc, a.temperament, a.status,
+  COALESCE(a.owner_name, u.display_name) AS ownerName,
+  a.adopted, a.intake_type AS intakeType, a.location,
+  a.image_url AS imageUrl, a.date_listed AS dateListed,
+  a.owner_id AS ownerId
 `;
 
 router.get('/', (req, res) => {
@@ -37,7 +41,7 @@ router.get('/:id', (req, res) => {
 
 router.post('/', requireAuth, (req, res, next) => {
   try {
-    const { name, species, breed, birthYear, description, imageUrl } = req.body ?? {};
+    const { name, species, breed, age, gender, color, physicalDesc, temperament, location, imageUrl } = req.body ?? {};
     if (typeof name !== 'string' || name.trim().length < 1) {
       return res.status(400).json({ message: 'Le nom est requis' });
     }
@@ -46,11 +50,14 @@ router.post('/', requireAuth, (req, res, next) => {
     }
 
     const result = db.prepare(
-      `INSERT INTO animals (owner_id, name, species, breed, birth_year, description, image_url)
-       VALUES (?, ?, ?, ?, ?, ?, ?)`
+      `INSERT INTO animals
+         (owner_id, source, name, species, breed, age, gender, color,
+          physical_desc, temperament, location, image_url)
+       VALUES (?, 'petsbook', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     ).run(
       req.user.id, name.trim(), species.trim(), breed ?? null,
-      birthYear ?? null, description ?? null, imageUrl ?? null,
+      age ?? null, gender ?? null, color ?? null,
+      physicalDesc ?? null, temperament ?? null, location ?? null, imageUrl ?? null,
     );
     res.status(201).json({ id: result.lastInsertRowid });
   } catch (err) {
@@ -74,20 +81,25 @@ router.put('/:id', requireAuth, (req, res, next) => {
       return res.status(403).json({ message: 'Modification non autorisée' });
     }
 
-    const { name, species, breed, birthYear, description, imageUrl } = req.body ?? {};
+    const { name, species, breed, age, gender, color, physicalDesc, temperament, location, imageUrl } = req.body ?? {};
     db.prepare(
       `UPDATE animals
        SET name = COALESCE(?, name),
            species = COALESCE(?, species),
            breed = ?,
-           birth_year = ?,
-           description = ?,
+           age = ?,
+           gender = ?,
+           color = ?,
+           physical_desc = ?,
+           temperament = ?,
+           location = ?,
            image_url = ?
        WHERE id = ?`
     ).run(
       typeof name === 'string' ? name.trim() : null,
       typeof species === 'string' ? species.trim() : null,
-      breed ?? null, birthYear ?? null, description ?? null, imageUrl ?? null,
+      breed ?? null, age ?? null, gender ?? null, color ?? null,
+      physicalDesc ?? null, temperament ?? null, location ?? null, imageUrl ?? null,
       id,
     );
 

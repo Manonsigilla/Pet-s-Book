@@ -119,9 +119,10 @@ function renderAnimals(animals) {
             <p class="admin-item__meta">
               <span>${escapeHtml(a.species)}</span>
               ${a.breed ? `<span>${escapeHtml(a.breed)}</span>` : ''}
+              <span>Source : ${escapeHtml(a.source || "Pet's Book")}</span>
               ${a.ownerName ? `<span>Propriétaire : ${escapeHtml(a.ownerName)}</span>` : ''}
             </p>
-            <p>${escapeHtml(a.description || '')}</p>
+            <p>${escapeHtml(a.temperament || a.physicalDesc || '')}</p>
           </div>
           <div class="admin-item__actions">
             <a class="btn btn--ghost btn--small" href="/profil-detail.html?id=${a.id}">Voir</a>

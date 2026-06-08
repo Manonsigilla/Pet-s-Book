@@ -8,8 +8,11 @@ Thumbs.db
 .vscode/
 .idea/
 .claude/
-server/db/*.sqlite
-server/db/*.sqlite-journal
+# Base SQLite de dev (générée par `npm run seed`), y compris les fichiers WAL
+**/*.sqlite
+**/*.sqlite-wal
+**/*.sqlite-shm
+**/*.sqlite-journal
 
 # Fichier d'identifiants locaux — NE JAMAIS commiter
 CREDENTIALS.local.md

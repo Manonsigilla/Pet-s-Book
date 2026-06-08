@@ -1,11 +1,12 @@
 // Page Profils — récupère les animaux depuis l'API et gère filtres + recherche
 import '../main.js';
 import { api } from '../api.js';
+import { escapeHtml, speciesLine, describe, tagsHtml } from '../animal-view.js';
 
 // Pour la grille RNCP : démonstration de fetch async, manipulation DOM,
 // événements (input, click) et timers (debounce).
 
-const ESPECES_CONNUES = new Set(['chat', 'chien', 'lapin']);
+const ESPECES_CONNUES = new Set(['chat', 'chien', 'lapin', 'oiseau']);
 
 const state = {
   animals: [],
@@ -63,7 +64,9 @@ function renderAnimals(animals) {
     return;
   }
 
-  const cards = animals.map((animal) => `
+  const cards = animals.map((animal) => {
+    const desc = describe(animal);
+    return `
     <article class="card">
       <img
         class="card__media"
@@ -72,17 +75,18 @@ function renderAnimals(animals) {
         loading="lazy"
       />
       <div class="card__body">
+        ${tagsHtml(animal)}
         <h2 class="card__title">${escapeHtml(animal.name)}</h2>
-        <p class="card__text">
-          ${escapeHtml(capitalize(animal.species))}${animal.breed ? ` &middot; ${escapeHtml(animal.breed)}` : ''}
-          ${animal.description ? `<br>${escapeHtml(animal.description)}` : ''}
-        </p>
+        <p class="card__meta">${escapeHtml(speciesLine(animal))}</p>
+        ${desc ? `<p class="card__text">${escapeHtml(desc)}</p>` : ''}
+        ${animal.location ? `<p class="card__meta">📍 ${escapeHtml(animal.location)}</p>` : ''}
         <div class="card__footer">
           <a class="btn btn--ghost" href="/profil-detail.html?id=${animal.id}">Voir le profil</a>
         </div>
       </div>
     </article>
-  `).join('');
+  `;
+  }).join('');
 
   dom.results.innerHTML = `<div class="grid-cards">${cards}</div>`;
 }
@@ -99,9 +103,9 @@ function applyFilters() {
     if (state.species === 'autre' && ESPECES_CONNUES.has(animal.species)) return false;
     if (state.species !== 'all' && state.species !== 'autre' && animal.species !== state.species) return false;
 
-    // Filtre par texte (nom, race ou description)
+    // Filtre par texte (nom, race, caractère, localisation)
     if (query) {
-      const haystack = `${animal.name} ${animal.breed ?? ''} ${animal.description ?? ''}`.toLowerCase();
+      const haystack = `${animal.name} ${animal.breed ?? ''} ${animal.breedSecondary ?? ''} ${animal.temperament ?? ''} ${animal.physicalDesc ?? ''} ${animal.location ?? ''}`.toLowerCase();
       if (!haystack.includes(query)) return false;
     }
     return true;
@@ -115,21 +119,7 @@ function applyFilters() {
 // Utilitaires
 // -----------------------------------------------------------------------------
 
-// Échappe le HTML pour prévenir les failles XSS (la grille évalue ce point)
-function escapeHtml(str) {
-  if (str == null) return '';
-  return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
-
-function capitalize(str) {
-  if (!str) return '';
-  return str.charAt(0).toUpperCase() + str.slice(1);
-}
+// escapeHtml et helpers de présentation : voir ../animal-view.js
 
 // Debounce — exigence implicite de la grille : utilisation de timers
 function debounce(fn, delay = 250) {
