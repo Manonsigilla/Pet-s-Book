@@ -18,4 +18,7 @@ Thumbs.db
 CREDENTIALS.local.md
 **/CREDENTIALS.local.md
 
+# Documentation locale (contient des identifiants de test) — NE JAMAIS commiter
+document/
+
 

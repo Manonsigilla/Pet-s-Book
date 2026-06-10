@@ -15,16 +15,18 @@ db.exec('DROP TABLE IF EXISTS animals');
 db.exec(readFileSync(resolve(__dirname, 'schema.sql'), 'utf-8'));
 
 // Identifiants de démo — à synchroniser avec CREDENTIALS.local.md
+// Mots de passe lus depuis l'environnement (.env, non commité). Les valeurs de
+// repli ne servent qu'à un clone sans .env et doivent être changées localement.
 const ACCOUNTS = {
   admin: {
     email: 'admin@petsbook.local',
-    password: 'Adm!nPetsBook-2026#Secure',
+    password: process.env.SEED_ADMIN_PASSWORD || 'ChangeMe-Admin-2026!',
     displayName: 'Administrateur Pet\'s Book',
     role: 'admin',
   },
   client: {
     email: 'client@petsbook.local',
-    password: 'Client.Demo-2026!',
+    password: process.env.SEED_CLIENT_PASSWORD || 'ChangeMe-Client-2026!',
     displayName: 'Manon (client démo)',
     role: 'user',
   },
@@ -97,22 +99,67 @@ const insertAnimals = db.transaction((rows) => {
 insertAnimals(animals);
 
 const insertEvent = db.prepare(
-  `INSERT INTO events (title, description, location, starts_at, image_url) VALUES (?, ?, ?, ?, ?)`
+  `INSERT INTO events (title, description, location, starts_at, image_url) VALUES (@title, @description, @location, @startsAt, @imageUrl)`
 );
-insertEvent.run(
-  'Balade dans la vallée de la Solière',
-  'Promenade nature au départ du parking Elysée-Beaufort, en bordure de forêt. Animaux en laisse bienvenus.',
-  'Huy, Belgique',
-  '2026-06-15 10:00:00',
-  '/images/balade-soliere.jpg'
-);
-insertEvent.run(
-  'Atelier comportementaliste chien',
-  'Atelier pratique pour mieux comprendre la communication canine.',
-  'Liège, Belgique',
-  '2026-07-02 14:00:00',
-  '/images/partner-comportementaliste.jpg'
-);
+const EVENTS = [
+  {
+    title: 'Balade dans la vallée de la Solière',
+    description: 'Promenade nature au départ du parking Elysée-Beaufort, en bordure de forêt. Le ruisseau de la Solière vous accompagnera tout au long du parcours. Site protégé : animaux tenus en laisse.',
+    location: 'Huy, Belgique',
+    startsAt: '2026-06-15 10:00:00',
+    imageUrl: '/images/balade-soliere.jpg',
+  },
+  {
+    title: "Salon de l'adoption féline",
+    description: "Une journée pour rencontrer des chats et chatons à l'adoption, échanger avec les refuges partenaires et tout savoir sur l'accueil d'un nouveau compagnon.",
+    location: 'Namur, Belgique',
+    startsAt: '2026-06-21 11:00:00',
+    imageUrl: '/images/events/event-adoption-feline.jpg',
+  },
+  {
+    title: 'Journée portes ouvertes du refuge',
+    description: "Visite des installations, présentation des animaux à l'adoption et stands de sensibilisation. Petite restauration sur place au profit du refuge.",
+    location: 'Charleroi, Belgique',
+    startsAt: '2026-06-28 10:00:00',
+    imageUrl: '/images/events/event-refuge.jpg',
+  },
+  {
+    title: 'Atelier comportementaliste chien',
+    description: 'Atelier pratique pour mieux comprendre la communication canine et désamorcer les comportements gênants au quotidien.',
+    location: 'Liège, Belgique',
+    startsAt: '2026-07-02 14:00:00',
+    imageUrl: '/images/partner-comportementaliste.jpg',
+  },
+  {
+    title: "Cours collectif d'éducation canine",
+    description: "Séance en plein air encadrée par un éducateur : marche en laisse, rappel et exercices d'obéissance de base. Ouvert à tous les niveaux.",
+    location: 'Liège, Belgique',
+    startsAt: '2026-07-12 09:30:00',
+    imageUrl: '/images/events/event-education-canine.jpg',
+  },
+  {
+    title: 'Concours canin & démonstrations agility',
+    description: "Démonstrations d'agility, parcours d'obstacles et concours amical ouvert aux duos maître-chien. Spectacle garanti pour petits et grands.",
+    location: 'Wavre, Belgique',
+    startsAt: '2026-07-19 13:00:00',
+    imageUrl: '/images/events/event-agility.jpg',
+  },
+  {
+    title: 'Atelier premiers secours pour animaux',
+    description: 'Formation pratique aux gestes qui sauvent : reconnaître une urgence, réagir à un étouffement, préparer une trousse de secours. Animé par un vétérinaire.',
+    location: 'Bruxelles, Belgique',
+    startsAt: '2026-08-08 14:00:00',
+    imageUrl: '/images/events/event-premiers-secours.jpg',
+  },
+  {
+    title: 'Marche solidaire pour les animaux abandonnés',
+    description: "Marche conviviale en faveur des animaux abandonnés. Les bénéfices des inscriptions sont reversés aux refuges locaux. Venez accompagné de votre chien tenu en laisse.",
+    location: 'Huy, Belgique',
+    startsAt: '2026-09-06 10:00:00',
+    imageUrl: '/images/events/event-marche.jpg',
+  },
+];
+for (const event of EVENTS) insertEvent.run(event);
 
 const insertProduct = db.prepare(
   `INSERT INTO products (name, description, price_cents, stock, image_url) VALUES (?, ?, ?, ?, ?)`
