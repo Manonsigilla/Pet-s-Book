@@ -71,6 +71,44 @@ async function loadAnimals() {
   }
 }
 
+// Prochain événement — remplace le bloc statique de l'accueil par la donnée réelle.
+const dateFmt = new Intl.DateTimeFormat('fr-BE', { dateStyle: 'long' });
+const timeFmt = new Intl.DateTimeFormat('fr-BE', { hour: '2-digit', minute: '2-digit' });
+
+function formatEventDate(startsAt) {
+  const d = new Date(String(startsAt).replace(' ', 'T'));
+  if (Number.isNaN(d.getTime())) return escapeHtml(startsAt);
+  return `${dateFmt.format(d)} — ${timeFmt.format(d).replace(':', 'h')}`;
+}
+
+async function loadNextEvent() {
+  const container = document.getElementById('home-event');
+  if (!container) return;
+  try {
+    const upcoming = await api.get('/events/upcoming');
+    const ev = upcoming[0];
+    if (!ev) return; // pas d'événement à venir : on garde le contenu statique
+    container.innerHTML = `
+      <img
+        class="event-feature__media"
+        src="${escapeHtml(ev.imageUrl || '/placeholder-pet.svg')}"
+        alt="Illustration de l'événement ${escapeHtml(ev.title)}"
+        loading="lazy"
+      />
+      <div class="event-feature__body">
+        <h3>${escapeHtml(ev.title)}</h3>
+        <p class="event-feature__meta">
+          <time datetime="${escapeHtml(ev.startsAt)}">${formatEventDate(ev.startsAt)}</time> · ${escapeHtml(ev.location)}
+        </p>
+        <p>${escapeHtml(ev.description)}</p>
+        <a class="btn btn--ghost" href="/evenements.html">Voir tous les événements</a>
+      </div>
+    `;
+  } catch {
+    // Erreur réseau : le bloc statique de secours reste affiché.
+  }
+}
+
 // Bouton "Écouter le carillon" — joue l'audio importé en local.
 function initGreetingAudio() {
   const audio = document.getElementById('greeting-audio');
@@ -98,4 +136,5 @@ function initGreetingAudio() {
 document.addEventListener('DOMContentLoaded', () => {
   initGreetingAudio();
   loadAnimals();
+  loadNextEvent();
 });

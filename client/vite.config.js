@@ -11,6 +11,7 @@ const pages = {
   register:        resolve(__dirname, 'register.html'),
   admin:           resolve(__dirname, 'admin.html'),
   perdusRetrouves: resolve(__dirname, 'perdus-retrouves.html'),
+  evenements:      resolve(__dirname, 'evenements.html'),
 };
 
 export default defineConfig({

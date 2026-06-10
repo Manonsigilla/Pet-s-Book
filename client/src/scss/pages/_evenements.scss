@@ -1,0 +1,106 @@
+@use '../abstracts' as *;
+
+.evenements {
+  padding-block: $space-6;
+}
+
+.evenements__filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2;
+  margin-block: $space-5 $space-3;
+}
+
+.evenements__count {
+  font-size: $font-size-sm;
+  color: $color-text-muted;
+  margin-bottom: $space-4;
+}
+
+.evenements__list {
+  display: grid;
+  gap: $space-4;
+  grid-template-columns: 1fr;
+
+  @include respond-to('medium') {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include respond-to('xlarge') {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.event-card {
+  display: flex;
+  flex-direction: column;
+  background-color: $color-surface;
+  border: $border-width solid $color-brand-light;
+  border-radius: $radius-md;
+  overflow: hidden;
+  transition: transform $transition-base, box-shadow $transition-base;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $shadow-md;
+  }
+
+  // Événements passés : visuellement atténués
+  &--past {
+    opacity: 0.7;
+  }
+
+  &--past .event-card__media {
+    filter: grayscale(0.5);
+  }
+
+  &__media {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    background-color: $color-brand-light;
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    gap: $space-2;
+    padding: $space-4;
+    flex: 1;
+  }
+
+  &__badge {
+    align-self: flex-start;
+    padding: $space-1 $space-3;
+    border-radius: $radius-full;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-bold;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    background-color: $color-brand-light;
+    color: $color-text-muted;
+  }
+
+  &__title {
+    font-size: $font-size-lg;
+    color: $color-brand-dark;
+  }
+
+  &__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-1 $space-3;
+    font-size: $font-size-sm;
+    color: $color-text-muted;
+
+    time {
+      font-weight: $font-weight-medium;
+      color: $color-brand-medium;
+    }
+  }
+
+  &__text {
+    color: $color-text;
+    @include line-clamp(4);
+  }
+}
