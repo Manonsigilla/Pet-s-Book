@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Découvrez tous les profils d'animaux de la communauté Pet's Book. Recherchez par nom, filtrez par espèce." />
+  <meta name="description" content="Gérez les profils de vos animaux sur Pet's Book et suivez leur score de protection." />
   <meta name="theme-color" content="#BF8A6B" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -11,7 +11,7 @@
     href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Quicksand:wght@400;500;700&display=swap"
     rel="stylesheet"
   />
-  <title>Profils des animaux — Pet's Book</title>
+  <title>Mes animaux — Pet's Book</title>
 </head>
 <body>
   <a class="skip-link" href="#main">Aller au contenu principal</a>
@@ -49,45 +49,51 @@
     </div>
   </header>
 
-  <main id="main" class="container profils">
-    <section aria-labelledby="profils-title">
-      <div class="profils__header">
-        <div>
-          <h1 id="profils-title">Profils des animaux</h1>
-          <p>Découvrez les compagnons de la communauté Pet's Book — et créez le profil du vôtre !</p>
-        </div>
-        <a class="btn btn--primary" href="/creer-profil.html">🐾 Créer le profil de mon animal</a>
+  <main id="main" class="container mes-animaux">
+    <div class="profils__header">
+      <div>
+        <h1>Mes animaux</h1>
+        <p>Tous vos compagnons au même endroit — et leur score de protection à faire grimper !</p>
       </div>
+      <a class="btn btn--primary" href="/creer-profil.html">🐾 Ajouter un animal</a>
+    </div>
 
-      <div class="profils__toolbar" role="search">
-        <div class="profils__search">
-          <label class="visually-hidden" for="search-animal">Rechercher un animal par son nom</label>
-          <input
-            class="form__input"
-            type="search"
-            id="search-animal"
-            placeholder="Rechercher un animal..."
-            autocomplete="off"
-          />
-        </div>
-
-        <div class="profils__filters" role="group" aria-label="Filtrer par espèce">
-          <button class="filter-chip" type="button" data-species="all" aria-pressed="true">Tous</button>
-          <button class="filter-chip" type="button" data-species="chat" aria-pressed="false">Chats</button>
-          <button class="filter-chip" type="button" data-species="chien" aria-pressed="false">Chiens</button>
-          <button class="filter-chip" type="button" data-species="lapin" aria-pressed="false">Lapins</button>
-          <button class="filter-chip" type="button" data-species="oiseau" aria-pressed="false">Oiseaux</button>
-          <button class="filter-chip" type="button" data-species="autre" aria-pressed="false">Autres</button>
-        </div>
-      </div>
-
-      <p class="profils__count" id="profils-count" aria-live="polite"></p>
-
-      <div id="profils-results" aria-busy="false">
-        <!-- Le contenu est injecté dynamiquement par profils.js -->
-      </div>
-    </section>
+    <div id="mes-animaux-list" aria-busy="true">
+      <!-- Injecté par mes-animaux.js -->
+    </div>
   </main>
+
+  <!-- Modal des paramètres d'un profil -->
+  <div class="modal" id="settings-modal" data-open="false" aria-hidden="true" role="dialog" aria-labelledby="settings-title">
+    <div class="modal__dialog">
+      <div class="modal__header">
+        <h2 id="settings-title">Paramètres du profil</h2>
+        <button class="modal__close" type="button" id="close-settings" aria-label="Fermer">&times;</button>
+      </div>
+      <div class="auth-feedback" id="settings-feedback" role="alert" aria-live="polite"></div>
+      <form class="form" id="settings-form">
+        <input type="hidden" id="settings-animal-id" />
+        <div class="form__field">
+          <label class="form__label" for="settings-visibility">Qui peut voir son profil ?</label>
+          <select class="form__select" id="settings-visibility">
+            <option value="private">Ses copains uniquement (recommandé)</option>
+            <option value="public">Tous les membres connectés</option>
+          </select>
+          <p class="form__hint">En privé, les autres ne voient qu'un aperçu (photo floutée) tant qu'ils ne sont pas copains.</p>
+        </div>
+        <div class="form__field">
+          <label class="form__label" for="settings-friend-policy">Qui peut l'ajouter en copain/copine ?</label>
+          <select class="form__select" id="settings-friend-policy">
+            <option value="everyone">Tout le monde</option>
+            <option value="friends-of-friends">Les copains de ses copains</option>
+            <option value="nobody">Personne pour le moment</option>
+          </select>
+          <p class="form__hint">« Personne » le retire aussi des suggestions des autres membres.</p>
+        </div>
+        <button class="btn btn--primary btn--block" type="submit" id="settings-submit">Enregistrer</button>
+      </form>
+    </div>
+  </div>
 
   <footer class="site-footer">
     <div class="site-footer__inner">
@@ -119,6 +125,6 @@
     <p class="site-footer__bottom">&copy; 2026 Pet's Book — Manon Sigaud</p>
   </footer>
 
-  <script type="module" src="/src/js/pages/profils.js"></script>
+  <script type="module" src="/src/js/pages/mes-animaux.js"></script>
 </body>
 </html>

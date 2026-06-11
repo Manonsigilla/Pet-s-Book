@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Découvrez tous les profils d'animaux de la communauté Pet's Book. Recherchez par nom, filtrez par espèce." />
+  <meta name="description" content="Mentions légales du site Pet's Book : éditeur, hébergement, propriété intellectuelle et données personnelles." />
   <meta name="theme-color" content="#BF8A6B" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -11,7 +11,7 @@
     href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Quicksand:wght@400;500;700&display=swap"
     rel="stylesheet"
   />
-  <title>Profils des animaux — Pet's Book</title>
+  <title>Mentions légales — Pet's Book</title>
 </head>
 <body>
   <a class="skip-link" href="#main">Aller au contenu principal</a>
@@ -49,43 +49,56 @@
     </div>
   </header>
 
-  <main id="main" class="container profils">
-    <section aria-labelledby="profils-title">
-      <div class="profils__header">
-        <div>
-          <h1 id="profils-title">Profils des animaux</h1>
-          <p>Découvrez les compagnons de la communauté Pet's Book — et créez le profil du vôtre !</p>
-        </div>
-        <a class="btn btn--primary" href="/creer-profil.html">🐾 Créer le profil de mon animal</a>
-      </div>
+  <main id="main" class="container legal-page">
+    <h1>Mentions légales</h1>
+    <p class="legal-page__updated">Dernière mise à jour : juin 2026</p>
 
-      <div class="profils__toolbar" role="search">
-        <div class="profils__search">
-          <label class="visually-hidden" for="search-animal">Rechercher un animal par son nom</label>
-          <input
-            class="form__input"
-            type="search"
-            id="search-animal"
-            placeholder="Rechercher un animal..."
-            autocomplete="off"
-          />
-        </div>
+    <section aria-labelledby="ml-editeur">
+      <h2 id="ml-editeur">Éditeur du site</h2>
+      <p>
+        Le site <strong>Pet's Book</strong> est un projet pédagogique réalisé dans le cadre
+        de la certification RNCP 37273 — Développeur web fullstack.
+      </p>
+      <p>
+        Responsable de la publication : Manon Sigaud.<br />
+        Contact : <a href="/contact.html">page de contact</a>.
+      </p>
+    </section>
 
-        <div class="profils__filters" role="group" aria-label="Filtrer par espèce">
-          <button class="filter-chip" type="button" data-species="all" aria-pressed="true">Tous</button>
-          <button class="filter-chip" type="button" data-species="chat" aria-pressed="false">Chats</button>
-          <button class="filter-chip" type="button" data-species="chien" aria-pressed="false">Chiens</button>
-          <button class="filter-chip" type="button" data-species="lapin" aria-pressed="false">Lapins</button>
-          <button class="filter-chip" type="button" data-species="oiseau" aria-pressed="false">Oiseaux</button>
-          <button class="filter-chip" type="button" data-species="autre" aria-pressed="false">Autres</button>
-        </div>
-      </div>
+    <section aria-labelledby="ml-hebergement">
+      <h2 id="ml-hebergement">Hébergement</h2>
+      <p>
+        Le site est hébergé à des fins de démonstration. Dans le cadre d'un déploiement réel,
+        l'identité et les coordonnées de l'hébergeur seraient indiquées ici.
+      </p>
+    </section>
 
-      <p class="profils__count" id="profils-count" aria-live="polite"></p>
+    <section aria-labelledby="ml-pi">
+      <h2 id="ml-pi">Propriété intellectuelle</h2>
+      <p>
+        La structure du site, ses textes et son identité visuelle sont la propriété de leur
+        auteure. Les photographies d'animaux et d'événements proviennent de sources ouvertes
+        (notamment The Cat/Dog API, Austin Animal Center, Pet911 et Pexels) et restent la
+        propriété de leurs auteurs respectifs.
+      </p>
+    </section>
 
-      <div id="profils-results" aria-busy="false">
-        <!-- Le contenu est injecté dynamiquement par profils.js -->
-      </div>
+    <section aria-labelledby="ml-donnees">
+      <h2 id="ml-donnees">Données personnelles</h2>
+      <p>
+        Les comptes créés sur le site stockent un email, un nom d'affichage et un mot de passe
+        chiffré. Conformément au RGPD, vous pouvez demander l'accès, la rectification ou la
+        suppression de vos données via la <a href="/contact.html">page de contact</a>.
+      </p>
+    </section>
+
+    <section aria-labelledby="ml-cookies">
+      <h2 id="ml-cookies">Cookies et stockage local</h2>
+      <p>
+        Le site utilise le stockage local du navigateur (localStorage) uniquement pour
+        conserver votre session de connexion. Aucun cookie publicitaire ni traceur tiers
+        n'est utilisé.
+      </p>
     </section>
   </main>
 
@@ -103,6 +116,7 @@
         <h3>Informations</h3>
         <ul>
           <li><a href="/apropos.html">À propos</a></li>
+          <li><a href="/suggestions-plaintes.html">Suggestions / Plaintes</a></li>
           <li><a href="/mentions-legales.html">Mentions légales</a></li>
           <li><a href="/conditions-generales.html">Conditions générales</a></li>
         </ul>
@@ -119,6 +133,6 @@
     <p class="site-footer__bottom">&copy; 2026 Pet's Book — Manon Sigaud</p>
   </footer>
 
-  <script type="module" src="/src/js/pages/profils.js"></script>
+  <script type="module" src="/src/js/main.js"></script>
 </body>
 </html>

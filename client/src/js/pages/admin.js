@@ -8,6 +8,10 @@ const pendingList = document.getElementById('pending-list');
 const pendingCount = document.getElementById('pending-count');
 const animalsList = document.getElementById('animals-list');
 const animalsCount = document.getElementById('animals-count');
+const messagesList = document.getElementById('messages-list');
+const messagesCount = document.getElementById('messages-count');
+
+const MESSAGE_TYPE_LABELS = { contact: 'Contact', suggestion: 'Suggestion', plainte: 'Plainte' };
 
 function escapeHtml(str) {
   if (str == null) return '';
@@ -137,6 +141,45 @@ function renderAnimals(animals) {
 }
 
 // -----------------------------------------------------------------------------
+// Rendu — messages reçus (contact + suggestions/plaintes)
+// -----------------------------------------------------------------------------
+function renderMessages(messages) {
+  messagesList.setAttribute('aria-busy', 'false');
+  messagesCount.textContent = `${messages.length} message${messages.length > 1 ? 's' : ''}`;
+
+  if (messages.length === 0) {
+    messagesList.innerHTML = '<div class="state"><p class="state__text">Aucun message reçu.</p></div>';
+    return;
+  }
+
+  messagesList.innerHTML = `
+    <ul class="admin-list">
+      ${messages.map((m) => `
+        <li class="admin-item admin-item--message${m.isHandled ? ' admin-item--handled' : ''}" data-id="${m.id}">
+          <div class="admin-item__info">
+            <p class="admin-item__meta">
+              <span>${escapeHtml(MESSAGE_TYPE_LABELS[m.type] || m.type)}</span>
+              ${m.isHandled ? '<span>✓ Traité</span>' : ''}
+              <span>${escapeHtml(m.createdAt)}</span>
+            </p>
+            <h3 class="admin-item__title">${escapeHtml(m.subject || '(sans sujet)')}</h3>
+            <p>${escapeHtml(m.body)}</p>
+            <p class="admin-item__meta">
+              <span>De : ${escapeHtml(m.name)}</span>
+              <span><a href="mailto:${escapeHtml(m.email)}">${escapeHtml(m.email)}</a></span>
+            </p>
+          </div>
+          <div class="admin-item__actions">
+            ${m.isHandled ? '' : `<button class="btn btn--success btn--small" data-action="handle-message" data-id="${m.id}">Marquer traité</button>`}
+            <button class="btn btn--danger btn--small" data-action="delete-message" data-id="${m.id}">Supprimer</button>
+          </div>
+        </li>
+      `).join('')}
+    </ul>
+  `;
+}
+
+// -----------------------------------------------------------------------------
 // Gestionnaires d'actions — délégation d'événements
 // -----------------------------------------------------------------------------
 async function handleAction(target) {
@@ -148,6 +191,8 @@ async function handleAction(target) {
     approve: 'Approbation...',
     reject: 'Rejet...',
     'delete-animal': 'Suppression...',
+    'handle-message': 'Traitement...',
+    'delete-message': 'Suppression...',
   };
   const originalText = target.textContent;
   target.disabled = true;
@@ -173,6 +218,17 @@ async function handleAction(target) {
       }
       await api.delete(`/animals/${id}`);
       await loadAnimals();
+    } else if (action === 'handle-message') {
+      await api.post(`/messages/${id}/handle`);
+      await loadMessages();
+    } else if (action === 'delete-message') {
+      if (!confirm('Supprimer définitivement ce message ?')) {
+        target.disabled = false;
+        target.textContent = originalText;
+        return;
+      }
+      await api.delete(`/messages/${id}`);
+      await loadMessages();
     }
   } catch (err) {
     alert(`Erreur : ${err.message}`);
@@ -217,7 +273,22 @@ async function loadAnimals() {
   }
 }
 
+async function loadMessages() {
+  messagesList.setAttribute('aria-busy', 'true');
+  try {
+    const messages = await api.get('/messages');
+    renderMessages(messages);
+  } catch (err) {
+    messagesList.innerHTML = `
+      <div class="state state--error" role="alert">
+        <p class="state__text">Impossible de charger les messages : ${escapeHtml(err.message)}</p>
+      </div>
+    `;
+  }
+}
+
 if (ensureAdmin()) {
   loadPending();
   loadAnimals();
+  loadMessages();
 }

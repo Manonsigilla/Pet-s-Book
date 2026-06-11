@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Espace d'administration Pet's Book : modérer les profils et approuver les annonces perdus/retrouvés." />
+  <meta name="description" content="Gérez vos annonces, vos ventes et vos achats sur la marketplace Pet's Book." />
   <meta name="theme-color" content="#BF8A6B" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -11,7 +11,7 @@
     href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Quicksand:wght@400;500;700&display=swap"
     rel="stylesheet"
   />
-  <title>Administration — Pet's Book</title>
+  <title>Gérer mes ventes — Pet's Book</title>
 </head>
 <body>
   <a class="skip-link" href="#main">Aller au contenu principal</a>
@@ -49,57 +49,50 @@
     </div>
   </header>
 
-  <main id="main" class="container admin">
-    <h1>Espace administration</h1>
-    <p class="admin__intro">
-      Cette page est réservée aux administrateurs. Vous pouvez approuver ou rejeter les annonces
-      perdus/retrouvés soumises par la communauté et modérer les profils d'animaux.
-    </p>
+  <main id="main" class="container mes-ventes">
+    <h1>Gérer mes ventes</h1>
 
-    <section class="admin-section" aria-labelledby="pending-title">
-      <div class="admin-section__header">
-        <h2 id="pending-title">Annonces en attente d'approbation</h2>
-        <span class="admin-section__count" id="pending-count" aria-live="polite">...</span>
-      </div>
-      <div id="pending-list" aria-busy="true">
-        <!-- Injecté par admin.js -->
-      </div>
-    </section>
+    <div class="mes-ventes__tabs" role="tablist" aria-label="Sections">
+      <button class="filter-chip" type="button" role="tab" data-tab="listings" aria-pressed="true">Mes annonces</button>
+      <button class="filter-chip" type="button" role="tab" data-tab="sales" aria-pressed="false">Mes ventes</button>
+      <button class="filter-chip" type="button" role="tab" data-tab="purchases" aria-pressed="false">Mes achats</button>
+    </div>
 
-    <section class="admin-section" aria-labelledby="animals-title">
-      <div class="admin-section__header">
-        <h2 id="animals-title">Profils d'animaux</h2>
-        <span class="admin-section__count" id="animals-count" aria-live="polite">...</span>
-      </div>
-      <div id="animals-list" aria-busy="true">
-        <!-- Injecté par admin.js -->
-      </div>
-    </section>
-
-    <section class="admin-section" aria-labelledby="messages-title">
-      <div class="admin-section__header">
-        <h2 id="messages-title">Messages reçus</h2>
-        <span class="admin-section__count" id="messages-count" aria-live="polite">...</span>
-      </div>
-      <div id="messages-list" aria-busy="true">
-        <!-- Injecté par admin.js (contact + suggestions/plaintes) -->
-      </div>
-    </section>
+    <div id="tab-content" aria-busy="true" aria-live="polite">
+      <!-- Injecté par mes-ventes.js -->
+    </div>
   </main>
 
   <footer class="site-footer">
     <div class="site-footer__inner">
       <div class="site-footer__column">
+        <h3>Services</h3>
+        <ul>
+          <li><a href="/evenements.html">Événements</a></li>
+          <li><a href="/petsshop.html">Pet's Shop</a></li>
+          <li><a href="/contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div class="site-footer__column">
         <h3>Informations</h3>
         <ul>
           <li><a href="/apropos.html">À propos</a></li>
           <li><a href="/mentions-legales.html">Mentions légales</a></li>
+          <li><a href="/conditions-generales.html">Conditions générales</a></li>
+        </ul>
+      </div>
+      <div class="site-footer__column">
+        <h3>Suivez-nous</h3>
+        <ul>
+          <li><a href="https://facebook.com" rel="noopener noreferrer" target="_blank">Facebook</a></li>
+          <li><a href="https://instagram.com" rel="noopener noreferrer" target="_blank">Instagram</a></li>
+          <li><a href="https://youtube.com" rel="noopener noreferrer" target="_blank">YouTube</a></li>
         </ul>
       </div>
     </div>
     <p class="site-footer__bottom">&copy; 2026 Pet's Book — Manon Sigaud</p>
   </footer>
 
-  <script type="module" src="/src/js/pages/admin.js"></script>
+  <script type="module" src="/src/js/pages/mes-ventes.js"></script>
 </body>
 </html>

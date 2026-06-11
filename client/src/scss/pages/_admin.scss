@@ -54,6 +54,18 @@
   }
 }
 
+// Messages : pas de vignette → grille 2 colonnes (contenu + actions).
+.admin-item--message {
+  @include respond-to('medium') {
+    grid-template-columns: 1fr auto;
+    align-items: start;
+  }
+}
+
+.admin-item--handled {
+  opacity: 0.6;
+}
+
 .admin-item__media {
   width: 100%;
   aspect-ratio: 1 / 1;

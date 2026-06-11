@@ -1,7 +1,9 @@
 @use '../abstracts' as *;
 
 // =============================================================================
-// Navigation desktop + bouton burger mobile-first
+// Navigation : tiroir mobile (burger) jusqu'à 1280px, barre horizontale au-delà.
+// La bascule se fait à 'xlarge' car la barre porte 6 liens + le bloc compte
+// (Bonjour, Messages, Administration, Déconnexion) — trop large avant 1280px.
 // =============================================================================
 
 .nav-toggle {
@@ -13,7 +15,7 @@
   height: 24px;
   padding: 0;
 
-  @include respond-to('large') {
+  @include respond-to('xlarge') {
     display: none;
   }
 
@@ -52,7 +54,7 @@
     transform: translateX(0);
   }
 
-  @include respond-to('large') {
+  @include respond-to('xlarge') {
     position: static;
     inset: auto;
     transform: none;
@@ -62,7 +64,8 @@
     display: flex;
     align-items: center;
     flex: 1;
-    gap: $space-5;
+    gap: $space-4;
+    min-width: 0; // autorise le bloc compte à s'ellipser plutôt qu'à déborder
   }
 }
 
@@ -71,10 +74,10 @@
   flex-direction: column;
   gap: $space-3;
 
-  @include respond-to('large') {
+  @include respond-to('xlarge') {
     flex-direction: row;
     align-items: center;
-    gap: $space-5;
+    gap: $space-2;
   }
 }
 
@@ -86,8 +89,9 @@
   border-radius: $radius-md;
   transition: background-color $transition-fast, color $transition-fast;
 
-  @include respond-to('large') {
+  @include respond-to('xlarge') {
     color: $color-text-inverse;
+    white-space: nowrap; // évite « Perdus / Retrouvés » sur deux lignes
   }
 
   &:hover,
@@ -99,7 +103,7 @@
   &[aria-current='page'] {
     background-color: rgba($color-brand-dark, 0.15);
 
-    @include respond-to('large') {
+    @include respond-to('xlarge') {
       background-color: rgba(0, 0, 0, 0.15);
     }
   }
@@ -110,7 +114,7 @@
   gap: $space-2;
   margin-top: $space-4;
 
-  @include respond-to('large') {
+  @include respond-to('xlarge') {
     margin-top: 0;
   }
 }

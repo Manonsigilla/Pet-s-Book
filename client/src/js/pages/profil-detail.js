@@ -1,13 +1,89 @@
-// Page Profil détaillé — récupère un animal par son id passé en query string
+// Page Profil détaillé — récupère un animal par son id passé en query string.
+// Les profils sont privés : un membre n'y accède que si l'un de ses animaux
+// est copain avec lui (sinon : aperçu + demande de copinage).
 import '../main.js';
 import { api } from '../api.js';
-import { escapeHtml, speciesLine, tagsHtml, sourceLabel } from '../animal-view.js';
+import { auth } from '../auth.js';
+import { escapeHtml, speciesLine, tagsHtml, sourceLabel, gaugeHtml, copainLabel, copainWord } from '../animal-view.js';
 
 const container = document.getElementById('profil-detail');
 
 function renderState(html, busy = false) {
   container.setAttribute('aria-busy', String(busy));
   container.innerHTML = html;
+}
+
+// Volet sensibilisation : statut de protection avec justification éventuelle.
+function protectionHtml(animal) {
+  const rows = [];
+
+  if (animal.identified === 1) {
+    rows.push('<li class="protection__item protection__item--ok">🛡️ Identifié (puce ou tatouage) — il pourra toujours retrouver sa famille !</li>');
+  } else if (animal.identified === 0) {
+    rows.push(`<li class="protection__item protection__item--todo">Pas encore identifié${animal.identifiedReason ? ` — <em>${escapeHtml(animal.identifiedReason)}</em>` : ''}</li>`);
+  }
+
+  if (animal.sterilized === 1) {
+    rows.push('<li class="protection__item protection__item--ok">💚 Stérilisé — protégé de nombreuses maladies.</li>');
+  } else if (animal.sterilized === 0) {
+    rows.push(`<li class="protection__item protection__item--todo">Non stérilisé${animal.sterilizedReason ? ` — <em>${escapeHtml(animal.sterilizedReason)}</em>` : ''}</li>`);
+  }
+
+  if (rows.length === 0) return '';
+  return `
+    <section class="protection" aria-labelledby="protection-title">
+      <h2 id="protection-title">Sa protection 🛡️</h2>
+      ${gaugeHtml(animal)}
+      <ul class="protection__list">${rows.join('')}</ul>
+    </section>
+  `;
+}
+
+// Profil privé : aperçu minimal + envoi d'une demande de copinage.
+async function renderPrivate(preview) {
+  let myAnimals = [];
+  try {
+    myAnimals = await api.get('/animals/mine');
+  } catch { /* non connecté ou erreur : pas de formulaire */ }
+
+  const selector = myAnimals.length > 1
+    ? `<select class="form__select" id="from-animal">
+         ${myAnimals.map((a) => `<option value="${a.id}">${escapeHtml(a.name)}</option>`).join('')}
+       </select>`
+    : '';
+
+  const cta = myAnimals.length === 0
+    ? `<p>Pour devenir ${copainWord(preview.gender)} de ${escapeHtml(preview.name)}, créez d'abord le profil de votre animal !</p>
+       <a class="btn btn--primary" href="/creer-profil.html">🐾 Créer le profil de mon animal</a>`
+    : `${selector}
+       <button class="btn btn--primary" type="button" id="add-friend-btn">${copainLabel(preview.gender)}</button>`;
+
+  renderState(`
+    <div class="profil-prive">
+      <img class="profil-prive__media" src="${escapeHtml(preview.imageUrl || '/placeholder-pet.svg')}" alt="" />
+      <h1>${escapeHtml(preview.name)}</h1>
+      <p class="profil-prive__meta">${escapeHtml(preview.species)}</p>
+      <p>🔒 Ce profil est privé : seuls ses copains et copines peuvent le découvrir.</p>
+      <div class="auth-feedback" id="friend-feedback" role="alert" aria-live="polite"></div>
+      <div class="profil-prive__actions">${cta}</div>
+    </div>
+  `);
+
+  document.getElementById('add-friend-btn')?.addEventListener('click', async (event) => {
+    const button = event.currentTarget;
+    const fromAnimalId = Number(document.getElementById('from-animal')?.value || myAnimals[0].id);
+    const feedback = document.getElementById('friend-feedback');
+    button.disabled = true;
+    try {
+      await api.post('/friends/requests', { fromAnimalId, toAnimalId: preview.id });
+      feedback.textContent = 'Demande envoyée ! Son humain doit maintenant accepter 🐾';
+      feedback.className = 'auth-feedback auth-feedback--success';
+    } catch (err) {
+      feedback.textContent = err.message || 'Erreur lors de l\'envoi.';
+      feedback.className = 'auth-feedback auth-feedback--error';
+      button.disabled = false;
+    }
+  });
 }
 
 function renderAnimal(animal) {
@@ -18,11 +94,8 @@ function renderAnimal(animal) {
     ['Sexe', animal.gender],
     ['Couleur', animal.color],
     ['Tempérament', animal.temperament],
-    ['Propriétaire', animal.ownerName],
-    ['Type de prise en charge', animal.intakeType],
+    ['Membre de la famille', animal.ownerName ? `${animal.ownerName}` : null],
     ['Localisation', animal.location],
-    ['Statut', animal.status],
-    ['Signalé le', animal.dateListed],
     ['Source des données', sourceLabel(animal.source)],
   ].filter(([, value]) => value);
 
@@ -37,6 +110,7 @@ function renderAnimal(animal) {
         ${tagsHtml(animal)}
         <h1>${escapeHtml(animal.name)}</h1>
         ${animal.physicalDesc ? `<p>${escapeHtml(animal.physicalDesc)}</p>` : ''}
+        ${protectionHtml(animal)}
         <dl class="profil-detail__facts">
           ${facts.map(([label, value]) => `
             <div class="profil-detail__fact">
@@ -47,9 +121,38 @@ function renderAnimal(animal) {
         </dl>
       </div>
     </article>
+    <section class="profil-posts" aria-labelledby="posts-title">
+      <h2 id="posts-title">Ses publications 📝</h2>
+      <div id="animal-posts" aria-busy="true"></div>
+    </section>
   `);
 
   document.title = `${animal.name} — Pet's Book`;
+  loadPosts(animal.id);
+}
+
+const postTimeFmt = new Intl.DateTimeFormat('fr-BE', { dateStyle: 'medium', timeStyle: 'short' });
+
+async function loadPosts(animalId) {
+  const list = document.getElementById('animal-posts');
+  try {
+    const posts = await api.get(`/posts/animal/${animalId}`);
+    list.setAttribute('aria-busy', 'false');
+    if (posts.length === 0) {
+      list.innerHTML = '<p class="profil-posts__empty">Pas encore de publication. Sa première aventure arrive bientôt !</p>';
+      return;
+    }
+    list.innerHTML = posts.map((p) => `
+      <article class="post-card">
+        <p class="post-card__meta">${postTimeFmt.format(new Date(String(p.createdAt).replace(' ', 'T')))}</p>
+        <p class="post-card__body">${escapeHtml(p.body)}</p>
+        ${p.imageUrl ? `<img class="post-card__media" src="${escapeHtml(p.imageUrl)}" alt="" loading="lazy" />` : ''}
+      </article>
+    `).join('');
+  } catch {
+    list.setAttribute('aria-busy', 'false');
+    list.innerHTML = '';
+  }
 }
 
 async function init() {
@@ -72,6 +175,14 @@ async function init() {
     const animal = await api.get(`/animals/${id}`);
     renderAnimal(animal);
   } catch (err) {
+    if (err.status === 401 && !auth.isAuthenticated()) {
+      window.location.replace(`/login.html?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}`);
+      return;
+    }
+    if (err.status === 403 && err.body?.preview) {
+      renderPrivate(err.body.preview);
+      return;
+    }
     renderState(`
       <div class="state state--error" role="alert">
         <h1 class="state__title">Profil introuvable</h1>

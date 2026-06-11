@@ -36,6 +36,8 @@ function render() {
     <span class="auth-widget__greeting">
       Bonjour, <strong>${escapeHtml(user.displayName)}</strong>
     </span>
+    <a class="auth-widget__link" href="/mes-animaux.html">Mes animaux</a>
+    <a class="auth-widget__link" href="/messages.html">Messages<span class="auth-widget__badge" id="unread-badge" hidden></span></a>
     ${adminLink}
     <button class="auth-widget__logout" type="button" id="logout-btn">Déconnexion</button>
   `;
@@ -44,6 +46,22 @@ function render() {
     auth.clear();
     window.location.href = '/index.html';
   });
+
+  refreshUnreadBadge();
+}
+
+// Affiche le nombre de messages non lus de la messagerie marketplace.
+async function refreshUnreadBadge() {
+  try {
+    const { count } = await api.get('/conversations/unread-count');
+    const badge = document.getElementById('unread-badge');
+    if (badge && count > 0) {
+      badge.textContent = count;
+      badge.hidden = false;
+    }
+  } catch {
+    // Silencieux : le badge est purement informatif.
+  }
 }
 
 // Vérifie au chargement que le token est toujours valide côté serveur.

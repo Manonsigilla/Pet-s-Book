@@ -8,13 +8,19 @@
   box-shadow: $shadow-sm;
 }
 
+// Pleine largeur (pas de container 1200px) : la barre de navigation a besoin
+// de toute la place disponible pour tenir sur une seule ligne en desktop.
 .site-header__inner {
-  @include container;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: $space-4;
   min-height: $header-height;
+  padding-inline: $container-padding;
+
+  @include respond-to('xlarge') {
+    padding-inline: $space-6;
+  }
 }
 
 .site-header__logo {

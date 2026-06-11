@@ -1,6 +1,9 @@
-// Page d'accueil — charge les profils en avant depuis l'API et gère l'audio d'accueil.
+// Page d'accueil — vitrine publique pour les visiteurs ; pour les membres
+// connectés, elle se transforme en FEED : publications des copains, évènements
+// proches de chez eux et contenus sponsorisés des Pages partenaires.
 import '../main.js';
 import { api } from '../api.js';
+import { auth } from '../auth.js';
 import { escapeHtml, speciesLine, describe, tagsHtml } from '../animal-view.js';
 
 const FEATURED_COUNT = 3;
@@ -64,7 +67,8 @@ function renderError(message) {
 async function loadAnimals() {
   renderSkeletons();
   try {
-    const animals = await api.get('/animals');
+    // Vitrine publique : 3 profils en avant (infos minimales, profils privés).
+    const animals = await api.get('/animals/featured');
     renderAnimals(animals.slice(0, FEATURED_COUNT));
   } catch (err) {
     renderError(err.message || 'Erreur de chargement des profils.');
@@ -133,8 +137,154 @@ function initGreetingAudio() {
   });
 }
 
+// =============================================================================
+// FEED (membres connectés)
+// =============================================================================
+
+const feedDom = {
+  feed: document.getElementById('home-feed'),
+  showcase: document.getElementById('home-showcase'),
+  items: document.getElementById('feed-items'),
+  eventsWrap: document.getElementById('feed-events'),
+  eventsList: document.getElementById('feed-events-list'),
+  composerForm: document.getElementById('composer-form'),
+  composerAnimal: document.getElementById('composer-animal'),
+  composerBody: document.getElementById('composer-body'),
+  composerPhoto: document.getElementById('composer-photo'),
+  composerPhotoName: document.getElementById('composer-photo-name'),
+  composerSubmit: document.getElementById('composer-submit'),
+  composerFeedback: document.getElementById('composer-feedback'),
+};
+
+const dateTimeFmt = new Intl.DateTimeFormat('fr-BE', { dateStyle: 'medium', timeStyle: 'short' });
+function formatWhen(sqlDate) {
+  const d = new Date(String(sqlDate).replace(' ', 'T'));
+  return Number.isNaN(d.getTime()) ? '' : dateTimeFmt.format(d);
+}
+
+function postCardHtml(item) {
+  const isSponsored = item.type === 'sponsored';
+  const authorName = isSponsored ? item.pageName : item.animalName;
+  const authorImage = isSponsored ? item.pageImage : item.animalImage;
+  const subtitle = isSponsored
+    ? '<span class="post-card__sponsored">Sponsorisé</span>'
+    : `<span>${escapeHtml(item.animalSpecies || '')}${item.ownerName ? ` · chez ${escapeHtml(item.ownerName)}` : ''}</span>`;
+  const link = !isSponsored && item.animalId ? `href="/profil-detail.html?id=${item.animalId}"` : '';
+
+  return `
+    <article class="post-card${isSponsored ? ' post-card--sponsored' : ''}">
+      <header class="post-card__header">
+        <img class="post-card__avatar" src="${escapeHtml(authorImage || '/placeholder-pet.svg')}" alt="" loading="lazy" />
+        <div>
+          <a class="post-card__author" ${link}>${escapeHtml(authorName || '')}</a>
+          <p class="post-card__meta">${subtitle} · ${formatWhen(item.createdAt)}</p>
+        </div>
+      </header>
+      <p class="post-card__body">${escapeHtml(item.body)}</p>
+      ${item.imageUrl ? `<img class="post-card__media" src="${escapeHtml(item.imageUrl)}" alt="" loading="lazy" />` : ''}
+    </article>
+  `;
+}
+
+function feedEventHtml(ev) {
+  return `
+    <article class="post-card post-card--event">
+      <header class="post-card__header">
+        <img class="post-card__avatar" src="${escapeHtml(ev.imageUrl || '/placeholder-pet.svg')}" alt="" loading="lazy" />
+        <div>
+          <p class="post-card__author">📅 ${escapeHtml(ev.title)}</p>
+          <p class="post-card__meta">${formatWhen(ev.startsAt)} · ${escapeHtml(ev.location)}</p>
+        </div>
+      </header>
+      <p class="post-card__body">${escapeHtml(ev.description)}</p>
+      <a class="btn btn--ghost btn--small" href="/evenements.html">Voir l'agenda</a>
+    </article>
+  `;
+}
+
+async function loadFeed() {
+  try {
+    const { events, items } = await api.get('/posts/feed');
+    feedDom.items.setAttribute('aria-busy', 'false');
+
+    if (events.length > 0) {
+      feedDom.eventsWrap.hidden = false;
+      feedDom.eventsList.innerHTML = events.map(feedEventHtml).join('');
+    }
+
+    feedDom.items.innerHTML = items.length
+      ? items.map(postCardHtml).join('')
+      : `<div class="state">
+           <p class="state__text">Le fil est calme... Trouvez des copains à vos animaux pour le faire vivre !</p>
+           <p><a class="btn btn--primary" href="/copains.html">Découvrir des copains</a></p>
+         </div>`;
+  } catch (err) {
+    feedDom.items.innerHTML = `<div class="state state--error"><p class="state__text">${escapeHtml(err.message)}</p></div>`;
+  }
+}
+
+async function initComposer() {
+  let myAnimals = [];
+  try {
+    myAnimals = await api.get('/animals/mine');
+  } catch { /* liste vide */ }
+
+  if (myAnimals.length === 0) {
+    feedDom.composerForm.innerHTML = `
+      <p>Créez le profil de votre animal pour publier dans le fil !</p>
+      <a class="btn btn--primary" href="/creer-profil.html">🐾 Créer son profil</a>
+    `;
+    return;
+  }
+  feedDom.composerAnimal.innerHTML = myAnimals
+    .map((a) => `<option value="${a.id}">${escapeHtml(a.name)} publie...</option>`)
+    .join('');
+
+  feedDom.composerPhoto.addEventListener('change', () => {
+    const file = feedDom.composerPhoto.files?.[0];
+    feedDom.composerPhotoName.textContent = file ? `📷 ${file.name}` : '';
+  });
+
+  feedDom.composerForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const body = feedDom.composerBody.value.trim();
+    if (!body) return;
+
+    const formData = new FormData();
+    formData.append('animalId', feedDom.composerAnimal.value);
+    formData.append('body', body);
+    const photo = feedDom.composerPhoto.files?.[0];
+    if (photo) formData.append('photo', photo);
+
+    feedDom.composerSubmit.disabled = true;
+    try {
+      await api.post('/posts', formData);
+      feedDom.composerBody.value = '';
+      feedDom.composerPhoto.value = '';
+      feedDom.composerPhotoName.textContent = '';
+      feedDom.composerFeedback.textContent = '';
+      await loadFeed();
+    } catch (err) {
+      feedDom.composerFeedback.textContent = err.message || 'Erreur lors de la publication.';
+      feedDom.composerFeedback.className = 'auth-feedback auth-feedback--error';
+    } finally {
+      feedDom.composerSubmit.disabled = false;
+    }
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   initGreetingAudio();
-  loadAnimals();
-  loadNextEvent();
+
+  if (auth.isAuthenticated()) {
+    // Membre connecté : l'accueil devient le feed.
+    feedDom.showcase.hidden = true;
+    feedDom.feed.hidden = false;
+    initComposer();
+    loadFeed();
+  } else {
+    // Visiteur : vitrine publique.
+    loadAnimals();
+    loadNextEvent();
+  }
 });

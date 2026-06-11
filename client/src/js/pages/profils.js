@@ -1,7 +1,16 @@
-// Page Profils — récupère les animaux depuis l'API et gère filtres + recherche
+// Page Profils — annuaire COMPLET des animaux, réservé à l'administrateur.
+// Les membres sont redirigés vers leur espace Copains (les profils sont privés
+// et se découvrent par amitié), les visiteurs vers la connexion.
 import '../main.js';
 import { api } from '../api.js';
+import { auth } from '../auth.js';
 import { escapeHtml, speciesLine, describe, tagsHtml } from '../animal-view.js';
+
+if (!auth.isAuthenticated()) {
+  window.location.replace(`/login.html?redirect=${encodeURIComponent('/profils.html')}`);
+} else if (!auth.isAdmin()) {
+  window.location.replace('/copains.html');
+}
 
 // Pour la grille RNCP : démonstration de fetch async, manipulation DOM,
 // événements (input, click) et timers (debounce).
@@ -66,6 +75,7 @@ function renderAnimals(animals) {
 
   const cards = animals.map((animal) => {
     const desc = describe(animal);
+    const meta = [speciesLine(animal), animal.age].filter(Boolean).join(' · ');
     return `
     <article class="card">
       <img
@@ -77,9 +87,9 @@ function renderAnimals(animals) {
       <div class="card__body">
         ${tagsHtml(animal)}
         <h2 class="card__title">${escapeHtml(animal.name)}</h2>
-        <p class="card__meta">${escapeHtml(speciesLine(animal))}</p>
+        <p class="card__meta">${escapeHtml(meta)}</p>
         ${desc ? `<p class="card__text">${escapeHtml(desc)}</p>` : ''}
-        ${animal.location ? `<p class="card__meta">📍 ${escapeHtml(animal.location)}</p>` : ''}
+        ${animal.ownerName ? `<p class="card__meta">Chez ${escapeHtml(animal.ownerName)}</p>` : ''}
         <div class="card__footer">
           <a class="btn btn--ghost" href="/profil-detail.html?id=${animal.id}">Voir le profil</a>
         </div>

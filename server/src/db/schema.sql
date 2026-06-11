@@ -11,32 +11,42 @@ CREATE TABLE IF NOT EXISTS users (
   created_at    DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
--- Schéma unifié issu de l'union verticale des sources externes
--- (The Cat/Dog API, Austin Animal Center, Pet911) + animaux créés dans l'app.
--- owner_id : renseigné pour les profils créés par un utilisateur (source 'petsbook') ;
--- owner_name : nom du propriétaire fourni par la source externe (ex. Pet911).
+-- Profils d'animaux — l'objet central du réseau social : chaque membre (humain)
+-- inscrit ses animaux ; un compte peut porter plusieurs profils (owner_id 1-N).
+-- Les données importées (The Cat/Dog API, Austin) servent de communauté fictive.
+-- Volet sensibilisation : identification et stérilisation, avec justification
+-- lorsque la réponse est non (protéger juridiquement et médicalement l'animal).
 CREATE TABLE IF NOT EXISTS animals (
-  id              INTEGER PRIMARY KEY AUTOINCREMENT,
-  owner_id        INTEGER REFERENCES users(id) ON DELETE SET NULL,
-  animal_id       TEXT,                                   -- identifiant d'origine dans la source
-  source          TEXT NOT NULL DEFAULT 'petsbook',       -- thecatapi|thedogapi|dogceo|austin|pet911|petsbook
-  species         TEXT NOT NULL,
-  breed           TEXT,
-  breed_secondary TEXT,
-  name            TEXT NOT NULL,
-  age             TEXT,
-  gender          TEXT,
-  color           TEXT,
-  physical_desc   TEXT,
-  temperament     TEXT,
-  status          TEXT,
-  owner_name      TEXT,
-  adopted         INTEGER,                                -- 0 | 1 | NULL
-  intake_type     TEXT,
-  location        TEXT,
-  image_url       TEXT,
-  date_listed     TEXT,
-  created_at      DATETIME DEFAULT CURRENT_TIMESTAMP
+  id                INTEGER PRIMARY KEY AUTOINCREMENT,
+  owner_id          INTEGER REFERENCES users(id) ON DELETE SET NULL,
+  animal_id         TEXT,                                 -- identifiant d'origine dans la source
+  source            TEXT NOT NULL DEFAULT 'petsbook',     -- thecatapi|thedogapi|dogceo|austin|pet911|petsbook
+  species           TEXT NOT NULL,
+  breed             TEXT,
+  breed_secondary   TEXT,
+  name              TEXT NOT NULL,
+  age               TEXT,
+  gender            TEXT,
+  color             TEXT,
+  physical_desc     TEXT,
+  temperament       TEXT,
+  status            TEXT,
+  owner_name        TEXT,
+  adopted           INTEGER,                              -- 0 | 1 | NULL
+  intake_type       TEXT,
+  location          TEXT,
+  image_url         TEXT,
+  date_listed       TEXT,
+  identified        INTEGER,                              -- 1 = pucé/tatoué, 0 = non, NULL = inconnu
+  identified_reason TEXT,                                 -- justification si non identifié
+  sterilized        INTEGER,                              -- 1 = stérilisé, 0 = non, NULL = inconnu
+  sterilized_reason TEXT,                                 -- justification si non stérilisé
+  -- Paramètres du profil (choisis par le propriétaire)
+  visibility        TEXT NOT NULL DEFAULT 'private'
+                    CHECK (visibility IN ('private', 'public')),   -- private = copains uniquement
+  friend_policy     TEXT NOT NULL DEFAULT 'everyone'
+                    CHECK (friend_policy IN ('everyone', 'friends-of-friends', 'nobody')),
+  created_at        DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS lost_reports (
@@ -76,7 +86,132 @@ CREATE TABLE IF NOT EXISTS products (
   created_at  DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Pages professionnelles (sponsors, associations, vétérinaires...). Fictives
+-- pour l'instant ; à terme : espace pro payant en self-service. Leurs posts
+-- apparaissent dans le feed avec l'étiquette « Sponsorisé ».
+CREATE TABLE IF NOT EXISTS pages (
+  id          INTEGER PRIMARY KEY AUTOINCREMENT,
+  name        TEXT NOT NULL,
+  category    TEXT NOT NULL DEFAULT 'sponsor'
+              CHECK (category IN ('sponsor', 'association', 'veterinaire', 'refuge')),
+  description TEXT,
+  image_url   TEXT,
+  website     TEXT,
+  created_at  DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Publications du feed : écrites par un ANIMAL (au nom duquel publie son
+-- propriétaire) OU par une PAGE professionnelle — jamais les deux.
+CREATE TABLE IF NOT EXISTS posts (
+  id          INTEGER PRIMARY KEY AUTOINCREMENT,
+  animal_id   INTEGER REFERENCES animals(id) ON DELETE CASCADE,
+  page_id     INTEGER REFERENCES pages(id) ON DELETE CASCADE,
+  body        TEXT NOT NULL,
+  image_url   TEXT,
+  created_at  DATETIME DEFAULT CURRENT_TIMESTAMP,
+  CHECK ((animal_id IS NULL) != (page_id IS NULL))
+);
+
+CREATE INDEX IF NOT EXISTS idx_posts_animal  ON posts(animal_id);
+CREATE INDEX IF NOT EXISTS idx_posts_page    ON posts(page_id);
+CREATE INDEX IF NOT EXISTS idx_posts_created ON posts(created_at);
+
+-- Amitiés « copain/copine » ENTRE ANIMAUX (le propriétaire agit au nom de son
+-- animal). Un profil n'est visible par un membre que si l'un de ses animaux
+-- est copain avec lui ; l'administrateur voit tout.
+CREATE TABLE IF NOT EXISTS friendships (
+  id                  INTEGER PRIMARY KEY AUTOINCREMENT,
+  requester_animal_id INTEGER NOT NULL REFERENCES animals(id) ON DELETE CASCADE,
+  addressee_animal_id INTEGER NOT NULL REFERENCES animals(id) ON DELETE CASCADE,
+  status              TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'accepted', 'refused')),
+  created_at          DATETIME DEFAULT CURRENT_TIMESTAMP,
+  responded_at        DATETIME,
+  UNIQUE (requester_animal_id, addressee_animal_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_friend_requester ON friendships(requester_animal_id);
+CREATE INDEX IF NOT EXISTS idx_friend_addressee ON friendships(addressee_animal_id);
+CREATE INDEX IF NOT EXISTS idx_friend_status    ON friendships(status);
+
+-- =============================================================================
+-- Marketplace Pet's Shop : annonces entre utilisateurs, commandes (séquestre
+-- simulé type Vinted) et messagerie acheteur/vendeur.
+-- =============================================================================
+
+CREATE TABLE IF NOT EXISTS listings (
+  id          INTEGER PRIMARY KEY AUTOINCREMENT,
+  seller_id   INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  title       TEXT NOT NULL,
+  description TEXT NOT NULL,
+  category    TEXT NOT NULL DEFAULT 'autre'
+              CHECK (category IN ('accessoire', 'jouet', 'alimentation', 'habitat', 'hygiene', 'autre')),
+  brand       TEXT,
+  condition   TEXT NOT NULL DEFAULT 'bon'
+              CHECK (condition IN ('neuf', 'tres-bon', 'bon', 'correct')),
+  price_cents INTEGER NOT NULL CHECK (price_cents >= 0),
+  status      TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'reserved', 'sold')),
+  created_at  DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS listing_images (
+  id          INTEGER PRIMARY KEY AUTOINCREMENT,
+  listing_id  INTEGER NOT NULL REFERENCES listings(id) ON DELETE CASCADE,
+  url         TEXT NOT NULL,
+  position    INTEGER NOT NULL DEFAULT 0
+);
+
+-- Commandes : séquestre simulé. Le « paiement » est retenu (paid) jusqu'à la
+-- confirmation de réception par l'acheteur (received), comme sur Vinted.
+CREATE TABLE IF NOT EXISTS orders (
+  id          INTEGER PRIMARY KEY AUTOINCREMENT,
+  listing_id  INTEGER NOT NULL REFERENCES listings(id) ON DELETE CASCADE,
+  buyer_id    INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  status      TEXT NOT NULL DEFAULT 'paid'
+              CHECK (status IN ('paid', 'shipped', 'received', 'cancelled')),
+  created_at  DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at  DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Conversations entre un acheteur potentiel et le vendeur d'une annonce.
+CREATE TABLE IF NOT EXISTS conversations (
+  id          INTEGER PRIMARY KEY AUTOINCREMENT,
+  listing_id  INTEGER REFERENCES listings(id) ON DELETE SET NULL,
+  buyer_id    INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  seller_id   INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  created_at  DATETIME DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE (listing_id, buyer_id)
+);
+
+CREATE TABLE IF NOT EXISTS chat_messages (
+  id              INTEGER PRIMARY KEY AUTOINCREMENT,
+  conversation_id INTEGER NOT NULL REFERENCES conversations(id) ON DELETE CASCADE,
+  sender_id       INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  body            TEXT NOT NULL,
+  created_at      DATETIME DEFAULT CURRENT_TIMESTAMP,
+  read_at         DATETIME
+);
+
+-- Messages publics : formulaires Contact et Suggestions/Plaintes.
+CREATE TABLE IF NOT EXISTS messages (
+  id          INTEGER PRIMARY KEY AUTOINCREMENT,
+  type        TEXT NOT NULL DEFAULT 'contact' CHECK (type IN ('contact', 'suggestion', 'plainte')),
+  name        TEXT NOT NULL,
+  email       TEXT NOT NULL,
+  subject     TEXT,
+  body        TEXT NOT NULL,
+  is_handled  INTEGER NOT NULL DEFAULT 0,
+  created_at  DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE INDEX IF NOT EXISTS idx_animals_owner    ON animals(owner_id);
+CREATE INDEX IF NOT EXISTS idx_messages_type    ON messages(type);
+CREATE INDEX IF NOT EXISTS idx_messages_handled ON messages(is_handled);
+CREATE INDEX IF NOT EXISTS idx_listings_seller  ON listings(seller_id);
+CREATE INDEX IF NOT EXISTS idx_listings_status  ON listings(status);
+CREATE INDEX IF NOT EXISTS idx_limg_listing     ON listing_images(listing_id);
+CREATE INDEX IF NOT EXISTS idx_orders_listing   ON orders(listing_id);
+CREATE INDEX IF NOT EXISTS idx_orders_buyer     ON orders(buyer_id);
+CREATE INDEX IF NOT EXISTS idx_chatmsg_conv     ON chat_messages(conversation_id);
 CREATE INDEX IF NOT EXISTS idx_animals_source   ON animals(source);
 CREATE INDEX IF NOT EXISTS idx_animals_species  ON animals(species);
 CREATE INDEX IF NOT EXISTS idx_lost_status      ON lost_reports(status);

@@ -1,0 +1,55 @@
+@use '../abstracts' as *;
+
+// Pages de contenu statique : mentions légales, CGU.
+.legal-page {
+  padding-block: $space-6;
+  max-width: 75ch;
+
+  h1 { margin-bottom: $space-2; }
+  h2 { margin-block: $space-5 $space-2; }
+  p  { margin-bottom: $space-3; line-height: $line-height-relaxed; }
+
+  &__updated {
+    color: $color-text-muted;
+    font-size: $font-size-sm;
+  }
+}
+
+// Page Contact et Suggestions/Plaintes.
+.contact {
+  padding-block: $space-6;
+}
+
+.contact__grid {
+  display: grid;
+  gap: $space-6;
+  margin-top: $space-5;
+
+  @include respond-to('medium') {
+    grid-template-columns: 1fr 1.2fr;
+    align-items: start;
+  }
+}
+
+.contact__info h2 {
+  margin-block: $space-4 $space-2;
+}
+
+.contact__list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  margin-bottom: $space-4;
+}
+
+.contact__form-wrapper {
+  max-width: 640px;
+}
+
+.form__optional {
+  color: $color-text-muted;
+  font-weight: $font-weight-normal;
+  font-size: $font-size-sm;
+}

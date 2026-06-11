@@ -1,0 +1,146 @@
+@use '../abstracts' as *;
+
+// =============================================================================
+// Feed de l'accueil (membres connectés) : composer + publications + évènements
+// =============================================================================
+
+.feed {
+  padding-block: $space-6;
+  max-width: 680px;
+}
+
+.feed__title {
+  margin-bottom: $space-5;
+}
+
+.feed__section-title {
+  font-size: $font-size-lg;
+  margin-block: $space-6 $space-3;
+}
+
+// Composer
+.feed__composer {
+  padding: $space-4;
+  background-color: $color-surface;
+  border: $border-width solid $color-brand-light;
+  border-radius: $radius-md;
+
+  .form__textarea {
+    min-height: 72px;
+    margin-block: $space-3;
+  }
+}
+
+.feed__composer-row {
+  display: flex;
+  gap: $space-3;
+  align-items: center;
+
+  .form__select {
+    flex: 1;
+  }
+}
+
+.feed__photo-label {
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.feed__photo-name {
+  font-size: $font-size-sm;
+  color: $color-text-muted;
+  margin-bottom: $space-2;
+
+  &:empty { display: none; }
+}
+
+// Cartes de publication
+.post-card {
+  padding: $space-4;
+  background-color: $color-surface;
+  border: $border-width solid $color-brand-light;
+  border-radius: $radius-md;
+  margin-bottom: $space-4;
+
+  &--sponsored {
+    border-color: rgba($color-info, 0.45);
+  }
+
+  &--event {
+    border-color: rgba($color-brand-medium, 0.5);
+    background-color: rgba($color-brand-light, 0.25);
+  }
+
+  &__header {
+    display: flex;
+    gap: $space-3;
+    align-items: center;
+    margin-bottom: $space-3;
+  }
+
+  &__avatar {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: $radius-full;
+    border: 2px solid $color-brand;
+    background-color: $color-brand-light;
+    flex-shrink: 0;
+  }
+
+  &__author {
+    font-weight: $font-weight-bold;
+    color: $color-brand-dark;
+    text-decoration: none;
+
+    &[href]:hover { text-decoration: underline; }
+  }
+
+  &__meta {
+    font-size: $font-size-sm;
+    color: $color-text-muted;
+  }
+
+  &__sponsored {
+    display: inline-block;
+    padding: 1px $space-2;
+    border-radius: $radius-full;
+    background-color: rgba($color-info, 0.12);
+    color: $color-info;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-bold;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  &__body {
+    white-space: pre-line;
+    overflow-wrap: anywhere;
+  }
+
+  &__media {
+    width: 100%;
+    max-height: 420px;
+    object-fit: cover;
+    border-radius: $radius-md;
+    margin-top: $space-3;
+  }
+
+  .btn {
+    margin-top: $space-3;
+  }
+}
+
+// Publications sur la page profil
+.profil-posts {
+  margin-top: $space-7;
+  max-width: 680px;
+
+  h2 {
+    margin-bottom: $space-4;
+  }
+}
+
+.profil-posts__empty {
+  color: $color-text-muted;
+}

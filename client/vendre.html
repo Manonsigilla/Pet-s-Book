@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Mettez en vente un article pour animaux sur la marketplace Pet's Book : photos, description, marque, état et prix." />
+  <meta name="theme-color" content="#BF8A6B" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Quicksand:wght@400;500;700&display=swap"
+    rel="stylesheet"
+  />
+  <title>Mettre en vente — Pet's Book</title>
+</head>
+<body>
+  <a class="skip-link" href="#main">Aller au contenu principal</a>
+
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a class="site-header__logo" href="/index.html" aria-label="Accueil Pet's Book">
+        <img src="/images/Pets_Book.png" alt="" width="80" height="80" />
+        <span class="visually-hidden">Pet's Book</span>
+      </a>
+
+      <button
+        class="nav-toggle"
+        type="button"
+        aria-expanded="false"
+        aria-controls="primary-nav"
+        aria-label="Ouvrir le menu de navigation"
+      >
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <nav class="nav" id="primary-nav" aria-label="Navigation principale">
+        <ul class="nav__list">
+          <li><a class="nav__link" href="/index.html">Accueil</a></li>
+          <li><a class="nav__link" href="/profils.html">Profils</a></li>
+          <li><a class="nav__link" href="/perdus-retrouves.html">Perdus / Retrouvés</a></li>
+          <li><a class="nav__link" href="/evenements.html">Événements</a></li>
+          <li><a class="nav__link" href="/petsshop.html">Pet's Shop</a></li>
+          <li><a class="nav__link" href="/apropos.html">À propos</a></li>
+        </ul>
+        <div class="auth-widget" id="auth-widget" aria-label="Compte utilisateur"></div>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="container vendre">
+    <h1>Mettre un article en vente</h1>
+    <p>Donnez une seconde vie aux affaires de vos compagnons : décrivez votre article, ajoutez de belles photos et fixez votre prix.</p>
+
+    <div class="auth-feedback" id="form-feedback" role="alert" aria-live="polite"></div>
+
+    <form class="form vendre__form" id="sell-form" novalidate>
+      <div class="form__field">
+        <label class="form__label" for="photos">Photos (1 à 3)</label>
+        <input class="form__input" type="file" id="photos" name="photos" accept="image/jpeg,image/png,image/webp" multiple />
+        <p class="form__hint">JPEG, PNG ou WebP — 5 Mo maximum par photo. La première photo sera la photo principale.</p>
+        <p class="form__error" id="photos-error" aria-live="polite"></p>
+        <div class="vendre__previews" id="photo-previews" aria-live="polite"></div>
+      </div>
+
+      <div class="form__field">
+        <label class="form__label" for="title">Titre de l'annonce</label>
+        <input class="form__input" type="text" id="title" name="title" required minlength="3" maxlength="80" placeholder="Ex : Cage de transport pour chat" />
+        <p class="form__error" id="title-error" aria-live="polite"></p>
+      </div>
+
+      <div class="vendre__row">
+        <div class="form__field">
+          <label class="form__label" for="category">Catégorie</label>
+          <select class="form__select" id="category" name="category" required>
+            <option value="accessoire">Accessoires (colliers, laisses...)</option>
+            <option value="jouet">Jouets</option>
+            <option value="alimentation">Alimentation</option>
+            <option value="habitat">Habitat (cages, paniers, aquariums...)</option>
+            <option value="hygiene">Hygiène (litières, brosses...)</option>
+            <option value="autre">Autre</option>
+          </select>
+        </div>
+
+        <div class="form__field">
+          <label class="form__label" for="condition">État</label>
+          <select class="form__select" id="condition" name="condition" required>
+            <option value="neuf">Neuf</option>
+            <option value="tres-bon">Très bon état</option>
+            <option value="bon" selected>Bon état</option>
+            <option value="correct">État correct</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="vendre__row">
+        <div class="form__field">
+          <label class="form__label" for="brand">Marque <span class="form__optional">(facultatif)</span></label>
+          <input class="form__input" type="text" id="brand" name="brand" maxlength="60" placeholder="Ex : Trixie" />
+        </div>
+
+        <div class="form__field">
+          <label class="form__label" for="price">Prix (€)</label>
+          <input class="form__input" type="number" id="price" name="price" required min="0" max="100000" step="0.01" placeholder="Ex : 15,00" />
+          <p class="form__error" id="price-error" aria-live="polite"></p>
+        </div>
+      </div>
+
+      <div class="form__field">
+        <label class="form__label" for="description">Description</label>
+        <textarea class="form__textarea" id="description" name="description" required minlength="10" maxlength="2000" placeholder="Dimensions, couleur, raison de la vente, défauts éventuels..."></textarea>
+        <p class="form__error" id="description-error" aria-live="polite"></p>
+      </div>
+
+      <button class="btn btn--primary btn--block" type="submit" id="submit-btn">Publier l'annonce</button>
+    </form>
+  </main>
+
+  <footer class="site-footer">
+    <div class="site-footer__inner">
+      <div class="site-footer__column">
+        <h3>Services</h3>
+        <ul>
+          <li><a href="/evenements.html">Événements</a></li>
+          <li><a href="/petsshop.html">Pet's Shop</a></li>
+          <li><a href="/contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div class="site-footer__column">
+        <h3>Informations</h3>
+        <ul>
+          <li><a href="/apropos.html">À propos</a></li>
+          <li><a href="/mentions-legales.html">Mentions légales</a></li>
+          <li><a href="/conditions-generales.html">Conditions générales</a></li>
+        </ul>
+      </div>
+      <div class="site-footer__column">
+        <h3>Suivez-nous</h3>
+        <ul>
+          <li><a href="https://facebook.com" rel="noopener noreferrer" target="_blank">Facebook</a></li>
+          <li><a href="https://instagram.com" rel="noopener noreferrer" target="_blank">Instagram</a></li>
+          <li><a href="https://youtube.com" rel="noopener noreferrer" target="_blank">YouTube</a></li>
+        </ul>
+      </div>
+    </div>
+    <p class="site-footer__bottom">&copy; 2026 Pet's Book — Manon Sigaud</p>
+  </footer>
+
+  <script type="module" src="/src/js/pages/vendre.js"></script>
+</body>
+</html>

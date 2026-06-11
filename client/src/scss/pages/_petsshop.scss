@@ -1,0 +1,629 @@
+@use '../abstracts' as *;
+
+// =============================================================================
+// Pet's Shop — marketplace entre membres (annonces, achat sécurisé, messagerie)
+// =============================================================================
+
+.petsshop {
+  padding-block: $space-6;
+}
+
+.petsshop__header {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+  margin-bottom: $space-5;
+
+  @include respond-to('medium') {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+}
+
+.petsshop__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2;
+  flex-shrink: 0;
+}
+
+.petsshop__toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+  margin-bottom: $space-4;
+
+  @include respond-to('medium') {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.petsshop__search {
+  flex: 1;
+
+  @include respond-to('medium') {
+    max-width: 320px;
+  }
+}
+
+.petsshop__filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2;
+}
+
+.petsshop__count {
+  font-size: $font-size-sm;
+  color: $color-text-muted;
+  margin-bottom: $space-4;
+}
+
+// -----------------------------------------------------------------------------
+// Grille et cartes d'annonces
+// -----------------------------------------------------------------------------
+
+.shop-grid {
+  display: grid;
+  gap: $space-4;
+  grid-template-columns: repeat(2, 1fr);
+
+  @include respond-to('medium') {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @include respond-to('xlarge') {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.shop-card {
+  display: flex;
+  flex-direction: column;
+  background-color: $color-surface;
+  border: $border-width solid $color-brand-light;
+  border-radius: $radius-md;
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  transition: transform $transition-base, box-shadow $transition-base;
+
+  &:hover,
+  &:focus-visible {
+    transform: translateY(-2px);
+    box-shadow: $shadow-md;
+  }
+
+  &__media {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    background-color: $color-brand-light;
+  }
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    gap: $space-1;
+    padding: $space-3;
+  }
+
+  &__title {
+    font-size: $font-size-md;
+    color: $color-brand-dark;
+    font-family: $font-body;
+    font-weight: $font-weight-bold;
+    @include line-clamp(2);
+  }
+
+  &__price {
+    font-weight: $font-weight-bold;
+    font-size: $font-size-lg;
+    color: $color-brand-dark;
+  }
+
+  &__meta,
+  &__seller {
+    font-size: $font-size-sm;
+    color: $color-text-muted;
+  }
+}
+
+// Badges d'état (annonce et commande)
+.shop-badge {
+  align-self: flex-start;
+  padding: $space-1 $space-3;
+  border-radius: $radius-full;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-bold;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+
+  &--available { background-color: rgba($color-success, 0.15); color: $color-success; }
+  &--reserved  { background-color: rgba($color-warning, 0.18); color: $color-warning; }
+  &--sold      { background-color: $color-brand-light; color: $color-text-muted; }
+  &--cancelled { background-color: rgba($color-danger, 0.12); color: $color-danger; }
+}
+
+// -----------------------------------------------------------------------------
+// Page Vendre — formulaire + aperçus photos
+// -----------------------------------------------------------------------------
+
+.vendre {
+  padding-block: $space-6;
+  max-width: 720px;
+}
+
+.vendre__form {
+  margin-top: $space-5;
+}
+
+.vendre__row {
+  display: grid;
+  gap: $space-3;
+
+  @include respond-to('medium') {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.vendre__previews {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-3;
+  margin-top: $space-3;
+}
+
+.vendre__preview {
+  position: relative;
+  width: 120px;
+
+  img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: $radius-md;
+    border: $border-width solid $color-brand-light;
+  }
+
+  figcaption {
+    font-size: $font-size-xs;
+    color: $color-text-muted;
+    text-align: center;
+    margin-top: $space-1;
+  }
+}
+
+.vendre__preview-remove {
+  @include button-reset;
+  position: absolute;
+  top: $space-1;
+  right: $space-1;
+  width: 28px;
+  height: 28px;
+  border-radius: $radius-full;
+  background-color: rgba($color-brand-dark, 0.75);
+  color: $color-text-inverse;
+  font-size: $font-size-lg;
+  line-height: 1;
+
+  &:hover,
+  &:focus-visible {
+    background-color: $color-danger;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Page Annonce — galerie + infos + achat
+// -----------------------------------------------------------------------------
+
+.annonce {
+  padding-block: $space-6;
+}
+
+.annonce__back {
+  color: $color-brand-medium;
+}
+
+.annonce__layout {
+  display: grid;
+  gap: $space-6;
+  margin-top: $space-4;
+
+  @include respond-to('medium') {
+    grid-template-columns: 1.1fr 1fr;
+    align-items: start;
+  }
+}
+
+.annonce__main-photo {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: $radius-md;
+  border: $border-width solid $color-brand-light;
+  background-color: $color-brand-light;
+}
+
+.annonce__thumbs {
+  display: flex;
+  gap: $space-2;
+  margin-top: $space-3;
+}
+
+.annonce__thumb {
+  @include button-reset;
+  border: 2px solid transparent;
+  border-radius: $radius-md;
+  overflow: hidden;
+
+  img {
+    display: block;
+    width: 72px;
+    height: 72px;
+    object-fit: cover;
+  }
+
+  &.is-active,
+  &:focus-visible {
+    border-color: $color-brand-dark;
+  }
+}
+
+.annonce__info {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.annonce__price {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  color: $color-brand-dark;
+}
+
+.annonce__facts {
+  display: grid;
+  gap: $space-2;
+
+  > div {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: $space-2;
+    padding-block: $space-1;
+    border-bottom: $border-width solid rgba($color-brand-medium, 0.2);
+  }
+
+  dt {
+    color: $color-text-muted;
+    font-size: $font-size-sm;
+  }
+}
+
+.annonce__description {
+  white-space: pre-line;
+}
+
+.annonce__actions {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+  padding: $space-4;
+  background-color: rgba($color-brand-light, 0.35);
+  border-radius: $radius-md;
+}
+
+.annonce__protection {
+  font-size: $font-size-sm;
+  color: $color-text-muted;
+}
+
+.annonce__owner-note {
+  font-weight: $font-weight-medium;
+}
+
+.annonce__contact {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+  margin-top: $space-2;
+}
+
+// Modal d'achat (séquestre simulé)
+.buy-summary {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+
+  &__lines > div {
+    display: flex;
+    justify-content: space-between;
+    padding-block: $space-1;
+  }
+
+  &__total {
+    border-top: $border-width solid $color-brand-light;
+    font-weight: $font-weight-bold;
+  }
+
+  &__escrow {
+    font-size: $font-size-sm;
+    background-color: rgba($color-success, 0.08);
+    border-left: 3px solid $color-success;
+    padding: $space-3;
+    border-radius: $radius-sm;
+  }
+
+  &__demo {
+    font-size: $font-size-xs;
+    color: $color-text-muted;
+    text-align: center;
+  }
+
+  &__success {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-medium;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Page Gérer mes ventes — onglets + listes de commandes
+// -----------------------------------------------------------------------------
+
+.mes-ventes {
+  padding-block: $space-6;
+}
+
+.mes-ventes__tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2;
+  margin-block: $space-4 $space-5;
+}
+
+.mes-ventes__cta {
+  margin-bottom: $space-4;
+}
+
+.order-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+}
+
+.order-item {
+  display: grid;
+  gap: $space-3;
+  padding: $space-4;
+  background-color: $color-surface;
+  border: $border-width solid $color-brand-light;
+  border-radius: $radius-md;
+
+  @include respond-to('medium') {
+    grid-template-columns: 96px 1fr auto;
+    align-items: center;
+  }
+
+  &__media {
+    width: 96px;
+    height: 96px;
+    object-fit: cover;
+    border-radius: $radius-md;
+    background-color: $color-brand-light;
+  }
+
+  &__info {
+    display: flex;
+    flex-direction: column;
+    gap: $space-1;
+  }
+
+  &__title a {
+    color: $color-brand-dark;
+    text-decoration: none;
+
+    &:hover { text-decoration: underline; }
+  }
+
+  &__meta {
+    font-size: $font-size-sm;
+    color: $color-text-muted;
+  }
+
+  &__escrow {
+    font-size: $font-size-sm;
+    color: $color-brand-medium;
+  }
+
+  &__actions {
+    display: flex;
+    flex-direction: column;
+    gap: $space-2;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Messagerie — boîte de réception + fil
+// -----------------------------------------------------------------------------
+
+.messagerie {
+  padding-block: $space-6;
+}
+
+.messagerie__layout {
+  display: grid;
+  gap: $space-4;
+  margin-top: $space-4;
+
+  @include respond-to('medium') {
+    grid-template-columns: 320px 1fr;
+    align-items: start;
+  }
+}
+
+.inbox {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.inbox__item {
+  @include button-reset;
+  display: flex;
+  gap: $space-3;
+  width: 100%;
+  padding: $space-3;
+  text-align: left;
+  border: $border-width solid $color-brand-light;
+  border-radius: $radius-md;
+  background-color: $color-surface;
+
+  &:hover,
+  &:focus-visible {
+    background-color: rgba($color-brand-light, 0.4);
+  }
+
+  &.is-active {
+    border-color: $color-brand-dark;
+    background-color: rgba($color-brand-light, 0.5);
+  }
+}
+
+.inbox__thumb {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: $radius-md;
+  flex-shrink: 0;
+  background-color: $color-brand-light;
+}
+
+.inbox__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.inbox__name {
+  font-weight: $font-weight-bold;
+  color: $color-brand-dark;
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+}
+
+.inbox__unread {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding-inline: 6px;
+  border-radius: $radius-full;
+  background-color: $color-danger;
+  color: $color-text-inverse;
+  font-size: $font-size-xs;
+}
+
+.inbox__listing,
+.inbox__last {
+  font-size: $font-size-sm;
+  color: $color-text-muted;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.messagerie__thread {
+  border: $border-width solid $color-brand-light;
+  border-radius: $radius-md;
+  background-color: $color-surface;
+  display: flex;
+  flex-direction: column;
+  min-height: 420px;
+}
+
+.messagerie__placeholder {
+  margin: auto;
+  padding: $space-6;
+  color: $color-text-muted;
+}
+
+#thread-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.messagerie__thread-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-3;
+  align-items: baseline;
+  padding: $space-3 $space-4;
+  border-bottom: $border-width solid $color-brand-light;
+
+  a {
+    font-size: $font-size-sm;
+    color: $color-brand-medium;
+  }
+}
+
+.messagerie__messages {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  padding: $space-4;
+  overflow-y: auto;
+  max-height: 50vh;
+}
+
+.bubble {
+  max-width: 75%;
+  align-self: flex-start;
+  background-color: rgba($color-brand-light, 0.55);
+  border-radius: $radius-lg;
+  border-bottom-left-radius: $radius-sm;
+  padding: $space-2 $space-3;
+
+  &--mine {
+    align-self: flex-end;
+    background-color: rgba($color-brand, 0.25);
+    border-radius: $radius-lg;
+    border-bottom-right-radius: $radius-sm;
+  }
+
+  &__body {
+    white-space: pre-line;
+    overflow-wrap: anywhere;
+  }
+
+  &__when {
+    display: block;
+    font-size: $font-size-xs;
+    color: $color-text-muted;
+    margin-top: 2px;
+  }
+}
+
+.messagerie__composer {
+  display: flex;
+  gap: $space-2;
+  padding: $space-3;
+  border-top: $border-width solid $color-brand-light;
+
+  .form__textarea {
+    flex: 1;
+    min-height: 48px;
+  }
+}

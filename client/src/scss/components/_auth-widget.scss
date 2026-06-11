@@ -1,20 +1,48 @@
 @use '../abstracts' as *;
 
+// Mobile-first : dans le tiroir de navigation (fond beige clair), le widget
+// forme une section séparée en texte FONCÉ. Sur desktop (bandeau caramel),
+// il repasse en texte clair, sur une seule ligne alignée à droite.
 .auth-widget {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
+  flex-direction: column;
+  align-items: stretch;
   gap: $space-2;
-  margin-left: auto;
-  font-size: $font-size-sm;
+  margin-top: $space-5;
+  padding-top: $space-5;
+  border-top: $border-width solid rgba($color-brand-dark, 0.2);
+
+  @include respond-to('xlarge') {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: $space-2;
+    margin: 0 0 0 auto;
+    padding: 0;
+    border: 0;
+    font-size: $font-size-sm;
+    min-width: 0;
+  }
 }
 
 .auth-widget__greeting {
-  color: $color-text-inverse;
-  white-space: nowrap;
+  color: $color-brand-dark;
+  padding: $space-2 $space-3;
 
   strong {
     font-weight: $font-weight-bold;
+  }
+
+  @include respond-to('xlarge') {
+    color: $color-text-inverse;
+    padding: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 240px;
+    // Si la place manque, c'est le pseudo qui se compresse (ellipse), pas la barre qui casse.
+    flex: 0 1 auto;
+    min-width: 0;
   }
 }
 
@@ -23,18 +51,32 @@
   align-items: center;
   padding: $space-2 $space-3;
   border-radius: $radius-md;
-  color: $color-text-inverse;
+  color: $color-brand-dark;
   font-weight: $font-weight-medium;
-  transition: background-color $transition-fast;
+  transition: background-color $transition-fast, color $transition-fast;
 
   &:hover,
   &:focus-visible {
-    background-color: rgba(0, 0, 0, 0.15);
+    background-color: $color-brand-dark;
     color: $color-text-inverse;
+  }
+
+  @include respond-to('xlarge') {
+    color: $color-text-inverse;
+    white-space: nowrap;
+    flex-shrink: 0;
+
+    &:hover,
+    &:focus-visible {
+      background-color: rgba(0, 0, 0, 0.15);
+      color: $color-text-inverse;
+    }
   }
 
   &--primary {
     background-color: $color-brand-dark;
+    color: $color-text-inverse;
+    justify-content: center;
 
     &:hover,
     &:focus-visible {
@@ -47,14 +89,28 @@
   @include button-reset;
   padding: $space-2 $space-3;
   border-radius: $radius-md;
-  color: $color-text-inverse;
+  color: $color-brand-dark;
   font-weight: $font-weight-medium;
-  border: $border-width solid rgba($color-brand-light, 0.4);
-  transition: background-color $transition-fast;
+  border: $border-width solid rgba($color-brand-dark, 0.4);
+  transition: background-color $transition-fast, color $transition-fast;
 
   &:hover,
   &:focus-visible {
-    background-color: rgba(0, 0, 0, 0.15);
+    background-color: $color-brand-dark;
+    color: $color-text-inverse;
+  }
+
+  @include respond-to('xlarge') {
+    color: $color-text-inverse;
+    border-color: rgba($color-brand-light, 0.4);
+    white-space: nowrap;
+    flex-shrink: 0;
+
+    &:hover,
+    &:focus-visible {
+      background-color: rgba(0, 0, 0, 0.15);
+      color: $color-text-inverse;
+    }
   }
 }
 
@@ -125,4 +181,20 @@
     color: $color-success;
     border: $border-width solid rgba($color-success, 0.3);
   }
+}
+
+// Badge de messages non lus à côté du lien Messages.
+.auth-widget__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding-inline: 5px;
+  margin-left: 6px;
+  border-radius: $radius-full;
+  background-color: $color-danger;
+  color: $color-text-inverse;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-bold;
 }

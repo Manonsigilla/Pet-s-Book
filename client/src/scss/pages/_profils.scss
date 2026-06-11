@@ -4,6 +4,24 @@
   padding-block: $space-6;
 }
 
+// En-tête : titre + bouton « Créer le profil de mon animal »
+.profils__header {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+  margin-bottom: $space-5;
+
+  @include respond-to('medium') {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+
+    .btn {
+      flex-shrink: 0;
+    }
+  }
+}
+
 .profils__toolbar {
   display: flex;
   flex-direction: column;
@@ -169,5 +187,45 @@
   dd {
     color: $color-text;
     word-break: break-word;
+  }
+}
+
+// Volet sensibilisation sur la page détail : « Sa protection »
+.protection {
+  padding: $space-4;
+  background-color: rgba($color-brand-light, 0.35);
+  border-radius: $radius-md;
+
+  h2 {
+    font-size: $font-size-lg;
+    margin-bottom: $space-3;
+  }
+}
+
+.protection__list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+}
+
+.protection__item {
+  padding: $space-2 $space-3;
+  border-radius: $radius-sm;
+  font-size: $font-size-sm;
+
+  &--ok {
+    background-color: rgba($color-success, 0.1);
+    border-left: 3px solid $color-success;
+  }
+
+  &--todo {
+    background-color: rgba($color-warning, 0.1);
+    border-left: 3px solid $color-warning;
+  }
+
+  em {
+    color: $color-text-muted;
   }
 }

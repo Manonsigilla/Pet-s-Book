@@ -6,14 +6,17 @@ const API_BASE = '/api';
 
 async function request(path, { method = 'GET', body, headers = {} } = {}) {
   const token = auth.getToken();
+  // FormData (upload de fichiers) : le navigateur fixe lui-même le Content-Type
+  // multipart avec son boundary — il ne faut surtout pas le forcer à la main.
+  const isFormData = body instanceof FormData;
   const response = await fetch(`${API_BASE}${path}`, {
     method,
     headers: {
-      'Content-Type': 'application/json',
+      ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...headers,
     },
-    body: body ? JSON.stringify(body) : undefined,
+    body: isFormData ? body : (body ? JSON.stringify(body) : undefined),
   });
 
   if (!response.ok) {
@@ -24,6 +27,7 @@ async function request(path, { method = 'GET', body, headers = {} } = {}) {
     const err = new Error(error.message || `Erreur ${response.status}`);
     err.status = response.status;
     err.code = error.code;
+    err.body = error; // corps complet (ex. aperçu d'un profil privé)
     throw err;
   }
 

@@ -1,0 +1,99 @@
+@use '../abstracts' as *;
+
+// Page « Créer le profil de mon animal » — formulaire ciblé animal
+// avec volet sensibilisation (champs conditionnels).
+
+.creer-profil {
+  padding-block: $space-6;
+  max-width: 720px;
+}
+
+.creer-profil__form {
+  margin-top: $space-5;
+  display: flex;
+  flex-direction: column;
+  gap: $space-5;
+}
+
+.creer-profil__section {
+  border: $border-width solid $color-brand-light;
+  border-radius: $radius-md;
+  padding: $space-5;
+  background-color: $color-surface;
+
+  legend {
+    font-family: $font-display;
+    font-size: $font-size-lg;
+    color: $color-brand-dark;
+    padding-inline: $space-2;
+  }
+}
+
+.creer-profil__intro {
+  color: $color-text-muted;
+  font-size: $font-size-sm;
+  margin-bottom: $space-4;
+}
+
+.creer-profil__row {
+  display: grid;
+  gap: $space-3;
+
+  @include respond-to('medium') {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+// Aperçu rond de la photo de profil
+.creer-profil__preview img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: $radius-full;
+  border: 3px solid $color-brand;
+  margin-top: $space-3;
+}
+
+// Boutons radio oui/non
+.creer-profil__choices {
+  display: flex;
+  gap: $space-4;
+  margin-top: $space-2;
+}
+
+.creer-profil__choice {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-2;
+  padding: $space-2 $space-4;
+  border: $border-width solid $color-brand-light;
+  border-radius: $radius-full;
+  cursor: pointer;
+  transition: border-color $transition-fast, background-color $transition-fast;
+
+  &:hover {
+    background-color: rgba($color-brand-light, 0.4);
+  }
+
+  &:has(input:checked) {
+    border-color: $color-brand-dark;
+    background-color: rgba($color-brand-light, 0.5);
+    font-weight: $font-weight-medium;
+  }
+}
+
+// Bloc conditionnel (raison) avec encart pédagogique
+.creer-profil__conditional {
+  padding: $space-4;
+  background-color: rgba($color-brand-light, 0.3);
+  border-radius: $radius-md;
+}
+
+.creer-profil__tip {
+  font-size: $font-size-sm;
+  background-color: rgba($color-info, 0.08);
+  border-left: 3px solid $color-info;
+  padding: $space-3;
+  border-radius: $radius-sm;
+  margin-bottom: $space-3;
+}

@@ -81,6 +81,17 @@
   color: $color-text-inverse;
 }
 
+// Volet sensibilisation : animal protégé (vert) / démarche à faire (neutre)
+.card__tag--protected {
+  background-color: rgba($color-success, 0.15);
+  color: $color-success;
+}
+
+.card__tag--todo {
+  background-color: rgba($color-warning, 0.15);
+  color: $color-warning;
+}
+
 .card__meta {
   color: $color-text-muted;
   font-size: $font-size-sm;
