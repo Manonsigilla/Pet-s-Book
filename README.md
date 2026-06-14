@@ -26,26 +26,49 @@ pets-book/
 - Les versions requises sont déclarées via le champ `engines` des `package.json`.
 - Accès réseau pour `npm run dataset` (sinon le pipeline retombe sur les snapshots committés).
 
-## Installation
+## Installation (à faire une seule fois)
+
+Ces étapes ne sont nécessaires qu'au premier démarrage (ou après un `git pull`
+qui ajoute des dépendances).
 
 ```bash
-# Back
+# 1. Back-end
 cd server
 npm install
 cp .env.example .env      # ajuster les secrets (et clés API optionnelles)
-npm run dataset           # (optionnel) régénère le dataset depuis les sources
-npm run seed              # initialise la base SQLite à partir du dataset
-npm run dev               # API sur http://localhost:3000
+npm run seed              # crée la base SQLite à partir du dataset
 
-# Front (dans un autre terminal)
+# 2. Front-end (dans un autre terminal)
 cd client
 npm install
-npm run dev               # http://localhost:5173
 ```
 
 > Le dépôt contient déjà `data/animals.unified.json` : `npm run seed` suffit pour
-> démarrer. Le pipeline (`npm run dataset`) n'est nécessaire que pour rafraîchir
-> les données.
+> démarrer. Le pipeline `npm run dataset` est **optionnel** et ne sert qu'à
+> rafraîchir les données depuis les sources externes (voir
+> [Données : dataset unifié](#données--dataset-unifié-etl)).
+
+## Lancer le projet au quotidien
+
+À chaque réouverture du projet, il suffit de démarrer les **deux serveurs** dans
+**deux terminaux séparés**.
+
+```bash
+# Terminal 1 — Back-end (API)
+cd server
+npm run dev               # API sur http://localhost:3000
+```
+
+```bash
+# Terminal 2 — Front-end (le site)
+cd client
+npm run dev               # http://localhost:5173
+```
+
+👉 Ouvre ensuite <http://localhost:5173> dans ton navigateur.
+
+> Pas besoin de relancer `npm install` ni `npm run seed` à chaque fois : ces
+> étapes font partie de l'[installation](#installation-à-faire-une-seule-fois).
 
 ## Données : dataset unifié (ETL)
 
