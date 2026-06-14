@@ -142,25 +142,3 @@
     border-radius: $radius-sm;
   }
 }
-
-// =============================================================================
-// Bandeau moyens de paiement (footer)
-// =============================================================================
-.payments {
-  display: flex;
-  flex-wrap: wrap;
-  gap: $space-2;
-  align-items: center;
-
-  img {
-    height: 28px;
-    width: auto;
-    background-color: $color-surface;
-    padding: $space-1;
-    border-radius: $radius-sm;
-  }
-}
-
-.site-footer__column--payments h3 {
-  margin-bottom: $space-3;
-}

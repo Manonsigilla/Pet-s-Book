@@ -12,8 +12,13 @@
   gap: $space-6;
   grid-template-columns: 1fr;
 
-  @include respond-to('medium') {
-    grid-template-columns: repeat(3, 1fr);
+  @include respond-to('small') {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include respond-to('large') {
+    grid-template-columns: repeat(4, 1fr);
+    gap: $space-8;
   }
 }
 
@@ -23,12 +28,6 @@
     color: $color-text-inverse;
   }
 
-  ul {
-    display: flex;
-    flex-direction: column;
-    gap: $space-2;
-  }
-
   a {
     color: $color-text;
 
@@ -36,6 +35,56 @@
     &:focus-visible {
       color: $color-text-inverse;
     }
+  }
+}
+
+// Listes de liens : empilées verticalement.
+.site-footer__links {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+}
+
+// Réseaux sociaux : icônes alignées en ligne dans des pastilles rondes.
+.site-footer__social {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-3;
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: $radius-full;
+    background-color: rgba($color-brand-dark, 0.18);
+    color: $color-text-inverse;
+    font-size: $font-size-lg;
+    transition: background-color $transition-fast, transform $transition-fast;
+
+    &:hover,
+    &:focus-visible {
+      background-color: $color-brand-dark;
+      color: $color-text-inverse;
+      transform: translateY(-2px);
+    }
+  }
+}
+
+// Moyens de paiement : logos alignés en ligne.
+.site-footer__payments {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2;
+  align-items: center;
+
+  img {
+    height: 28px;
+    width: auto;
+    background-color: $color-surface;
+    padding: $space-1;
+    border-radius: $radius-sm;
   }
 }
 
