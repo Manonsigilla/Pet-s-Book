@@ -79,7 +79,7 @@ async function loadRequests() {
         ${received.map((r) => miniCard(r.from, `
           <p class="copain-card__meta">souhaite devenir ${copainWord(r.from?.gender)} de <strong>${escapeHtml(r.toMyAnimal?.name ?? '')}</strong></p>
           <div class="copain-card__actions">
-            <button class="btn btn--success btn--small" data-action="accept" data-id="${r.id}">Accepter 🐾</button>
+            <button class="btn btn--success btn--small" data-action="accept" data-id="${r.id}">Accepter <i class="fa-solid fa-paw" aria-hidden="true"></i></button>
             <button class="btn btn--danger btn--small" data-action="refuse" data-id="${r.id}">Refuser</button>
           </div>
         `)).join('')}
@@ -97,13 +97,13 @@ async function loadRequests() {
 function reasonChips(s) {
   const chips = [];
   if (s.mutualCount > 0) {
-    chips.push(`<span class="card__tag card__tag--protected">🐾 ${s.mutualCount} copain${s.mutualCount > 1 ? 's' : ''} en commun</span>`);
+    chips.push(`<span class="card__tag card__tag--protected"><i class="fa-solid fa-paw" aria-hidden="true"></i> ${s.mutualCount} copain${s.mutualCount > 1 ? 's' : ''} en commun</span>`);
   }
   if (s.sameLocation) {
-    chips.push('<span class="card__tag card__tag--protected">📍 Même coin</span>');
+    chips.push('<span class="card__tag card__tag--protected"><i class="fa-solid fa-location-dot" aria-hidden="true"></i> Même coin</span>');
   }
   if (chips.length === 0) {
-    chips.push('<span class="card__tag">✨ Découverte</span>');
+    chips.push('<span class="card__tag"><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i> Découverte</span>');
   }
   return `<div class="card__tags">${chips.join('')}</div>`;
 }
@@ -118,7 +118,7 @@ async function loadSuggestions() {
         <div class="state">
           <h3 class="state__title">D'abord, présentez votre compagnon !</h3>
           <p class="state__text">Créez le profil de votre animal pour qu'il puisse se faire des copains.</p>
-          <p><a class="btn btn--primary" href="/creer-profil.html">🐾 Créer son profil</a></p>
+          <p><a class="btn btn--primary" href="/creer-profil.html"><i class="fa-solid fa-paw" aria-hidden="true"></i> Créer son profil</a></p>
         </div>
       `;
       return;
@@ -192,7 +192,7 @@ document.addEventListener('click', async (event) => {
       await loadRequests();
     } else if (action === 'add') {
       await api.post('/friends/requests', { fromAnimalId: actingAnimalId(), toAnimalId: Number(id) });
-      button.textContent = 'Demande envoyée ✓';
+      button.innerHTML = 'Demande envoyée <i class="fa-solid fa-check" aria-hidden="true"></i>';
     }
   } catch (err) {
     alert(`Erreur : ${err.message}`);

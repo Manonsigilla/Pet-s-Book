@@ -57,7 +57,7 @@ function renderListing() {
         Acheter — ${formatPrice(listing.priceCents)}
       </button>
       <p class="annonce__protection">
-        🛡️ <strong>Achat protégé</strong> : votre paiement est conservé en lieu sûr et
+        <i class="fa-solid fa-shield-halved" aria-hidden="true"></i> <strong>Achat protégé</strong> : votre paiement est conservé en lieu sûr et
         n'est reversé au vendeur qu'après confirmation de la réception.
       </p>
     `;
@@ -167,7 +167,7 @@ function bindBuy() {
           <div class="buy-summary__total"><dt>Total</dt><dd>${formatPrice(listing.priceCents)}</dd></div>
         </dl>
         <p class="buy-summary__escrow">
-          🛡️ Le montant est <strong>retenu en séquestre</strong> et ne sera reversé à
+          <i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Le montant est <strong>retenu en séquestre</strong> et ne sera reversé à
           ${escapeHtml(listing.sellerName)} qu'après que vous ayez confirmé la réception de l'article.
         </p>
         <p class="buy-summary__demo">Démonstration pédagogique : aucun paiement réel n'est effectué.</p>
@@ -187,7 +187,7 @@ function bindBuy() {
         await api.post('/orders', { listingId: listing.id });
         modalBody.innerHTML = `
           <div class="buy-summary">
-            <p class="buy-summary__success">✅ Achat confirmé ! Le vendeur va préparer votre colis.</p>
+            <p class="buy-summary__success"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Achat confirmé ! Le vendeur va préparer votre colis.</p>
             <p>Suivez votre commande depuis l'onglet « Mes achats » de votre espace ventes.</p>
             <a class="btn btn--primary btn--block" href="/mes-ventes.html">Suivre ma commande</a>
           </div>

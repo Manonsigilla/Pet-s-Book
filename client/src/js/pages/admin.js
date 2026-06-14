@@ -159,7 +159,7 @@ function renderMessages(messages) {
           <div class="admin-item__info">
             <p class="admin-item__meta">
               <span>${escapeHtml(MESSAGE_TYPE_LABELS[m.type] || m.type)}</span>
-              ${m.isHandled ? '<span>✓ Traité</span>' : ''}
+              ${m.isHandled ? '<span><i class="fa-solid fa-check" aria-hidden="true"></i> Traité</span>' : ''}
               <span>${escapeHtml(m.createdAt)}</span>
             </p>
             <h3 class="admin-item__title">${escapeHtml(m.subject || '(sans sujet)')}</h3>

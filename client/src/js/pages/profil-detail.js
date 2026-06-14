@@ -18,13 +18,13 @@ function protectionHtml(animal) {
   const rows = [];
 
   if (animal.identified === 1) {
-    rows.push('<li class="protection__item protection__item--ok">🛡️ Identifié (puce ou tatouage) — il pourra toujours retrouver sa famille !</li>');
+    rows.push('<li class="protection__item protection__item--ok"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Identifié (puce ou tatouage) — il pourra toujours retrouver sa famille !</li>');
   } else if (animal.identified === 0) {
     rows.push(`<li class="protection__item protection__item--todo">Pas encore identifié${animal.identifiedReason ? ` — <em>${escapeHtml(animal.identifiedReason)}</em>` : ''}</li>`);
   }
 
   if (animal.sterilized === 1) {
-    rows.push('<li class="protection__item protection__item--ok">💚 Stérilisé — protégé de nombreuses maladies.</li>');
+    rows.push('<li class="protection__item protection__item--ok"><i class="fa-solid fa-heart" aria-hidden="true"></i> Stérilisé — protégé de nombreuses maladies.</li>');
   } else if (animal.sterilized === 0) {
     rows.push(`<li class="protection__item protection__item--todo">Non stérilisé${animal.sterilizedReason ? ` — <em>${escapeHtml(animal.sterilizedReason)}</em>` : ''}</li>`);
   }
@@ -32,7 +32,7 @@ function protectionHtml(animal) {
   if (rows.length === 0) return '';
   return `
     <section class="protection" aria-labelledby="protection-title">
-      <h2 id="protection-title">Sa protection 🛡️</h2>
+      <h2 id="protection-title">Sa protection <i class="fa-solid fa-shield-halved" aria-hidden="true"></i></h2>
       ${gaugeHtml(animal)}
       <ul class="protection__list">${rows.join('')}</ul>
     </section>
@@ -54,7 +54,7 @@ async function renderPrivate(preview) {
 
   const cta = myAnimals.length === 0
     ? `<p>Pour devenir ${copainWord(preview.gender)} de ${escapeHtml(preview.name)}, créez d'abord le profil de votre animal !</p>
-       <a class="btn btn--primary" href="/creer-profil.html">🐾 Créer le profil de mon animal</a>`
+       <a class="btn btn--primary" href="/creer-profil.html"><i class="fa-solid fa-paw" aria-hidden="true"></i> Créer le profil de mon animal</a>`
     : `${selector}
        <button class="btn btn--primary" type="button" id="add-friend-btn">${copainLabel(preview.gender)}</button>`;
 
@@ -63,7 +63,7 @@ async function renderPrivate(preview) {
       <img class="profil-prive__media" src="${escapeHtml(preview.imageUrl || '/placeholder-pet.svg')}" alt="" />
       <h1>${escapeHtml(preview.name)}</h1>
       <p class="profil-prive__meta">${escapeHtml(preview.species)}</p>
-      <p>🔒 Ce profil est privé : seuls ses copains et copines peuvent le découvrir.</p>
+      <p><i class="fa-solid fa-lock" aria-hidden="true"></i> Ce profil est privé : seuls ses copains et copines peuvent le découvrir.</p>
       <div class="auth-feedback" id="friend-feedback" role="alert" aria-live="polite"></div>
       <div class="profil-prive__actions">${cta}</div>
     </div>
@@ -76,7 +76,7 @@ async function renderPrivate(preview) {
     button.disabled = true;
     try {
       await api.post('/friends/requests', { fromAnimalId, toAnimalId: preview.id });
-      feedback.textContent = 'Demande envoyée ! Son humain doit maintenant accepter 🐾';
+      feedback.innerHTML = 'Demande envoyée ! Son humain doit maintenant accepter <i class="fa-solid fa-paw" aria-hidden="true"></i>';
       feedback.className = 'auth-feedback auth-feedback--success';
     } catch (err) {
       feedback.textContent = err.message || 'Erreur lors de l\'envoi.';
@@ -122,7 +122,7 @@ function renderAnimal(animal) {
       </div>
     </article>
     <section class="profil-posts" aria-labelledby="posts-title">
-      <h2 id="posts-title">Ses publications 📝</h2>
+      <h2 id="posts-title">Ses publications <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i></h2>
       <div id="animal-posts" aria-busy="true"></div>
     </section>
   `);

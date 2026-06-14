@@ -31,8 +31,10 @@ function clearErrors() {
   form.querySelectorAll('.form__error').forEach((el) => { el.textContent = ''; });
 }
 
-function setFeedback(message, type) {
-  feedback.textContent = message;
+function setFeedback(message, type, icon = '') {
+  // L'icône est insérée en HTML ; le message reste un nœud texte (pas d'injection).
+  feedback.innerHTML = icon ? `<i class="fa-solid ${icon}" aria-hidden="true"></i> ` : '';
+  feedback.append(message);
   feedback.className = `auth-feedback auth-feedback--${type}`;
 }
 
@@ -121,11 +123,11 @@ form.addEventListener('submit', async (event) => {
   submitBtn.textContent = 'Création...';
   try {
     const { id } = await api.post('/animals', formData);
-    setFeedback('Profil créé ! Bienvenue dans la communauté 🎉 Redirection...', 'success');
+    setFeedback('Profil créé ! Bienvenue dans la communauté ! Redirection...', 'success', 'fa-champagne-glasses');
     setTimeout(() => { window.location.href = `/profil-detail.html?id=${id}`; }, 900);
   } catch (err) {
     setFeedback(err.message || 'Erreur lors de la création du profil.', 'error');
     submitBtn.disabled = false;
-    submitBtn.textContent = 'Créer son profil 🐾';
+    submitBtn.innerHTML = 'Créer son profil <i class="fa-solid fa-paw" aria-hidden="true"></i>';
   }
 });

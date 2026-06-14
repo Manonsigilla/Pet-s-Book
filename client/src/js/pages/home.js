@@ -192,7 +192,7 @@ function feedEventHtml(ev) {
       <header class="post-card__header">
         <img class="post-card__avatar" src="${escapeHtml(ev.imageUrl || '/placeholder-pet.svg')}" alt="" loading="lazy" />
         <div>
-          <p class="post-card__author">📅 ${escapeHtml(ev.title)}</p>
+          <p class="post-card__author"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i> ${escapeHtml(ev.title)}</p>
           <p class="post-card__meta">${formatWhen(ev.startsAt)} · ${escapeHtml(ev.location)}</p>
         </div>
       </header>
@@ -232,7 +232,7 @@ async function initComposer() {
   if (myAnimals.length === 0) {
     feedDom.composerForm.innerHTML = `
       <p>Créez le profil de votre animal pour publier dans le fil !</p>
-      <a class="btn btn--primary" href="/creer-profil.html">🐾 Créer son profil</a>
+      <a class="btn btn--primary" href="/creer-profil.html"><i class="fa-solid fa-paw" aria-hidden="true"></i> Créer son profil</a>
     `;
     return;
   }
@@ -242,7 +242,7 @@ async function initComposer() {
 
   feedDom.composerPhoto.addEventListener('change', () => {
     const file = feedDom.composerPhoto.files?.[0];
-    feedDom.composerPhotoName.textContent = file ? `📷 ${file.name}` : '';
+    feedDom.composerPhotoName.innerHTML = file ? `<i class="fa-solid fa-camera" aria-hidden="true"></i> ${escapeHtml(file.name)}` : '';
   });
 
   feedDom.composerForm.addEventListener('submit', async (event) => {

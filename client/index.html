@@ -12,6 +12,7 @@
     rel="stylesheet"
   />
   <title>Pet's Book — La plateforme des amis des animaux</title>
+  <script src="https://kit.fontawesome.com/820b23ac92.js" crossorigin="anonymous"></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Aller au contenu principal</a>
@@ -52,7 +53,7 @@
   <main id="main">
     <!-- Feed du membre connecté : home.js le remplit et masque la vitrine. -->
     <div id="home-feed" class="container feed" hidden>
-      <h1 class="feed__title">Quoi de neuf dans la bande ? 🐾</h1>
+      <h1 class="feed__title">Quoi de neuf dans la bande ? <i class="fa-solid fa-paw" aria-hidden="true"></i></h1>
 
       <section class="feed__composer" aria-labelledby="composer-title">
         <h2 class="visually-hidden" id="composer-title">Publier</h2>
@@ -61,18 +62,18 @@
           <div class="feed__composer-row">
             <label class="visually-hidden" for="composer-animal">Qui publie ?</label>
             <select class="form__select" id="composer-animal"></select>
-            <label class="btn btn--ghost feed__photo-label" for="composer-photo">📷 Photo</label>
+            <label class="btn btn--ghost feed__photo-label" for="composer-photo"><i class="fa-solid fa-camera" aria-hidden="true"></i> Photo</label>
             <input type="file" id="composer-photo" accept="image/jpeg,image/png,image/webp" hidden />
           </div>
           <label class="visually-hidden" for="composer-body">Votre publication</label>
           <textarea class="form__textarea" id="composer-body" maxlength="2000" placeholder="Racontez sa dernière aventure..." required></textarea>
           <p class="feed__photo-name" id="composer-photo-name" aria-live="polite"></p>
-          <button class="btn btn--primary" type="submit" id="composer-submit">Publier 🐾</button>
+          <button class="btn btn--primary" type="submit" id="composer-submit">Publier <i class="fa-solid fa-paw" aria-hidden="true"></i></button>
         </form>
       </section>
 
       <section id="feed-events" aria-labelledby="feed-events-title" hidden>
-        <h2 class="feed__section-title" id="feed-events-title">📍 Près de chez vous</h2>
+        <h2 class="feed__section-title" id="feed-events-title"><i class="fa-solid fa-location-dot" aria-hidden="true"></i> Près de chez vous</h2>
         <div id="feed-events-list"></div>
       </section>
 
@@ -96,7 +97,7 @@
       <div class="hero__cta">
         <a class="btn btn--primary" href="/apropos.html">En savoir plus</a>
         <button class="btn btn--secondary" type="button" id="play-greeting">
-          <span aria-hidden="true">♪</span> Écouter le carillon
+          <i class="fa-solid fa-music" aria-hidden="true"></i> Écouter le carillon
         </button>
       </div>
       <audio id="greeting-audio" src="/media/welcome.wav" preload="metadata"></audio>
@@ -207,9 +208,9 @@
       <div class="site-footer__column">
         <h3>Suivez-nous</h3>
         <ul>
-          <li><a href="https://facebook.com" rel="noopener noreferrer" target="_blank">Facebook</a></li>
-          <li><a href="https://instagram.com" rel="noopener noreferrer" target="_blank">Instagram</a></li>
-          <li><a href="https://youtube.com" rel="noopener noreferrer" target="_blank">YouTube</a></li>
+          <li><a href="https://facebook.com" rel="noopener noreferrer" target="_blank"><i class="fa-brands fa-facebook-f" aria-hidden="true"></i><span class="visually-hidden">Facebook</span></a></li>
+          <li><a href="https://instagram.com" rel="noopener noreferrer" target="_blank"><i class="fa-brands fa-instagram" aria-hidden="true"></i><span class="visually-hidden">Instagram</span></a></li>
+          <li><a href="https://youtube.com" rel="noopener noreferrer" target="_blank"><i class="fa-brands fa-youtube" aria-hidden="true"></i><span class="visually-hidden">YouTube</span></a></li>
         </ul>
       </div>
       <div class="site-footer__column site-footer__column--payments">

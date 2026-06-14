@@ -12,6 +12,7 @@
     rel="stylesheet"
   />
   <title>Créer le profil de mon animal — Pet's Book</title>
+  <script src="https://kit.fontawesome.com/820b23ac92.js" crossorigin="anonymous"></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Aller au contenu principal</a>
@@ -53,14 +54,14 @@
     <h1>Créer le profil de mon animal</h1>
     <p>
       Sur Pet's Book, c'est votre compagnon qui a son profil ! Présentez-le à la communauté —
-      et profitez-en pour faire le point sur sa protection 🛡️
+      et profitez-en pour faire le point sur sa protection <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
     </p>
 
     <div class="auth-feedback" id="form-feedback" role="alert" aria-live="polite"></div>
 
     <form class="form creer-profil__form" id="profile-form" novalidate>
       <fieldset class="creer-profil__section">
-        <legend>Qui est-il ? 🐾</legend>
+        <legend>Qui est-il ? <i class="fa-solid fa-paw" aria-hidden="true"></i></legend>
 
         <div class="form__field">
           <label class="form__label" for="photo">Photo de profil</label>
@@ -119,7 +120,7 @@
       </fieldset>
 
       <fieldset class="creer-profil__section">
-        <legend>Sa protection 🛡️</legend>
+        <legend>Sa protection <i class="fa-solid fa-shield-halved" aria-hidden="true"></i></legend>
         <p class="creer-profil__intro">
           Deux petites questions qui comptent beaucoup pour lui : un animal identifié rentre
           plus vite à la maison s'il se perd, et la stérilisation le protège de nombreuses maladies.
@@ -128,7 +129,7 @@
         <div class="form__field" role="radiogroup" aria-labelledby="identified-label">
           <p class="form__label" id="identified-label">Est-il identifié (puce électronique ou tatouage) ?</p>
           <div class="creer-profil__choices">
-            <label class="creer-profil__choice"><input type="radio" name="identified" value="1" required /> Oui ✅</label>
+            <label class="creer-profil__choice"><input type="radio" name="identified" value="1" required /> Oui <i class="fa-solid fa-circle-check" aria-hidden="true"></i></label>
             <label class="creer-profil__choice"><input type="radio" name="identified" value="0" /> Non</label>
           </div>
           <p class="form__error" id="identified-error" aria-live="polite"></p>
@@ -136,7 +137,7 @@
 
         <div class="form__field creer-profil__conditional" id="identified-reason-block" hidden>
           <p class="creer-profil__tip">
-            💡 <strong>Le saviez-vous ?</strong> L'identification est obligatoire pour les chiens et
+            <i class="fa-solid fa-lightbulb" aria-hidden="true"></i> <strong>Le saviez-vous ?</strong> L'identification est obligatoire pour les chiens et
             les chats en Belgique. C'est la carte d'identité de votre compagnon : s'il se perd,
             elle multiplie ses chances de vous retrouver !
           </p>
@@ -148,7 +149,7 @@
         <div class="form__field" role="radiogroup" aria-labelledby="sterilized-label">
           <p class="form__label" id="sterilized-label">Est-il stérilisé ?</p>
           <div class="creer-profil__choices">
-            <label class="creer-profil__choice"><input type="radio" name="sterilized" value="1" required /> Oui ✅</label>
+            <label class="creer-profil__choice"><input type="radio" name="sterilized" value="1" required /> Oui <i class="fa-solid fa-circle-check" aria-hidden="true"></i></label>
             <label class="creer-profil__choice"><input type="radio" name="sterilized" value="0" /> Non</label>
           </div>
           <p class="form__error" id="sterilized-error" aria-live="polite"></p>
@@ -156,8 +157,8 @@
 
         <div class="form__field creer-profil__conditional" id="sterilized-reason-block" hidden>
           <p class="creer-profil__tip">
-            💡 <strong>Bon à savoir :</strong> la stérilisation réduit les risques de tumeurs et
-            d'infections, limite les fugues... et évite les portées surprises 🐣
+            <i class="fa-solid fa-lightbulb" aria-hidden="true"></i> <strong>Bon à savoir :</strong> la stérilisation réduit les risques de tumeurs et
+            d'infections, limite les fugues... et évite les portées surprises <i class="fa-solid fa-egg" aria-hidden="true"></i>
           </p>
           <label class="form__label" for="sterilizedReason">Pour quelle raison ?</label>
           <select class="form__select" id="sterilizedReason" name="sterilizedReason">
@@ -176,7 +177,7 @@
         </div>
       </fieldset>
 
-      <button class="btn btn--primary btn--block" type="submit" id="submit-btn">Créer son profil 🐾</button>
+      <button class="btn btn--primary btn--block" type="submit" id="submit-btn">Créer son profil <i class="fa-solid fa-paw" aria-hidden="true"></i></button>
     </form>
   </main>
 
@@ -201,9 +202,9 @@
       <div class="site-footer__column">
         <h3>Suivez-nous</h3>
         <ul>
-          <li><a href="https://facebook.com" rel="noopener noreferrer" target="_blank">Facebook</a></li>
-          <li><a href="https://instagram.com" rel="noopener noreferrer" target="_blank">Instagram</a></li>
-          <li><a href="https://youtube.com" rel="noopener noreferrer" target="_blank">YouTube</a></li>
+          <li><a href="https://facebook.com" rel="noopener noreferrer" target="_blank"><i class="fa-brands fa-facebook-f" aria-hidden="true"></i><span class="visually-hidden">Facebook</span></a></li>
+          <li><a href="https://instagram.com" rel="noopener noreferrer" target="_blank"><i class="fa-brands fa-instagram" aria-hidden="true"></i><span class="visually-hidden">Instagram</span></a></li>
+          <li><a href="https://youtube.com" rel="noopener noreferrer" target="_blank"><i class="fa-brands fa-youtube" aria-hidden="true"></i><span class="visually-hidden">YouTube</span></a></li>
         </ul>
       </div>
     </div>

@@ -84,8 +84,8 @@ function orderItemHtml(order, role) {
       ? 'Article expédié — confirmez la réception pour libérer le paiement.'
       : 'En attente de confirmation de réception par l\'acheteur.',
     received: role === 'seller'
-      ? 'Paiement libéré sur votre compte. Vente terminée ✔'
-      : 'Transaction terminée ✔',
+      ? 'Paiement libéré sur votre compte. Vente terminée <i class="fa-solid fa-check" aria-hidden="true"></i>'
+      : 'Transaction terminée <i class="fa-solid fa-check" aria-hidden="true"></i>',
     cancelled: 'Commande annulée — l\'annonce est de nouveau en ligne.',
   }[order.status] ?? '';
 

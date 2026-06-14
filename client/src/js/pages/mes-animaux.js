@@ -21,7 +21,7 @@ function render(animals) {
           Votre compagnon mérite sa place dans la communauté ! Créez son profil,
           faites grimper son score de protection et trouvez-lui des copains.
         </p>
-        <p><a class="btn btn--primary" href="/creer-profil.html">🐾 Créer son premier profil</a></p>
+        <p><a class="btn btn--primary" href="/creer-profil.html"><i class="fa-solid fa-paw" aria-hidden="true"></i> Créer son premier profil</a></p>
       </div>
     `;
     return;
@@ -46,7 +46,7 @@ function render(animals) {
               <a class="btn btn--ghost" href="/profil-detail.html?id=${animal.id}">Voir le profil</a>
               <button class="btn btn--ghost btn--small" data-action="settings" data-id="${animal.id}"
                 data-visibility="${escapeHtml(animal.visibility || 'private')}"
-                data-friend-policy="${escapeHtml(animal.friendPolicy || 'everyone')}">⚙️ Paramètres</button>
+                data-friend-policy="${escapeHtml(animal.friendPolicy || 'everyone')}"><i class="fa-solid fa-gear" aria-hidden="true"></i> Paramètres</button>
               <button class="btn btn--danger btn--small" data-action="delete" data-id="${animal.id}">Supprimer</button>
             </div>
           </div>

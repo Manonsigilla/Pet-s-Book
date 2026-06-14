@@ -85,7 +85,7 @@ export function gaugeHtml(animal) {
   return `
     <div class="gauge" role="img" aria-label="Score de protection : ${score} sur 100">
       <div class="gauge__bar"><div class="gauge__fill gauge__fill--${level}" style="width:${score}%"></div></div>
-      <span class="gauge__label">🐾 ${score}&nbsp;% — ${label}</span>
+      <span class="gauge__label"><i class="fa-solid fa-paw" aria-hidden="true"></i> ${score}&nbsp;% — ${label}</span>
     </div>
   `;
 }
@@ -96,13 +96,13 @@ export function tagsHtml(animal) {
   const tags = [];
 
   if (animal.identified === 1) {
-    tags.push('<span class="card__tag card__tag--protected">🛡️ Identifié</span>');
+    tags.push('<span class="card__tag card__tag--protected"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Identifié</span>');
   } else if (animal.identified === 0) {
     tags.push('<span class="card__tag card__tag--todo">Pas encore identifié</span>');
   }
 
   if (animal.sterilized === 1) {
-    tags.push('<span class="card__tag card__tag--protected">💚 Stérilisé</span>');
+    tags.push('<span class="card__tag card__tag--protected"><i class="fa-solid fa-heart" aria-hidden="true"></i> Stérilisé</span>');
   } else if (animal.sterilized === 0) {
     tags.push('<span class="card__tag card__tag--todo">Non stérilisé</span>');
   }
