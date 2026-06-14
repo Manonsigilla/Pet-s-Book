@@ -32,12 +32,15 @@ router.get('/', requireAdmin, (req, res) => {
 
 // Vitrine publique de l'accueil : 3 profils en avant, informations minimales.
 router.get('/featured', (req, res) => {
+  // Limite optionnelle (1–12) : 3 pour la vitrine d'accueil, davantage pour la
+  // galerie de la page À propos.
+  const limit = Math.min(Math.max(Number(req.query.limit) || 3, 1), 12);
   const animals = db.prepare(
     `SELECT a.id, a.name, a.species, a.breed, a.temperament, a.image_url AS imageUrl
      FROM animals a
      WHERE a.image_url IS NOT NULL
-     ORDER BY RANDOM() LIMIT 3`
-  ).all();
+     ORDER BY RANDOM() LIMIT ?`
+  ).all(limit);
   res.json(animals);
 });
 

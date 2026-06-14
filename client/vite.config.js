@@ -5,6 +5,7 @@ import { resolve } from 'path';
 // chaque clé devient le nom du chunk, chaque valeur pointe vers le fichier HTML.
 const pages = {
   main:            resolve(__dirname, 'index.html'),
+  apropos:         resolve(__dirname, 'apropos.html'),
   profils:         resolve(__dirname, 'profils.html'),
   profilDetail:    resolve(__dirname, 'profil-detail.html'),
   creerProfil:     resolve(__dirname, 'creer-profil.html'),

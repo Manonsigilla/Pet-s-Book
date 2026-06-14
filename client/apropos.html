@@ -33,7 +33,6 @@
           <li><a class="nav__link" href="/perdus-retrouves.html">Perdus / Retrouvés</a></li>
           <li><a class="nav__link" href="/evenements.html">Événements</a></li>
           <li><a class="nav__link" href="/petsshop.html">Pet's Shop</a></li>
-          <li><a class="nav__link" href="/apropos.html">À propos</a></li>
         </ul>
         <div class="auth-widget" id="auth-widget" aria-label="Compte utilisateur"></div>
       </nav>
@@ -113,25 +112,38 @@
 
     <section class="apropos__gallery" aria-labelledby="galerie-title">
       <h2 id="galerie-title">En images</h2>
-      <ul class="apropos__gallery-list">
-        <li><img src="/images/about-1.jpg" alt="Photo souvenir 1" loading="lazy" /></li>
-        <li><img src="/images/about-2.jpg" alt="Photo souvenir 2" loading="lazy" /></li>
-        <li><img src="/images/about-3.jpg" alt="Photo souvenir 3" loading="lazy" /></li>
-      </ul>
+      <p class="apropos__gallery-intro">Quelques compagnons de la communauté Pet's Book.</p>
+      <div class="gallery-marquee" id="gallery-marquee" aria-label="Galerie de photos d'animaux de la communauté">
+        <div class="gallery-marquee__track" id="gallery-track"></div>
+      </div>
     </section>
 
-    <section class="apropos__cta" aria-label="Rejoindre Pet's Book">
-      <h2>Envie de nous rejoindre ?</h2>
-      <p>Créez votre compte gratuitement et commencez à partager les profils de vos animaux.</p>
-      <a class="btn btn--primary" href="/register.html">Créer un compte</a>
+    <section class="apropos__cta" aria-label="Soutenir Pet's Book">
+      <h2>Envie de nous soutenir ?</h2>
+      <p>Chaque don nous aide à secourir, soigner et protéger davantage d'animaux. Un grand merci pour votre générosité !</p>
+      <a class="btn btn--primary" href="https://www.leetchi.com/c/petsbook-exemple" rel="noopener noreferrer" target="_blank">
+        <i class="fa-solid fa-hand-holding-heart" aria-hidden="true"></i> Faire un don sur Leetchi
+      </a>
     </section>
+
+    <div class="modal" id="animal-modal" data-open="false" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="animal-modal-title">
+      <div class="modal__dialog">
+        <div class="modal__header">
+          <h2 id="animal-modal-title">Fiche animal</h2>
+          <button class="modal__close" type="button" id="close-animal-modal" aria-label="Fermer">&times;</button>
+        </div>
+        <div id="animal-modal-body">
+          <!-- Injecté par apropos.js -->
+        </div>
+      </div>
+    </div>
   </main>
 
   <footer class="site-footer">
     <div class="site-footer__inner">
       <div class="site-footer__column">
         <h3>Services</h3>
-        <ul>
+        <ul class="site-footer__links">
           <li><a href="/evenements.html">Événements</a></li>
           <li><a href="/petsshop.html">Pet's Shop</a></li>
           <li><a href="/contact.html">Contact</a></li>
@@ -139,7 +151,8 @@
       </div>
       <div class="site-footer__column">
         <h3>Informations</h3>
-        <ul>
+        <ul class="site-footer__links">
+          <li><a href="/apropos.html">À propos</a></li>
           <li><a href="/suggestions-plaintes.html">Suggestions / Plaintes</a></li>
           <li><a href="/mentions-legales.html">Mentions légales</a></li>
           <li><a href="/conditions-generales.html">Conditions générales</a></li>
@@ -147,16 +160,25 @@
       </div>
       <div class="site-footer__column">
         <h3>Suivez-nous</h3>
-        <ul>
+        <ul class="site-footer__social">
           <li><a href="https://facebook.com" rel="noopener noreferrer" target="_blank"><i class="fa-brands fa-facebook-f" aria-hidden="true"></i><span class="visually-hidden">Facebook</span></a></li>
           <li><a href="https://instagram.com" rel="noopener noreferrer" target="_blank"><i class="fa-brands fa-instagram" aria-hidden="true"></i><span class="visually-hidden">Instagram</span></a></li>
           <li><a href="https://youtube.com" rel="noopener noreferrer" target="_blank"><i class="fa-brands fa-youtube" aria-hidden="true"></i><span class="visually-hidden">YouTube</span></a></li>
+        </ul>
+      </div>
+      <div class="site-footer__column site-footer__column--payments">
+        <h3>Moyens de paiement</h3>
+        <ul class="site-footer__payments">
+          <li><img src="/images/payment-bancontact.png" alt="Bancontact" /></li>
+          <li><img src="/images/payment-visa.png" alt="Visa" /></li>
+          <li><img src="/images/payment-mastercard.jpg" alt="Mastercard" /></li>
+          <li><img src="/images/payment-maestro.png" alt="Maestro" /></li>
         </ul>
       </div>
     </div>
     <p class="site-footer__bottom">&copy; 2026 Pet's Book — Manon Sigaud</p>
   </footer>
 
-  <script type="module" src="/src/js/main.js"></script>
+  <script type="module" src="/src/js/pages/apropos.js"></script>
 </body>
 </html>

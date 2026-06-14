@@ -53,3 +53,208 @@
   font-weight: $font-weight-normal;
   font-size: $font-size-sm;
 }
+
+// =============================================================================
+// Page À propos — présentation centrée
+// =============================================================================
+.apropos {
+  padding-block: $space-6 $space-10;
+  text-align: center;
+
+  > h1 {
+    margin-bottom: $space-6;
+  }
+
+  section {
+    margin-bottom: $space-10;
+  }
+
+  h2 {
+    margin-bottom: $space-4;
+  }
+}
+
+.apropos__slogan p {
+  font-family: $font-display;
+  font-size: $font-size-2xl;
+  color: $color-brand-medium;
+}
+
+.apropos__story-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space-6;
+}
+
+.apropos__figure {
+  margin: 0;
+  max-width: 480px;
+
+  img {
+    width: 100%;
+    height: auto;
+    border-radius: $radius-lg;
+    box-shadow: $shadow-md;
+  }
+
+  figcaption {
+    margin-top: $space-2;
+    font-size: $font-size-sm;
+    color: $color-text-muted;
+    font-style: italic;
+  }
+}
+
+// Le récit reste aligné à gauche pour rester lisible dans une colonne centrée.
+.apropos__text {
+  max-width: 70ch;
+  text-align: left;
+
+  p {
+    margin-bottom: $space-4;
+    line-height: $line-height-relaxed;
+  }
+}
+
+.apropos__gallery-intro {
+  margin-bottom: $space-5;
+  color: $color-text-muted;
+}
+
+.apropos__cta {
+  max-width: 640px;
+  margin-inline: auto;
+  padding: $space-8 $space-6;
+  background-color: $color-background;
+  border-radius: $radius-lg;
+
+  p {
+    max-width: 50ch;
+    margin: $space-3 auto $space-5;
+    line-height: $line-height-base;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Carrousel défilant en boucle continue (galerie « En images »)
+// -----------------------------------------------------------------------------
+.gallery-marquee {
+  --marquee-duration: 32s;
+  width: 100%;
+  overflow: hidden;
+  // Léger fondu sur les bords pour adoucir le défilement.
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+
+  &:hover .gallery-marquee__track {
+    animation-play-state: paused;
+  }
+}
+
+.gallery-marquee__track {
+  display: flex;
+  width: max-content;
+  animation: gallery-scroll var(--marquee-duration) linear infinite;
+  // Carrousel volontairement animé : on force le mouvement même si le système
+  // demande de réduire les animations. Sinon le reset global (en !important)
+  // ramène la durée à 0,01 ms et le carrousel paraît figé.
+  animation-duration: var(--marquee-duration) !important;
+  animation-iteration-count: infinite !important;
+}
+
+// Vignette cliquable : ouvre la fiche animal en modale.
+.gallery-marquee__item {
+  @include button-reset;
+  flex: 0 0 auto;
+  width: 240px;
+  // Marge (plutôt que `gap`) pour un raccord parfait de la boucle à -50 %.
+  margin-right: $space-4;
+  cursor: pointer;
+  border-radius: $radius-md;
+  overflow: hidden;
+
+  img {
+    display: block;
+    width: 100%;
+    height: 170px;
+    object-fit: cover;
+    border-radius: $radius-md;
+    box-shadow: $shadow-sm;
+    transition: transform $transition-fast;
+  }
+
+  &:hover img,
+  &:focus-visible img {
+    transform: scale(1.05);
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Fiche animal affichée en modale (galerie À propos)
+// -----------------------------------------------------------------------------
+.animal-modal__card {
+  text-align: center;
+}
+
+.animal-modal__media {
+  width: 160px;
+  height: 160px;
+  object-fit: cover;
+  border-radius: $radius-full;
+  box-shadow: $shadow-md;
+  margin-bottom: $space-3;
+}
+
+.animal-modal__name {
+  margin-bottom: $space-1;
+}
+
+.animal-modal__meta {
+  color: $color-text-muted;
+  margin-bottom: $space-3;
+}
+
+.animal-modal__facts {
+  display: grid;
+  gap: $space-2;
+  margin: $space-4 0;
+  text-align: left;
+
+  div {
+    display: flex;
+    justify-content: space-between;
+    gap: $space-3;
+    padding-bottom: $space-1;
+    border-bottom: $border-width solid $color-brand-light;
+  }
+
+  dt { color: $color-text-muted; }
+  dd { font-weight: $font-weight-medium; text-align: right; }
+}
+
+.animal-modal__friend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2;
+  justify-content: center;
+  margin-top: $space-3;
+}
+
+.animal-modal__gate {
+  text-align: center;
+
+  p { margin-bottom: $space-4; }
+}
+
+.animal-modal__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-3;
+  justify-content: center;
+}
+
+@keyframes gallery-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
