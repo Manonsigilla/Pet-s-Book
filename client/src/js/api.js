@@ -32,7 +32,24 @@ async function request(path, { method = 'GET', body, headers = {} } = {}) {
   }
 
   if (response.status === 204) return null;
-  return response.json();
+
+  // On lit le corps en texte d'abord : un corps vide sur une réponse 2xx
+  // (typiquement le back-end momentanément injoignable — redémarrage nodemon
+  // en mode watch, ou serveur non démarré) ferait planter response.json() avec
+  // un « JSON.parse: unexpected end of data » difficile à diagnostiquer.
+  const text = await response.text();
+  if (!text) {
+    const err = new Error('Réponse vide du serveur. Le back-end est-il bien démarré et joignable ?');
+    err.status = response.status;
+    throw err;
+  }
+  try {
+    return JSON.parse(text);
+  } catch {
+    const err = new Error('Réponse du serveur illisible (JSON invalide).');
+    err.status = response.status;
+    throw err;
+  }
 }
 
 export const api = {
