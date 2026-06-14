@@ -87,6 +87,7 @@ function orderItemHtml(order, role) {
       ? 'Paiement libéré sur votre compte. Vente terminée <i class="fa-solid fa-check" aria-hidden="true"></i>'
       : 'Transaction terminée <i class="fa-solid fa-check" aria-hidden="true"></i>',
     cancelled: 'Commande annulée — l\'annonce est de nouveau en ligne.',
+    completed: 'Achat direct auprès du professionnel — commande confirmée.',
   }[order.status] ?? '';
 
   return `

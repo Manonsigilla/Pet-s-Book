@@ -5,6 +5,7 @@ import '../main.js';
 import { api } from '../api.js';
 import { auth } from '../auth.js';
 import { escapeHtml, speciesLine, describe, tagsHtml } from '../animal-view.js';
+import { reactionBarHtml, bindReactions } from '../reactions.js';
 
 const FEATURED_COUNT = 3;
 
@@ -182,6 +183,7 @@ function postCardHtml(item) {
       </header>
       <p class="post-card__body">${escapeHtml(item.body)}</p>
       ${item.imageUrl ? `<img class="post-card__media" src="${escapeHtml(item.imageUrl)}" alt="" loading="lazy" />` : ''}
+      ${reactionBarHtml(item)}
     </article>
   `;
 }
@@ -218,6 +220,7 @@ async function loadFeed() {
            <p class="state__text">Le fil est calme... Trouvez des copains à vos animaux pour le faire vivre !</p>
            <p><a class="btn btn--primary" href="/copains.html">Découvrir des copains</a></p>
          </div>`;
+    bindReactions(feedDom.items);
   } catch (err) {
     feedDom.items.innerHTML = `<div class="state state--error"><p class="state__text">${escapeHtml(err.message)}</p></div>`;
   }

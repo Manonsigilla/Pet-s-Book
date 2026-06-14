@@ -5,6 +5,7 @@ import '../main.js';
 import { api } from '../api.js';
 import { auth } from '../auth.js';
 import { escapeHtml, speciesLine, tagsHtml, sourceLabel, gaugeHtml, copainLabel, copainWord } from '../animal-view.js';
+import { reactionBarHtml, bindReactions } from '../reactions.js';
 
 const container = document.getElementById('profil-detail');
 
@@ -147,8 +148,10 @@ async function loadPosts(animalId) {
         <p class="post-card__meta">${postTimeFmt.format(new Date(String(p.createdAt).replace(' ', 'T')))}</p>
         <p class="post-card__body">${escapeHtml(p.body)}</p>
         ${p.imageUrl ? `<img class="post-card__media" src="${escapeHtml(p.imageUrl)}" alt="" loading="lazy" />` : ''}
+        ${reactionBarHtml(p)}
       </article>
     `).join('');
+    bindReactions(list);
   } catch {
     list.setAttribute('aria-busy', 'false');
     list.innerHTML = '';

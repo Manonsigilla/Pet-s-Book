@@ -23,6 +23,38 @@ const POST_JOINS = `
   LEFT JOIN pages pg ON pg.id = p.page_id
 `;
 
+// Réactions emoji autorisées (validées côté serveur). Emojis volontaires : pas
+// de dépendance à une librairie d'icônes.
+const REACTION_EMOJIS = ['❤️', '😂', '😮', '🥰', '👏', '🐾'];
+
+// Ajoute à chaque post le décompte des réactions par emoji et la réaction du
+// membre courant. Une seule paire de requêtes pour tout le lot.
+function attachReactions(posts, userId) {
+  if (posts.length === 0) return posts;
+  const ids = posts.map((p) => p.id);
+  const placeholders = ids.map(() => '?').join(',');
+  const counts = db.prepare(
+    `SELECT post_id AS postId, emoji, COUNT(*) AS n FROM reactions
+     WHERE post_id IN (${placeholders}) GROUP BY post_id, emoji`
+  ).all(...ids);
+  const mine = db.prepare(
+    `SELECT post_id AS postId, emoji FROM reactions
+     WHERE user_id = ? AND post_id IN (${placeholders})`
+  ).all(userId, ...ids);
+
+  const byPost = new Map();
+  for (const c of counts) {
+    if (!byPost.has(c.postId)) byPost.set(c.postId, {});
+    byPost.get(c.postId)[c.emoji] = c.n;
+  }
+  const myByPost = new Map(mine.map((m) => [m.postId, m.emoji]));
+  return posts.map((p) => ({
+    ...p,
+    reactions: byPost.get(p.id) ?? {},
+    myReaction: myByPost.get(p.id) ?? null,
+  }));
+}
+
 function myAnimalIds(userId) {
   return db.prepare('SELECT id FROM animals WHERE owner_id = ?').all(userId).map((r) => r.id);
 }
@@ -99,10 +131,11 @@ router.get('/feed', requireAuth, (req, res) => {
     ).all(...visibleAuthors);
   }
 
-  // Posts sponsorisés des Pages professionnelles.
+  // Publicités des Pages partenaires : diffusées automatiquement tant que
+  // l'abonnement du partenaire est actif (pas de boost à l'unité).
   const sponsored = db.prepare(
     `SELECT ${POST_FIELDS} ${POST_JOINS}
-     WHERE p.page_id IS NOT NULL
+     WHERE p.page_id IS NOT NULL AND pg.subscription_status = 'active'
      ORDER BY p.created_at DESC LIMIT 6`
   ).all();
 
@@ -118,9 +151,11 @@ router.get('/feed', requireAuth, (req, res) => {
   ).all().filter((e) => locationTokens(e.location).some((t) => myTokens.has(t))).slice(0, 3);
 
   // Assemblage : posts (membres + sponsorisés) triés par date, évènements à part.
+  const withReactions = attachReactions([...posts, ...sponsored], req.user.id);
+  const reactionsById = new Map(withReactions.map((p) => [p.id, p]));
   const items = [
-    ...posts.map((p) => ({ type: 'post', ...p })),
-    ...sponsored.map((p) => ({ type: 'sponsored', ...p })),
+    ...posts.map((p) => ({ type: 'post', ...reactionsById.get(p.id) })),
+    ...sponsored.map((p) => ({ type: 'sponsored', ...reactionsById.get(p.id) })),
   ].sort((x, y) => String(y.createdAt).localeCompare(String(x.createdAt)));
 
   res.json({ events, items });
@@ -152,7 +187,39 @@ router.get('/animal/:id', requireAuth, (req, res) => {
   const posts = db.prepare(
     `SELECT ${POST_FIELDS} ${POST_JOINS} WHERE p.animal_id = ? ORDER BY p.created_at DESC LIMIT 50`
   ).all(id);
-  res.json(posts);
+  res.json(attachReactions(posts, req.user.id));
+});
+
+// -----------------------------------------------------------------------------
+// Réactions emoji : poser/changer (upsert) ou retirer sa réaction sur un post
+// -----------------------------------------------------------------------------
+router.post('/:id/react', requireAuth, (req, res) => {
+  const id = Number(req.params.id);
+  if (!Number.isInteger(id) || id < 1) {
+    return res.status(400).json({ message: 'Identifiant invalide' });
+  }
+  const emoji = req.body?.emoji;
+  if (!REACTION_EMOJIS.includes(emoji)) {
+    return res.status(400).json({ message: 'Réaction invalide' });
+  }
+  const post = db.prepare('SELECT id FROM posts WHERE id = ?').get(id);
+  if (!post) return res.status(404).json({ message: 'Publication introuvable' });
+
+  // Une seule réaction par membre et par post : changer d'emoji remplace l'ancienne.
+  db.prepare(
+    `INSERT INTO reactions (post_id, user_id, emoji) VALUES (?, ?, ?)
+     ON CONFLICT(post_id, user_id) DO UPDATE SET emoji = excluded.emoji, created_at = CURRENT_TIMESTAMP`
+  ).run(id, req.user.id, emoji);
+  res.json({ id, myReaction: emoji });
+});
+
+router.delete('/:id/react', requireAuth, (req, res) => {
+  const id = Number(req.params.id);
+  if (!Number.isInteger(id) || id < 1) {
+    return res.status(400).json({ message: 'Identifiant invalide' });
+  }
+  db.prepare('DELETE FROM reactions WHERE post_id = ? AND user_id = ?').run(id, req.user.id);
+  res.status(204).end();
 });
 
 // Suppression : propriétaire de l'animal auteur, ou admin.

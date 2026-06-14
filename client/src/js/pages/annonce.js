@@ -5,7 +5,7 @@ import { api } from '../api.js';
 import { auth } from '../auth.js';
 import {
   escapeHtml, formatPrice, formatDate,
-  CATEGORY_LABELS, CONDITION_LABELS, listingBadge,
+  CATEGORY_LABELS, CONDITION_LABELS, listingBadge, proBadge,
 } from '../shop-view.js';
 
 const container = document.getElementById('annonce-detail');
@@ -34,6 +34,7 @@ function renderNotFound(message) {
 
 function renderListing() {
   const user = auth.getUser();
+  const isPro = Boolean(listing.isPro);
   const isOwner = user && user.id === listing.sellerId;
   const images = listing.images.length ? listing.images : ['/placeholder-pet.svg'];
 
@@ -42,7 +43,7 @@ function renderListing() {
     ['État', CONDITION_LABELS[listing.condition] || listing.condition],
     ['Marque', listing.brand],
     ['Publiée le', formatDate(listing.createdAt)],
-    ['Vendeur', listing.sellerName],
+    [isPro ? 'Boutique' : 'Vendeur', listing.sellerName],
   ].filter(([, v]) => v);
 
   let actions;
@@ -50,6 +51,16 @@ function renderListing() {
     actions = `
       <p class="annonce__owner-note">C'est votre annonce.</p>
       <a class="btn btn--ghost" href="/mes-ventes.html">Gérer mes ventes</a>
+    `;
+  } else if (isPro) {
+    // Vente professionnelle : achat direct, sans séquestre.
+    actions = `
+      <button class="btn btn--primary btn--block" type="button" id="buy-btn">
+        Acheter — ${formatPrice(listing.priceCents)}
+      </button>
+      <p class="annonce__protection">
+        <i class="fa-solid fa-store" aria-hidden="true"></i> Vendu et expédié par <strong>${escapeHtml(listing.sellerName)}</strong>, partenaire professionnel de Pet's Book.
+      </p>
     `;
   } else if (listing.status === 'active') {
     actions = `
@@ -65,7 +76,18 @@ function renderListing() {
     actions = `<p class="annonce__owner-note">Cet article n'est plus disponible.</p>`;
   }
 
-  const contactBlock = (!isOwner && user) ? `
+  // Pro : pas de messagerie membre, mais un lien vers le site du partenaire.
+  // Particulier : formulaire de contact (ou invitation à se connecter).
+  let contactBlock = '';
+  if (isPro) {
+    contactBlock = listing.sellerWebsite ? `
+      <div class="annonce__contact">
+        <h2>Le partenaire</h2>
+        <p><a class="btn btn--ghost" href="${escapeHtml(listing.sellerWebsite)}" target="_blank" rel="noopener noreferrer">Voir le site de ${escapeHtml(listing.sellerName)}</a></p>
+      </div>
+    ` : '';
+  } else if (!isOwner && user) {
+    contactBlock = `
     <div class="annonce__contact">
       <h2>Contacter le vendeur</h2>
       <div class="auth-feedback" id="contact-feedback" role="alert" aria-live="polite"></div>
@@ -77,13 +99,14 @@ function renderListing() {
         </div>
         <button class="btn btn--ghost" type="submit">Envoyer le message</button>
       </form>
-    </div>
-  ` : (!isOwner ? `
+    </div>`;
+  } else if (!isOwner) {
+    contactBlock = `
     <div class="annonce__contact">
       <h2>Contacter le vendeur</h2>
       <p><a class="btn btn--ghost" href="/login.html?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}">Connectez-vous pour envoyer un message</a></p>
-    </div>
-  ` : '');
+    </div>`;
+  }
 
   renderState(`
     <article class="annonce__layout">
@@ -101,7 +124,7 @@ function renderListing() {
       </div>
 
       <div class="annonce__info">
-        ${listingBadge(listing.status)}
+        <div class="annonce__badges">${proBadge(isPro)}${listingBadge(listing.status)}</div>
         <h1>${escapeHtml(listing.title)}</h1>
         <p class="annonce__price">${formatPrice(listing.priceCents)}</p>
         <dl class="annonce__facts">
@@ -153,27 +176,35 @@ function bindBuy() {
   const buyBtn = document.getElementById('buy-btn');
   if (!buyBtn) return;
 
+  const isPro = Boolean(listing.isPro);
+  const confirmLabel = `${isPro ? 'Commander' : 'Payer'} ${formatPrice(listing.priceCents)}`;
+
   buyBtn.addEventListener('click', () => {
     if (!auth.isAuthenticated()) {
       window.location.href = `/login.html?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}`;
       return;
     }
+    const summaryNote = isPro
+      ? `<p class="buy-summary__escrow">
+           <i class="fa-solid fa-store" aria-hidden="true"></i> Achat direct auprès de <strong>${escapeHtml(listing.sellerName)}</strong>, vendeur professionnel. Pas de séquestre : la commande est confirmée immédiatement.
+         </p>`
+      : `<p class="buy-summary__escrow">
+           <i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Le montant est <strong>retenu en séquestre</strong> et ne sera reversé à
+           ${escapeHtml(listing.sellerName)} qu'après que vous ayez confirmé la réception de l'article.
+         </p>`;
     modalBody.innerHTML = `
       <div class="buy-summary">
         <p><strong>${escapeHtml(listing.title)}</strong></p>
         <dl class="buy-summary__lines">
           <div><dt>Article</dt><dd>${formatPrice(listing.priceCents)}</dd></div>
-          <div><dt>Protection acheteur</dt><dd>Incluse</dd></div>
+          ${isPro ? '' : '<div><dt>Protection acheteur</dt><dd>Incluse</dd></div>'}
           <div class="buy-summary__total"><dt>Total</dt><dd>${formatPrice(listing.priceCents)}</dd></div>
         </dl>
-        <p class="buy-summary__escrow">
-          <i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Le montant est <strong>retenu en séquestre</strong> et ne sera reversé à
-          ${escapeHtml(listing.sellerName)} qu'après que vous ayez confirmé la réception de l'article.
-        </p>
+        ${summaryNote}
         <p class="buy-summary__demo">Démonstration pédagogique : aucun paiement réel n'est effectué.</p>
         <div class="auth-feedback" id="buy-feedback" role="alert" aria-live="polite"></div>
         <button class="btn btn--primary btn--block" type="button" id="confirm-buy-btn">
-          Payer ${formatPrice(listing.priceCents)}
+          ${confirmLabel}
         </button>
       </div>
     `;
@@ -182,21 +213,25 @@ function bindBuy() {
     document.getElementById('confirm-buy-btn').addEventListener('click', async (event) => {
       const btn = event.currentTarget;
       btn.disabled = true;
-      btn.textContent = 'Paiement en cours...';
+      btn.textContent = isPro ? 'Commande en cours...' : 'Paiement en cours...';
       try {
         await api.post('/orders', { listingId: listing.id });
-        modalBody.innerHTML = `
-          <div class="buy-summary">
-            <p class="buy-summary__success"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Achat confirmé ! Le vendeur va préparer votre colis.</p>
-            <p>Suivez votre commande depuis l'onglet « Mes achats » de votre espace ventes.</p>
-            <a class="btn btn--primary btn--block" href="/mes-ventes.html">Suivre ma commande</a>
-          </div>
-        `;
+        modalBody.innerHTML = isPro
+          ? `<div class="buy-summary">
+               <p class="buy-summary__success"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Commande confirmée auprès de ${escapeHtml(listing.sellerName)} !</p>
+               <p>Retrouvez-la dans l'onglet « Mes achats » de votre espace ventes.</p>
+               <a class="btn btn--primary btn--block" href="/mes-ventes.html">Voir mes achats</a>
+             </div>`
+          : `<div class="buy-summary">
+               <p class="buy-summary__success"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Achat confirmé ! Le vendeur va préparer votre colis.</p>
+               <p>Suivez votre commande depuis l'onglet « Mes achats » de votre espace ventes.</p>
+               <a class="btn btn--primary btn--block" href="/mes-ventes.html">Suivre ma commande</a>
+             </div>`;
       } catch (err) {
         document.getElementById('buy-feedback').textContent = err.message || 'Erreur lors de l\'achat.';
         document.getElementById('buy-feedback').className = 'auth-feedback auth-feedback--error';
         btn.disabled = false;
-        btn.textContent = `Payer ${formatPrice(listing.priceCents)}`;
+        btn.textContent = confirmLabel;
       }
     });
   });

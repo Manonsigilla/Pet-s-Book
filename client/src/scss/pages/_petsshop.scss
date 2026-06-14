@@ -145,6 +145,16 @@
   &--reserved  { background-color: rgba($color-warning, 0.18); color: $color-warning; }
   &--sold      { background-color: $color-brand-light; color: $color-text-muted; }
   &--cancelled { background-color: rgba($color-danger, 0.12); color: $color-danger; }
+  &--pro       { background-color: $color-brand-dark; color: $color-text-inverse; }
+}
+
+// Conteneurs de badges (carte boutique + page annonce) : alignés en ligne.
+.shop-card__badges,
+.annonce__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2;
+  margin-bottom: $space-2;
 }
 
 // -----------------------------------------------------------------------------

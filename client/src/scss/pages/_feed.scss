@@ -144,3 +144,47 @@
 .profil-posts__empty {
   color: $color-text-muted;
 }
+
+// -----------------------------------------------------------------------------
+// Barre de réactions emoji (sous les publications du feed et des profils)
+// -----------------------------------------------------------------------------
+.reactions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2;
+  margin-top: $space-3;
+}
+
+.reaction {
+  @include button-reset;
+  display: inline-flex;
+  align-items: center;
+  gap: $space-1;
+  padding: $space-1 $space-3;
+  border: $border-width solid $color-brand-light;
+  border-radius: $radius-full;
+  line-height: 1;
+  transition: background-color $transition-fast, border-color $transition-fast, transform $transition-fast;
+
+  &:hover,
+  &:focus-visible {
+    background-color: $color-brand-light;
+    transform: translateY(-1px);
+  }
+
+  // Réaction choisie par le membre courant : mise en évidence.
+  &--mine {
+    background-color: rgba($color-brand, 0.25);
+    border-color: $color-brand;
+  }
+
+  &__emoji {
+    font-size: $font-size-md;
+  }
+
+  &__count {
+    font-size: $font-size-sm;
+    font-variant-numeric: tabular-nums;
+    color: $color-text-muted;
+  }
+}

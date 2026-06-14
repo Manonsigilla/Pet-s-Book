@@ -49,7 +49,13 @@ export const ORDER_STATUS = {
   shipped: { label: 'Expédié', cls: 'shop-badge--available' },
   received: { label: 'Terminé', cls: 'shop-badge--sold' },
   cancelled: { label: 'Annulé', cls: 'shop-badge--cancelled' },
+  completed: { label: 'Commande confirmée', cls: 'shop-badge--sold' },
 };
+
+// Étiquette « Pro » pour les annonces vendues par un partenaire professionnel.
+export function proBadge(isPro) {
+  return isPro ? '<span class="shop-badge shop-badge--pro">Pro</span>' : '';
+}
 
 export function listingBadge(status) {
   const s = LISTING_STATUS[status];
@@ -68,14 +74,17 @@ export function listingCardHtml(listing) {
     <a class="shop-card" href="/annonce.html?id=${listing.id}">
       <img class="shop-card__media" src="${escapeHtml(img)}" alt="${escapeHtml(listing.title)}" loading="lazy" />
       <div class="shop-card__body">
-        ${listing.status !== 'active' ? listingBadge(listing.status) : ''}
+        <div class="shop-card__badges">
+          ${proBadge(listing.isPro)}
+          ${listing.status !== 'active' ? listingBadge(listing.status) : ''}
+        </div>
         <h2 class="shop-card__title">${escapeHtml(listing.title)}</h2>
         <p class="shop-card__price">${formatPrice(listing.priceCents)}</p>
         <p class="shop-card__meta">
           ${escapeHtml(CONDITION_LABELS[listing.condition] || listing.condition)}
           ${listing.brand ? ` · ${escapeHtml(listing.brand)}` : ''}
         </p>
-        <p class="shop-card__seller">Vendu par ${escapeHtml(listing.sellerName)}</p>
+        <p class="shop-card__seller">${listing.isPro ? 'Boutique' : 'Vendu par'} ${escapeHtml(listing.sellerName)}</p>
       </div>
     </a>
   `;

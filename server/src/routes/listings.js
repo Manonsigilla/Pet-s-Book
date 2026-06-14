@@ -15,7 +15,17 @@ const CONDITIONS = ['neuf', 'tres-bon', 'bon', 'correct'];
 const SELECT_FIELDS = `
   l.id, l.title, l.description, l.category, l.brand, l.condition,
   l.price_cents AS priceCents, l.status, l.created_at AS createdAt,
-  l.seller_id AS sellerId, u.display_name AS sellerName
+  l.seller_id AS sellerId, l.seller_page_id AS sellerPageId,
+  COALESCE(u.display_name, pg.name) AS sellerName,
+  pg.website AS sellerWebsite,
+  CASE WHEN l.seller_page_id IS NOT NULL THEN 1 ELSE 0 END AS isPro
+`;
+
+// Le vendeur est soit un particulier (users), soit un professionnel (pages).
+const LISTING_JOINS = `
+  FROM listings l
+  LEFT JOIN users u ON u.id = l.seller_id
+  LEFT JOIN pages pg ON pg.id = l.seller_page_id
 `;
 
 function attachImages(listings) {
@@ -39,8 +49,7 @@ function attachImages(listings) {
 // -----------------------------------------------------------------------------
 router.get('/', (req, res) => {
   const { category, q } = req.query;
-  let sql = `SELECT ${SELECT_FIELDS} FROM listings l JOIN users u ON u.id = l.seller_id
-             WHERE l.status != 'sold'`;
+  let sql = `SELECT ${SELECT_FIELDS} ${LISTING_JOINS} WHERE l.status != 'sold'`;
   const params = [];
   if (CATEGORIES.includes(category)) {
     sql += ' AND l.category = ?';
@@ -58,7 +67,7 @@ router.get('/', (req, res) => {
 // Mes annonces (toutes, y compris vendues) — pour « Gérer mes ventes ».
 router.get('/mine', requireAuth, (req, res) => {
   const rows = db.prepare(
-    `SELECT ${SELECT_FIELDS} FROM listings l JOIN users u ON u.id = l.seller_id
+    `SELECT ${SELECT_FIELDS} ${LISTING_JOINS}
      WHERE l.seller_id = ? ORDER BY l.created_at DESC`
   ).all(req.user.id);
   res.json(attachImages(rows));
@@ -70,7 +79,7 @@ router.get('/:id', (req, res) => {
     return res.status(400).json({ message: 'Identifiant invalide' });
   }
   const listing = db.prepare(
-    `SELECT ${SELECT_FIELDS} FROM listings l JOIN users u ON u.id = l.seller_id WHERE l.id = ?`
+    `SELECT ${SELECT_FIELDS} ${LISTING_JOINS} WHERE l.id = ?`
   ).get(id);
   if (!listing) return res.status(404).json({ message: 'Annonce introuvable' });
   res.json(attachImages([listing])[0]);

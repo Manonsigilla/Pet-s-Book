@@ -86,9 +86,12 @@ CREATE TABLE IF NOT EXISTS products (
   created_at  DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
--- Pages professionnelles (sponsors, associations, vétérinaires...). Fictives
--- pour l'instant ; à terme : espace pro payant en self-service. Leurs posts
--- apparaissent dans le feed avec l'étiquette « Sponsorisé ».
+-- Pages professionnelles / partenaires (sponsors, associations, vétérinaires...).
+-- Modèle économique : le partenaire est CLIENT de Pet's Book. Il paie un
+-- abonnement (subscription_status = 'active'). Tant qu'il est abonné, ses
+-- publications sont diffusées automatiquement en publicité aux membres (pas de
+-- boost à l'unité) et il peut vendre dans le Pet's Shop. Les membres, eux, ne
+-- paient jamais pour voir ces contenus.
 CREATE TABLE IF NOT EXISTS pages (
   id          INTEGER PRIMARY KEY AUTOINCREMENT,
   name        TEXT NOT NULL,
@@ -97,6 +100,9 @@ CREATE TABLE IF NOT EXISTS pages (
   description TEXT,
   image_url   TEXT,
   website     TEXT,
+  subscription_status TEXT NOT NULL DEFAULT 'active'
+                      CHECK (subscription_status IN ('active', 'inactive')),
+  subscribed_until    DATE,
   created_at  DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -115,6 +121,18 @@ CREATE TABLE IF NOT EXISTS posts (
 CREATE INDEX IF NOT EXISTS idx_posts_animal  ON posts(animal_id);
 CREATE INDEX IF NOT EXISTS idx_posts_page    ON posts(page_id);
 CREATE INDEX IF NOT EXISTS idx_posts_created ON posts(created_at);
+
+-- Réactions emoji aux publications : une réaction (modifiable) par membre et par
+-- post. Changer d'emoji remplace l'ancienne ; recliquer le même la retire.
+CREATE TABLE IF NOT EXISTS reactions (
+  id         INTEGER PRIMARY KEY AUTOINCREMENT,
+  post_id    INTEGER NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
+  user_id    INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  emoji      TEXT NOT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE (post_id, user_id)
+);
+CREATE INDEX IF NOT EXISTS idx_reactions_post ON reactions(post_id);
 
 -- Amitiés « copain/copine » ENTRE ANIMAUX (le propriétaire agit au nom de son
 -- animal). Un profil n'est visible par un membre que si l'un de ses animaux
@@ -138,9 +156,13 @@ CREATE INDEX IF NOT EXISTS idx_friend_status    ON friendships(status);
 -- simulé type Vinted) et messagerie acheteur/vendeur.
 -- =============================================================================
 
+-- Annonces du Pet's Shop. Vendeur soit un particulier (seller_id), soit un
+-- professionnel abonné (seller_page_id) : un seul shop pour les deux. Les
+-- ventes pro se font en achat direct (sans séquestre, cf. orders).
 CREATE TABLE IF NOT EXISTS listings (
-  id          INTEGER PRIMARY KEY AUTOINCREMENT,
-  seller_id   INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  id             INTEGER PRIMARY KEY AUTOINCREMENT,
+  seller_id      INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  seller_page_id INTEGER REFERENCES pages(id) ON DELETE CASCADE,
   title       TEXT NOT NULL,
   description TEXT NOT NULL,
   category    TEXT NOT NULL DEFAULT 'autre'
@@ -150,7 +172,9 @@ CREATE TABLE IF NOT EXISTS listings (
               CHECK (condition IN ('neuf', 'tres-bon', 'bon', 'correct')),
   price_cents INTEGER NOT NULL CHECK (price_cents >= 0),
   status      TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'reserved', 'sold')),
-  created_at  DATETIME DEFAULT CURRENT_TIMESTAMP
+  created_at  DATETIME DEFAULT CURRENT_TIMESTAMP,
+  -- Exactement un vendeur : particulier OU professionnel.
+  CHECK ((seller_id IS NULL) != (seller_page_id IS NULL))
 );
 
 CREATE TABLE IF NOT EXISTS listing_images (
@@ -167,7 +191,8 @@ CREATE TABLE IF NOT EXISTS orders (
   listing_id  INTEGER NOT NULL REFERENCES listings(id) ON DELETE CASCADE,
   buyer_id    INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   status      TEXT NOT NULL DEFAULT 'paid'
-              CHECK (status IN ('paid', 'shipped', 'received', 'cancelled')),
+              -- 'completed' = achat direct chez un pro (sans étape de séquestre)
+              CHECK (status IN ('paid', 'shipped', 'received', 'cancelled', 'completed')),
   created_at  DATETIME DEFAULT CURRENT_TIMESTAMP,
   updated_at  DATETIME DEFAULT CURRENT_TIMESTAMP
 );
@@ -207,6 +232,7 @@ CREATE INDEX IF NOT EXISTS idx_animals_owner    ON animals(owner_id);
 CREATE INDEX IF NOT EXISTS idx_messages_type    ON messages(type);
 CREATE INDEX IF NOT EXISTS idx_messages_handled ON messages(is_handled);
 CREATE INDEX IF NOT EXISTS idx_listings_seller  ON listings(seller_id);
+CREATE INDEX IF NOT EXISTS idx_listings_page    ON listings(seller_page_id);
 CREATE INDEX IF NOT EXISTS idx_listings_status  ON listings(status);
 CREATE INDEX IF NOT EXISTS idx_limg_listing     ON listing_images(listing_id);
 CREATE INDEX IF NOT EXISTS idx_orders_listing   ON orders(listing_id);

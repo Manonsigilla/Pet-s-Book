@@ -9,10 +9,19 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 
 console.log('Initialisation des données de test...');
 
-// La table `animals` a évolué (schéma riche + protection + paramètres). On la
-// recrée avec les tables qui la référencent, puis on réapplique le schéma.
+// Plusieurs tables ont évolué (animals enrichie, pages avec abonnement, listings
+// avec vendeur pro, réactions...). On supprime ces tables et celles qui les
+// référencent (dépendants d'abord, à cause des clés étrangères), puis on
+// réapplique le schéma à jour. Les autres tables sont juste vidées plus bas.
+db.exec('DROP TABLE IF EXISTS reactions');
 db.exec('DROP TABLE IF EXISTS posts');
 db.exec('DROP TABLE IF EXISTS friendships');
+db.exec('DROP TABLE IF EXISTS chat_messages');
+db.exec('DROP TABLE IF EXISTS conversations');
+db.exec('DROP TABLE IF EXISTS orders');
+db.exec('DROP TABLE IF EXISTS listing_images');
+db.exec('DROP TABLE IF EXISTS listings');
+db.exec('DROP TABLE IF EXISTS pages');
 db.exec('DROP TABLE IF EXISTS animals');
 db.exec(readFileSync(resolve(__dirname, 'schema.sql'), 'utf-8'));
 
@@ -242,6 +251,15 @@ const seedFriendships = db.transaction(() => {
           OR (requester_animal_id = @b AND addressee_animal_id = @a)`
     ).get({ a: requester.id, b: mine.id });
     if (!already) insertFriendship.run(requester.id, mine.id, 'pending', null);
+
+    // Une demande ENVOYÉE en attente (suivi des demandes côté client).
+    const target = others[(index * 19 + 11) % others.length];
+    const alreadySent = db.prepare(
+      `SELECT id FROM friendships
+       WHERE (requester_animal_id = @a AND addressee_animal_id = @b)
+          OR (requester_animal_id = @b AND addressee_animal_id = @a)`
+    ).get({ a: mine.id, b: target.id });
+    if (!alreadySent) insertFriendship.run(mine.id, target.id, 'pending', null);
   });
 });
 seedFriendships();
@@ -363,7 +381,7 @@ function seedListing(sellerId, title, description, category, brand, condition, p
   return id;
 }
 
-seedListing(clientId, 'Collier en cuir naturel', 'Collier artisanal réglable en cuir, très peu porté (taille M). Mon chien a grandi trop vite !', 'accessoire', 'Toutous & Co', 'tres-bon', 1250, ['/images/partner-toutous.jpg']);
+const listingCollier = seedListing(clientId, 'Collier en cuir naturel', 'Collier artisanal réglable en cuir, très peu porté (taille M). Mon chien a grandi trop vite !', 'accessoire', 'Toutous & Co', 'tres-bon', 1250, ['/images/partner-toutous.jpg']);
 seedListing(clientId, 'Jouet en corde pour chien', 'Corde solide pour les séances de tir, quelques traces de crocs mais encore beaucoup de vie devant elle.', 'jouet', null, 'bon', 450, ['/images/partner-holidog.jpg']);
 const listingCroquettes = seedListing(adminId, 'Sac de croquettes bio 5 kg (non entamé)', 'Sac jamais ouvert, mon chat est passé à une alimentation spécifique sur conseil vétérinaire. DLC longue.', 'alimentation', 'Tipaw', 'neuf', 2490, ['/images/partner-tipaw.jpg']);
 const listingPanier = seedListing(adminId, 'Panier douillet pour chat', 'Panier moelleux lavable en machine, mon chat lui préfère obstinément le canapé...', 'habitat', null, 'bon', 1500, ['/images/cesar.jpg']);
@@ -372,6 +390,10 @@ seedListing(clientId, 'Kit brosse + peigne de toilettage', 'Kit de toilettage co
 // Vente en cours : le client a acheté les croquettes de l'admin (séquestre « paid »).
 db.prepare('INSERT INTO orders (listing_id, buyer_id) VALUES (?, ?)').run(listingCroquettes, clientId);
 db.prepare("UPDATE listings SET status = 'reserved' WHERE id = ?").run(listingCroquettes);
+
+// Vente terminée : l'admin a acheté le collier du client (séquestre libéré, reçu).
+db.prepare("INSERT INTO orders (listing_id, buyer_id, status) VALUES (?, ?, 'received')").run(listingCollier, adminId);
+db.prepare("UPDATE listings SET status = 'sold' WHERE id = ?").run(listingCollier);
 
 // Conversation de démo : le client questionne l'admin sur le panier.
 const convId = db.prepare(
@@ -388,13 +410,32 @@ insertChat.run(convId, adminId, 'Bonjour, oui toujours disponible ! Il fait 50 c
 // Plus tard : espace pro payant en self-service ; pour l'instant, du contenu
 // crédible pour le feed (étiqueté « Sponsorisé » côté front).
 // -----------------------------------------------------------------------------
+// Partenaires abonnés : tant que l'abonnement est actif, leurs posts sont
+// diffusés en pub et ils peuvent vendre dans le Pet's Shop.
 const insertPage = db.prepare(
-  `INSERT INTO pages (name, category, description, image_url, website) VALUES (?, ?, ?, ?, ?)`
+  `INSERT INTO pages (name, category, description, image_url, website, subscription_status, subscribed_until)
+   VALUES (?, ?, ?, ?, ?, ?, ?)`
 );
-const pageVetcare = insertPage.run('Clinique VetCare', 'veterinaire', 'Clinique vétérinaire à Liège — médecine, chirurgie et prévention.', '/images/partner-vetcare.jpg', 'https://example.com/vetcare').lastInsertRowid;
-const pageTipaw = insertPage.run('Tipaw', 'sponsor', 'Alimentation naturelle pour chiens et chats.', '/images/partner-tipaw.jpg', 'https://example.com/tipaw').lastInsertRowid;
-const pageHolidog = insertPage.run('Holidog', 'sponsor', 'Garde d\'animaux et promenades partout en Belgique.', '/images/partner-holidog.jpg', 'https://example.com/holidog').lastInsertRowid;
-const pagePattes = insertPage.run('Les Pattes du Cœur', 'association', 'Association de protection animale — adoptions et sensibilisation.', '/images/partner-extra.jpg', null).lastInsertRowid;
+const SUBSCRIBED_UNTIL = '2027-06-14';
+const pageVetcare = insertPage.run('Clinique VetCare', 'veterinaire', 'Clinique vétérinaire à Liège — médecine, chirurgie et prévention.', '/images/partner-vetcare.jpg', 'https://example.com/vetcare', 'active', SUBSCRIBED_UNTIL).lastInsertRowid;
+const pageTipaw = insertPage.run('Tipaw', 'sponsor', 'Alimentation naturelle pour chiens et chats.', '/images/partner-tipaw.jpg', 'https://example.com/tipaw', 'active', SUBSCRIBED_UNTIL).lastInsertRowid;
+const pageHolidog = insertPage.run('Holidog', 'sponsor', 'Garde d\'animaux et promenades partout en Belgique.', '/images/partner-holidog.jpg', 'https://example.com/holidog', 'active', SUBSCRIBED_UNTIL).lastInsertRowid;
+const pagePattes = insertPage.run('Les Pattes du Cœur', 'association', 'Association de protection animale — adoptions et sensibilisation.', '/images/partner-extra.jpg', null, 'active', SUBSCRIBED_UNTIL).lastInsertRowid;
+
+// Annonces professionnelles dans le Pet's Shop (vendeur = une Page abonnée).
+// Elles cohabitent avec les annonces des particuliers, avec un badge « Pro ».
+const insertProListing = db.prepare(
+  `INSERT INTO listings (seller_page_id, title, description, category, brand, condition, price_cents)
+   VALUES (?, ?, ?, ?, ?, ?, ?)`
+);
+function seedProListing(pageId, title, description, category, brand, priceCents, images) {
+  const id = insertProListing.run(pageId, title, description, category, brand, 'neuf', priceCents).lastInsertRowid;
+  images.forEach((url, i) => insertListingImage.run(id, url, i));
+  return id;
+}
+seedProListing(pageTipaw, 'Croquettes premium sans céréales 12 kg', 'Formule complète riche en protéines, sans céréales, pour chiens adultes de toutes tailles. Livraison rapide.', 'alimentation', 'Tipaw', 4990, ['/images/partner-tipaw.jpg']);
+seedProListing(pageVetcare, 'Pipettes antiparasitaires (lot de 6)', 'Protection mensuelle contre puces et tiques, conseillée par nos vétérinaires. Pour chats et chiens.', 'hygiene', 'VetCare', 2790, ['/images/partner-vetcare.jpg']);
+seedProListing(pageHolidog, 'Harnais confort réfléchissant', 'Harnais ergonomique réglable, bandes réfléchissantes pour les sorties du soir. Plusieurs tailles.', 'accessoire', 'Holidog', 1990, ['/images/partner-holidog.jpg']);
 
 const insertPost = db.prepare(
   `INSERT INTO posts (animal_id, page_id, body, image_url, created_at) VALUES (?, ?, ?, ?, ?)`
@@ -450,6 +491,23 @@ const seedPosts = db.transaction(() => {
   }
 });
 seedPosts();
+
+// Réactions emoji de démo : quelques membres réagissent aux publications.
+const REACTION_EMOJIS = ['❤️', '😂', '😮', '🥰', '👏', '🐾'];
+const allUserIds = [clientId, adminId, ...fictionalIds];
+const insertReaction = db.prepare(
+  'INSERT OR IGNORE INTO reactions (post_id, user_id, emoji) VALUES (?, ?, ?)'
+);
+const seedReactions = db.transaction(() => {
+  const postIds = db.prepare('SELECT id FROM posts').all().map((r) => r.id);
+  for (const postId of postIds) {
+    const count = Math.floor(rand() * 7); // 0 à 6 réactions par post
+    for (let i = 0; i < count; i += 1) {
+      insertReaction.run(postId, pick(allUserIds), pick(REACTION_EMOJIS));
+    }
+  }
+});
+seedReactions();
 
 // Quelques messages de démonstration pour l'espace admin.
 const insertMessage = db.prepare(
