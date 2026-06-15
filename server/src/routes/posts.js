@@ -2,7 +2,7 @@
 // Le feed mélange : posts des copains (et de ses propres animaux), évènements
 // proches de la localisation des animaux du membre, et posts sponsorisés des Pages.
 import { Router } from 'express';
-import { db } from '../db/database.js';
+import { db } from '../db/index.js';
 import { requireAuth } from '../middlewares/auth.js';
 import { uploadProfilePhoto } from '../lib/upload.js';
 
@@ -29,15 +29,15 @@ const REACTION_EMOJIS = ['❤️', '😂', '😮', '🥰', '👏', '🐾'];
 
 // Ajoute à chaque post le décompte des réactions par emoji et la réaction du
 // membre courant. Une seule paire de requêtes pour tout le lot.
-function attachReactions(posts, userId) {
+async function attachReactions(posts, userId) {
   if (posts.length === 0) return posts;
   const ids = posts.map((p) => p.id);
   const placeholders = ids.map(() => '?').join(',');
-  const counts = db.prepare(
+  const counts = await db.prepare(
     `SELECT post_id AS postId, emoji, COUNT(*) AS n FROM reactions
      WHERE post_id IN (${placeholders}) GROUP BY post_id, emoji`
   ).all(...ids);
-  const mine = db.prepare(
+  const mine = await db.prepare(
     `SELECT post_id AS postId, emoji FROM reactions
      WHERE user_id = ? AND post_id IN (${placeholders})`
   ).all(userId, ...ids);
@@ -55,14 +55,14 @@ function attachReactions(posts, userId) {
   }));
 }
 
-function myAnimalIds(userId) {
-  return db.prepare('SELECT id FROM animals WHERE owner_id = ?').all(userId).map((r) => r.id);
+async function myAnimalIds(userId) {
+  return (await db.prepare('SELECT id FROM animals WHERE owner_id = ?').all(userId)).map((r) => r.id);
 }
 
-function copainIds(mine) {
+async function copainIds(mine) {
   if (mine.length === 0) return [];
   const placeholders = mine.map(() => '?').join(',');
-  const rows = db.prepare(
+  const rows = await db.prepare(
     `SELECT requester_animal_id AS a, addressee_animal_id AS b FROM friendships
      WHERE status = 'accepted'
        AND (requester_animal_id IN (${placeholders}) OR addressee_animal_id IN (${placeholders}))`
@@ -84,7 +84,7 @@ function locationTokens(location) {
 // Publier au nom d'un de ses animaux (texte + photo facultative)
 // -----------------------------------------------------------------------------
 router.post('/', requireAuth, (req, res, next) => {
-  uploadProfilePhoto(req, res, (uploadErr) => {
+  uploadProfilePhoto(req, res, async (uploadErr) => {
     if (uploadErr) {
       return res.status(400).json({ message: uploadErr.message || 'Téléversement refusé' });
     }
@@ -97,13 +97,13 @@ router.post('/', requireAuth, (req, res, next) => {
       if (body.length < 1 || body.length > 2000) {
         return res.status(400).json({ message: 'La publication doit faire entre 1 et 2000 caractères' });
       }
-      const animal = db.prepare('SELECT owner_id FROM animals WHERE id = ?').get(animalId);
+      const animal = await db.prepare('SELECT owner_id FROM animals WHERE id = ?').get(animalId);
       if (!animal) return res.status(404).json({ message: 'Animal introuvable' });
       if (animal.owner_id !== req.user.id) {
         return res.status(403).json({ message: 'Vous ne pouvez publier qu\'au nom de vos propres animaux' });
       }
 
-      const result = db.prepare(
+      const result = await db.prepare(
         'INSERT INTO posts (animal_id, body, image_url) VALUES (?, ?, ?)'
       ).run(animalId, body, req.file ? `/uploads/${req.file.filename}` : null);
       res.status(201).json({ id: result.lastInsertRowid });
@@ -116,128 +116,147 @@ router.post('/', requireAuth, (req, res, next) => {
 // -----------------------------------------------------------------------------
 // Le feed du membre connecté
 // -----------------------------------------------------------------------------
-router.get('/feed', requireAuth, (req, res) => {
-  const mine = myAnimalIds(req.user.id);
-  const visibleAuthors = [...mine, ...copainIds(mine)];
+router.get('/feed', requireAuth, async (req, res, next) => {
+  try {
+    const mine = await myAnimalIds(req.user.id);
+    const visibleAuthors = [...mine, ...(await copainIds(mine))];
 
-  // Posts des copains et de mes animaux.
-  let posts = [];
-  if (visibleAuthors.length > 0) {
-    const placeholders = visibleAuthors.map(() => '?').join(',');
-    posts = db.prepare(
+    // Posts des copains et de mes animaux.
+    let posts = [];
+    if (visibleAuthors.length > 0) {
+      const placeholders = visibleAuthors.map(() => '?').join(',');
+      posts = await db.prepare(
+        `SELECT ${POST_FIELDS} ${POST_JOINS}
+         WHERE p.animal_id IN (${placeholders})
+         ORDER BY p.created_at DESC LIMIT 30`
+      ).all(...visibleAuthors);
+    }
+
+    // Publicités des Pages partenaires : diffusées automatiquement tant que
+    // l'abonnement du partenaire est actif (pas de boost à l'unité).
+    const sponsored = await db.prepare(
       `SELECT ${POST_FIELDS} ${POST_JOINS}
-       WHERE p.animal_id IN (${placeholders})
-       ORDER BY p.created_at DESC LIMIT 30`
-    ).all(...visibleAuthors);
+       WHERE p.page_id IS NOT NULL AND pg.subscription_status = 'active'
+       ORDER BY p.created_at DESC LIMIT 6`
+    ).all();
+
+    // Évènements à venir proches de la localisation de mes animaux.
+    const myTokens = new Set(
+      (await db.prepare(`SELECT location FROM animals WHERE owner_id = ?`).all(req.user.id))
+        .flatMap((r) => locationTokens(r.location)),
+    );
+    const events = (await db.prepare(
+      `SELECT id, title, description, location, starts_at AS startsAt, image_url AS imageUrl
+       FROM events WHERE starts_at >= datetime('now') ORDER BY starts_at ASC LIMIT 10`
+    ).all()).filter((e) => locationTokens(e.location).some((t) => myTokens.has(t))).slice(0, 3);
+
+    // Assemblage : posts (membres + sponsorisés) triés par date, évènements à part.
+    const withReactions = await attachReactions([...posts, ...sponsored], req.user.id);
+    const reactionsById = new Map(withReactions.map((p) => [p.id, p]));
+    const items = [
+      ...posts.map((p) => ({ type: 'post', ...reactionsById.get(p.id) })),
+      ...sponsored.map((p) => ({ type: 'sponsored', ...reactionsById.get(p.id) })),
+    ].sort((x, y) => String(y.createdAt).localeCompare(String(x.createdAt)));
+
+    res.json({ events, items });
+  } catch (err) {
+    next(err);
   }
-
-  // Publicités des Pages partenaires : diffusées automatiquement tant que
-  // l'abonnement du partenaire est actif (pas de boost à l'unité).
-  const sponsored = db.prepare(
-    `SELECT ${POST_FIELDS} ${POST_JOINS}
-     WHERE p.page_id IS NOT NULL AND pg.subscription_status = 'active'
-     ORDER BY p.created_at DESC LIMIT 6`
-  ).all();
-
-  // Évènements à venir proches de la localisation de mes animaux.
-  const myTokens = new Set(
-    db.prepare(`SELECT location FROM animals WHERE owner_id = ?`)
-      .all(req.user.id)
-      .flatMap((r) => locationTokens(r.location)),
-  );
-  const events = db.prepare(
-    `SELECT id, title, description, location, starts_at AS startsAt, image_url AS imageUrl
-     FROM events WHERE starts_at >= datetime('now') ORDER BY starts_at ASC LIMIT 10`
-  ).all().filter((e) => locationTokens(e.location).some((t) => myTokens.has(t))).slice(0, 3);
-
-  // Assemblage : posts (membres + sponsorisés) triés par date, évènements à part.
-  const withReactions = attachReactions([...posts, ...sponsored], req.user.id);
-  const reactionsById = new Map(withReactions.map((p) => [p.id, p]));
-  const items = [
-    ...posts.map((p) => ({ type: 'post', ...reactionsById.get(p.id) })),
-    ...sponsored.map((p) => ({ type: 'sponsored', ...reactionsById.get(p.id) })),
-  ].sort((x, y) => String(y.createdAt).localeCompare(String(x.createdAt)));
-
-  res.json({ events, items });
 });
 
 // -----------------------------------------------------------------------------
 // Les publications d'un animal (mêmes règles de visibilité que son profil)
 // -----------------------------------------------------------------------------
-router.get('/animal/:id', requireAuth, (req, res) => {
-  const id = Number(req.params.id);
-  if (!Number.isInteger(id) || id < 1) {
-    return res.status(400).json({ message: 'Identifiant invalide' });
-  }
-  const animal = db.prepare('SELECT id, owner_id, visibility FROM animals WHERE id = ?').get(id);
-  if (!animal) return res.status(404).json({ message: 'Animal introuvable' });
+router.get('/animal/:id', requireAuth, async (req, res, next) => {
+  try {
+    const id = Number(req.params.id);
+    if (!Number.isInteger(id) || id < 1) {
+      return res.status(400).json({ message: 'Identifiant invalide' });
+    }
+    const animal = await db.prepare('SELECT id, owner_id, visibility FROM animals WHERE id = ?').get(id);
+    if (!animal) return res.status(404).json({ message: 'Animal introuvable' });
 
-  const isOwner = animal.owner_id === req.user.id;
-  const isAdmin = req.user.role === 'admin';
-  const isFriend = Boolean(db.prepare(
-    `SELECT f.id FROM friendships f
-     JOIN animals mine ON mine.id IN (f.requester_animal_id, f.addressee_animal_id)
-     WHERE f.status = 'accepted' AND mine.owner_id = ?
-       AND (f.requester_animal_id = ? OR f.addressee_animal_id = ?)`
-  ).get(req.user.id, id, id));
-  if (!isOwner && !isAdmin && animal.visibility !== 'public' && !isFriend) {
-    return res.status(403).json({ message: 'Ce profil est privé' });
-  }
+    const isOwner = animal.owner_id === req.user.id;
+    const isAdmin = req.user.role === 'admin';
+    const isFriend = Boolean(await db.prepare(
+      `SELECT f.id FROM friendships f
+       JOIN animals mine ON mine.id IN (f.requester_animal_id, f.addressee_animal_id)
+       WHERE f.status = 'accepted' AND mine.owner_id = ?
+         AND (f.requester_animal_id = ? OR f.addressee_animal_id = ?)`
+    ).get(req.user.id, id, id));
+    if (!isOwner && !isAdmin && animal.visibility !== 'public' && !isFriend) {
+      return res.status(403).json({ message: 'Ce profil est privé' });
+    }
 
-  const posts = db.prepare(
-    `SELECT ${POST_FIELDS} ${POST_JOINS} WHERE p.animal_id = ? ORDER BY p.created_at DESC LIMIT 50`
-  ).all(id);
-  res.json(attachReactions(posts, req.user.id));
+    const posts = await db.prepare(
+      `SELECT ${POST_FIELDS} ${POST_JOINS} WHERE p.animal_id = ? ORDER BY p.created_at DESC LIMIT 50`
+    ).all(id);
+    res.json(await attachReactions(posts, req.user.id));
+  } catch (err) {
+    next(err);
+  }
 });
 
 // -----------------------------------------------------------------------------
 // Réactions emoji : poser/changer (upsert) ou retirer sa réaction sur un post
 // -----------------------------------------------------------------------------
-router.post('/:id/react', requireAuth, (req, res) => {
-  const id = Number(req.params.id);
-  if (!Number.isInteger(id) || id < 1) {
-    return res.status(400).json({ message: 'Identifiant invalide' });
-  }
-  const emoji = req.body?.emoji;
-  if (!REACTION_EMOJIS.includes(emoji)) {
-    return res.status(400).json({ message: 'Réaction invalide' });
-  }
-  const post = db.prepare('SELECT id FROM posts WHERE id = ?').get(id);
-  if (!post) return res.status(404).json({ message: 'Publication introuvable' });
+router.post('/:id/react', requireAuth, async (req, res, next) => {
+  try {
+    const id = Number(req.params.id);
+    if (!Number.isInteger(id) || id < 1) {
+      return res.status(400).json({ message: 'Identifiant invalide' });
+    }
+    const emoji = req.body?.emoji;
+    if (!REACTION_EMOJIS.includes(emoji)) {
+      return res.status(400).json({ message: 'Réaction invalide' });
+    }
+    const post = await db.prepare('SELECT id FROM posts WHERE id = ?').get(id);
+    if (!post) return res.status(404).json({ message: 'Publication introuvable' });
 
-  // Une seule réaction par membre et par post : changer d'emoji remplace l'ancienne.
-  db.prepare(
-    `INSERT INTO reactions (post_id, user_id, emoji) VALUES (?, ?, ?)
-     ON CONFLICT(post_id, user_id) DO UPDATE SET emoji = excluded.emoji, created_at = CURRENT_TIMESTAMP`
-  ).run(id, req.user.id, emoji);
-  res.json({ id, myReaction: emoji });
+    // Une seule réaction par membre et par post : changer d'emoji remplace l'ancienne.
+    await db.prepare(
+      `INSERT INTO reactions (post_id, user_id, emoji) VALUES (?, ?, ?)
+       ON CONFLICT(post_id, user_id) DO UPDATE SET emoji = excluded.emoji, created_at = CURRENT_TIMESTAMP`
+    ).run(id, req.user.id, emoji);
+    res.json({ id, myReaction: emoji });
+  } catch (err) {
+    next(err);
+  }
 });
 
-router.delete('/:id/react', requireAuth, (req, res) => {
-  const id = Number(req.params.id);
-  if (!Number.isInteger(id) || id < 1) {
-    return res.status(400).json({ message: 'Identifiant invalide' });
+router.delete('/:id/react', requireAuth, async (req, res, next) => {
+  try {
+    const id = Number(req.params.id);
+    if (!Number.isInteger(id) || id < 1) {
+      return res.status(400).json({ message: 'Identifiant invalide' });
+    }
+    await db.prepare('DELETE FROM reactions WHERE post_id = ? AND user_id = ?').run(id, req.user.id);
+    res.status(204).end();
+  } catch (err) {
+    next(err);
   }
-  db.prepare('DELETE FROM reactions WHERE post_id = ? AND user_id = ?').run(id, req.user.id);
-  res.status(204).end();
 });
 
 // Suppression : propriétaire de l'animal auteur, ou admin.
-router.delete('/:id', requireAuth, (req, res) => {
-  const id = Number(req.params.id);
-  if (!Number.isInteger(id) || id < 1) {
-    return res.status(400).json({ message: 'Identifiant invalide' });
+router.delete('/:id', requireAuth, async (req, res, next) => {
+  try {
+    const id = Number(req.params.id);
+    if (!Number.isInteger(id) || id < 1) {
+      return res.status(400).json({ message: 'Identifiant invalide' });
+    }
+    const post = await db.prepare(
+      `SELECT p.id, a.owner_id AS ownerId FROM posts p
+       LEFT JOIN animals a ON a.id = p.animal_id WHERE p.id = ?`
+    ).get(id);
+    if (!post) return res.status(404).json({ message: 'Publication introuvable' });
+    if (post.ownerId !== req.user.id && req.user.role !== 'admin') {
+      return res.status(403).json({ message: 'Suppression non autorisée' });
+    }
+    await db.prepare('DELETE FROM posts WHERE id = ?').run(id);
+    res.status(204).end();
+  } catch (err) {
+    next(err);
   }
-  const post = db.prepare(
-    `SELECT p.id, a.owner_id AS ownerId FROM posts p
-     LEFT JOIN animals a ON a.id = p.animal_id WHERE p.id = ?`
-  ).get(id);
-  if (!post) return res.status(404).json({ message: 'Publication introuvable' });
-  if (post.ownerId !== req.user.id && req.user.role !== 'admin') {
-    return res.status(403).json({ message: 'Suppression non autorisée' });
-  }
-  db.prepare('DELETE FROM posts WHERE id = ?').run(id);
-  res.status(204).end();
 });
 
 export default router;

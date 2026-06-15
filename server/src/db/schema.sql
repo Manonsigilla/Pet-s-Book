@@ -243,3 +243,10 @@ CREATE INDEX IF NOT EXISTS idx_animals_species  ON animals(species);
 CREATE INDEX IF NOT EXISTS idx_lost_status      ON lost_reports(status);
 CREATE INDEX IF NOT EXISTS idx_lost_approved    ON lost_reports(is_approved);
 CREATE INDEX IF NOT EXISTS idx_events_starts_at ON events(starts_at);
+
+-- Index complémentaires pour les requêtes filtrées par membre (boîte de
+-- réception, non-lus, « ma » réaction) — utiles dès qu'il y a du volume.
+CREATE INDEX IF NOT EXISTS idx_reactions_user   ON reactions(user_id);
+CREATE INDEX IF NOT EXISTS idx_conv_buyer       ON conversations(buyer_id);
+CREATE INDEX IF NOT EXISTS idx_conv_seller      ON conversations(seller_id);
+CREATE INDEX IF NOT EXISTS idx_chatmsg_sender   ON chat_messages(sender_id);

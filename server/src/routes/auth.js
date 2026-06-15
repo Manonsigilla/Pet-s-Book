@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { db } from '../db/database.js';
+import { db } from '../db/index.js';
 import { hashPassword, verifyPassword } from '../lib/password.js';
 import { signToken } from '../lib/jwt.js';
 import { requireAuth } from '../middlewares/auth.js';
@@ -49,13 +49,13 @@ router.post('/register', async (req, res, next) => {
       return res.status(400).json({ message: 'Nom d\'affichage invalide' });
     }
 
-    const exists = db.prepare('SELECT id FROM users WHERE email = ?').get(email);
+    const exists = await db.prepare('SELECT id FROM users WHERE email = ?').get(email);
     if (exists) {
       return res.status(409).json({ message: 'Cet email est déjà utilisé' });
     }
 
     const passwordHash = await hashPassword(password);
-    const result = db
+    const result = await db
       .prepare('INSERT INTO users (email, password_hash, display_name) VALUES (?, ?, ?)')
       .run(email, passwordHash, displayName.trim());
 
@@ -79,7 +79,7 @@ router.post('/login', async (req, res, next) => {
       return res.status(400).json({ message: 'Identifiants invalides' });
     }
 
-    const user = db
+    const user = await db
       .prepare('SELECT id, email, password_hash, display_name, role FROM users WHERE email = ?')
       .get(email);
 
@@ -99,12 +99,16 @@ router.post('/login', async (req, res, next) => {
   }
 });
 
-router.get('/me', requireAuth, (req, res) => {
-  const user = db
-    .prepare('SELECT id, email, display_name, role FROM users WHERE id = ?')
-    .get(req.user.id);
-  if (!user) return res.status(404).json({ message: 'Utilisateur introuvable' });
-  res.json(publicUser(user));
+router.get('/me', requireAuth, async (req, res, next) => {
+  try {
+    const user = await db
+      .prepare('SELECT id, email, display_name, role FROM users WHERE id = ?')
+      .get(req.user.id);
+    if (!user) return res.status(404).json({ message: 'Utilisateur introuvable' });
+    res.json(publicUser(user));
+  } catch (err) {
+    next(err);
+  }
 });
 
 export default router;

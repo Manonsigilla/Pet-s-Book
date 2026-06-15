@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { db } from '../db/database.js';
+import { db } from '../db/index.js';
 import { requireAuth, requireAdmin, attachUser } from '../middlewares/auth.js';
 import { uploadProfilePhoto } from '../lib/upload.js';
 
@@ -20,50 +20,62 @@ const SELECT_FIELDS = `
 
 // Annuaire complet des profils, répertorié par prénom — RÉSERVÉ À L'ADMIN.
 // Les membres découvrent les profils via les copains et les suggestions.
-router.get('/', requireAdmin, (req, res) => {
-  const animals = db.prepare(
-    `SELECT ${SELECT_FIELDS}
-     FROM animals a
-     LEFT JOIN users u ON u.id = a.owner_id
-     ORDER BY a.name COLLATE NOCASE ASC`
-  ).all();
-  res.json(animals);
+router.get('/', requireAdmin, async (req, res, next) => {
+  try {
+    const animals = await db.prepare(
+      `SELECT ${SELECT_FIELDS}
+       FROM animals a
+       LEFT JOIN users u ON u.id = a.owner_id
+       ORDER BY a.name COLLATE NOCASE ASC`
+    ).all();
+    res.json(animals);
+  } catch (err) {
+    next(err);
+  }
 });
 
 // Vitrine publique de l'accueil : 3 profils en avant, informations minimales.
-router.get('/featured', (req, res) => {
-  // Limite optionnelle (1–12) : 3 pour la vitrine d'accueil, davantage pour la
-  // galerie de la page À propos.
-  const limit = Math.min(Math.max(Number(req.query.limit) || 3, 1), 12);
-  const animals = db.prepare(
-    `SELECT a.id, a.name, a.species, a.breed, a.temperament, a.image_url AS imageUrl
-     FROM animals a
-     WHERE a.image_url IS NOT NULL
-     ORDER BY RANDOM() LIMIT ?`
-  ).all(limit);
-  res.json(animals);
+router.get('/featured', async (req, res, next) => {
+  try {
+    // Limite optionnelle (1–12) : 3 pour la vitrine d'accueil, davantage pour la
+    // galerie de la page À propos.
+    const limit = Math.min(Math.max(Number(req.query.limit) || 3, 1), 12);
+    const animals = await db.prepare(
+      `SELECT a.id, a.name, a.species, a.breed, a.temperament, a.image_url AS imageUrl
+       FROM animals a
+       WHERE a.image_url IS NOT NULL
+       ORDER BY RANDOM() LIMIT ?`
+    ).all(limit);
+    res.json(animals);
+  } catch (err) {
+    next(err);
+  }
 });
 
 // Les profils du membre connecté (un compte peut porter plusieurs animaux).
-router.get('/mine', requireAuth, (req, res) => {
-  const animals = db.prepare(
-    `SELECT ${SELECT_FIELDS}
-     FROM animals a
-     LEFT JOIN users u ON u.id = a.owner_id
-     WHERE a.owner_id = ?
-     ORDER BY a.name COLLATE NOCASE ASC`
-  ).all(req.user.id);
-  res.json(animals);
+router.get('/mine', requireAuth, async (req, res, next) => {
+  try {
+    const animals = await db.prepare(
+      `SELECT ${SELECT_FIELDS}
+       FROM animals a
+       LEFT JOIN users u ON u.id = a.owner_id
+       WHERE a.owner_id = ?
+       ORDER BY a.name COLLATE NOCASE ASC`
+    ).all(req.user.id);
+    res.json(animals);
+  } catch (err) {
+    next(err);
+  }
 });
 
 // Un profil n'est visible que par : l'admin, son propriétaire, tout membre
 // connecté si le profil est « public », ou un membre dont l'un des animaux est
 // copain avec lui. Sinon : aperçu minimal (403).
-function canViewAnimal(user, animalId, ownerId, visibility) {
+async function canViewAnimal(user, animalId, ownerId, visibility) {
   if (!user) return false;
   if (user.role === 'admin' || ownerId === user.id) return true;
   if (visibility === 'public') return true;
-  const link = db.prepare(
+  const link = await db.prepare(
     `SELECT f.id
      FROM friendships f
      JOIN animals mine ON mine.id IN (f.requester_animal_id, f.addressee_animal_id)
@@ -74,41 +86,45 @@ function canViewAnimal(user, animalId, ownerId, visibility) {
   return Boolean(link);
 }
 
-router.get('/:id', attachUser, (req, res) => {
-  const id = Number(req.params.id);
-  if (!Number.isInteger(id) || id < 1) {
-    return res.status(400).json({ message: 'Identifiant invalide' });
-  }
-  const animal = db.prepare(
-    `SELECT ${SELECT_FIELDS}
-     FROM animals a
-     LEFT JOIN users u ON u.id = a.owner_id
-     WHERE a.id = ?`
-  ).get(id);
-  if (!animal) return res.status(404).json({ message: 'Animal introuvable' });
+router.get('/:id', attachUser, async (req, res, next) => {
+  try {
+    const id = Number(req.params.id);
+    if (!Number.isInteger(id) || id < 1) {
+      return res.status(400).json({ message: 'Identifiant invalide' });
+    }
+    const animal = await db.prepare(
+      `SELECT ${SELECT_FIELDS}
+       FROM animals a
+       LEFT JOIN users u ON u.id = a.owner_id
+       WHERE a.id = ?`
+    ).get(id);
+    if (!animal) return res.status(404).json({ message: 'Animal introuvable' });
 
-  if (!req.user) {
-    return res.status(401).json({ message: 'Connectez-vous pour découvrir ce profil' });
+    if (!req.user) {
+      return res.status(401).json({ message: 'Connectez-vous pour découvrir ce profil' });
+    }
+    if (!(await canViewAnimal(req.user, animal.id, animal.ownerId, animal.visibility))) {
+      return res.status(403).json({
+        message: 'Ce profil est privé : devenez copains pour le découvrir !',
+        preview: {
+          id: animal.id,
+          name: animal.name,
+          species: animal.species,
+          gender: animal.gender,
+          imageUrl: animal.imageUrl,
+        },
+      });
+    }
+    res.json(animal);
+  } catch (err) {
+    next(err);
   }
-  if (!canViewAnimal(req.user, animal.id, animal.ownerId, animal.visibility)) {
-    return res.status(403).json({
-      message: 'Ce profil est privé : devenez copains pour le découvrir !',
-      preview: {
-        id: animal.id,
-        name: animal.name,
-        species: animal.species,
-        gender: animal.gender,
-        imageUrl: animal.imageUrl,
-      },
-    });
-  }
-  res.json(animal);
 });
 
 // Création d'un profil animal par un membre — multipart (photo de profil + champs).
 // Volet sensibilisation : si non identifié / non stérilisé, la raison est requise.
 router.post('/', requireAuth, (req, res, next) => {
-  uploadProfilePhoto(req, res, (uploadErr) => {
+  uploadProfilePhoto(req, res, async (uploadErr) => {
     if (uploadErr) {
       return res.status(400).json({ message: uploadErr.message || 'Téléversement refusé' });
     }
@@ -137,7 +153,7 @@ router.post('/', requireAuth, (req, res, next) => {
         return res.status(400).json({ message: 'Indiquez la raison pour laquelle l\'animal n\'est pas stérilisé' });
       }
 
-      const result = db.prepare(
+      const result = await db.prepare(
         `INSERT INTO animals
            (owner_id, source, name, species, breed, age, gender, temperament,
             identified, identified_reason, sterilized, sterilized_reason, image_url)
@@ -157,13 +173,13 @@ router.post('/', requireAuth, (req, res, next) => {
 });
 
 // L'utilisateur peut modifier son propre animal ; l'admin peut modifier n'importe lequel.
-router.put('/:id', requireAuth, (req, res, next) => {
+router.put('/:id', requireAuth, async (req, res, next) => {
   try {
     const id = Number(req.params.id);
     if (!Number.isInteger(id) || id < 1) {
       return res.status(400).json({ message: 'Identifiant invalide' });
     }
-    const existing = db.prepare('SELECT owner_id FROM animals WHERE id = ?').get(id);
+    const existing = await db.prepare('SELECT owner_id FROM animals WHERE id = ?').get(id);
     if (!existing) return res.status(404).json({ message: 'Animal introuvable' });
 
     const isOwner = existing.owner_id === req.user.id;
@@ -176,7 +192,7 @@ router.put('/:id', requireAuth, (req, res, next) => {
       name, species, breed, age, gender, color, physicalDesc, temperament, location, imageUrl,
       identified, identifiedReason, sterilized, sterilizedReason,
     } = req.body ?? {};
-    db.prepare(
+    await db.prepare(
       `UPDATE animals
        SET name = COALESCE(?, name),
            species = COALESCE(?, species),
@@ -210,13 +226,13 @@ router.put('/:id', requireAuth, (req, res, next) => {
 });
 
 // Paramètres du profil (visibilité, qui peut demander en copain) — propriétaire only.
-router.put('/:id/settings', requireAuth, (req, res, next) => {
+router.put('/:id/settings', requireAuth, async (req, res, next) => {
   try {
     const id = Number(req.params.id);
     if (!Number.isInteger(id) || id < 1) {
       return res.status(400).json({ message: 'Identifiant invalide' });
     }
-    const existing = db.prepare('SELECT owner_id FROM animals WHERE id = ?').get(id);
+    const existing = await db.prepare('SELECT owner_id FROM animals WHERE id = ?').get(id);
     if (!existing) return res.status(404).json({ message: 'Animal introuvable' });
     if (existing.owner_id !== req.user.id) {
       return res.status(403).json({ message: 'Seul le propriétaire peut modifier les paramètres' });
@@ -230,7 +246,7 @@ router.put('/:id/settings', requireAuth, (req, res, next) => {
       return res.status(400).json({ message: 'Préférence de copinage invalide' });
     }
 
-    db.prepare('UPDATE animals SET visibility = ?, friend_policy = ? WHERE id = ?')
+    await db.prepare('UPDATE animals SET visibility = ?, friend_policy = ? WHERE id = ?')
       .run(visibility, friendPolicy, id);
     res.json({ id, visibility, friendPolicy });
   } catch (err) {
@@ -239,18 +255,22 @@ router.put('/:id/settings', requireAuth, (req, res, next) => {
 });
 
 // Suppression : le propriétaire peut retirer son propre profil ; l'admin modère.
-router.delete('/:id', requireAuth, (req, res) => {
-  const id = Number(req.params.id);
-  if (!Number.isInteger(id) || id < 1) {
-    return res.status(400).json({ message: 'Identifiant invalide' });
+router.delete('/:id', requireAuth, async (req, res, next) => {
+  try {
+    const id = Number(req.params.id);
+    if (!Number.isInteger(id) || id < 1) {
+      return res.status(400).json({ message: 'Identifiant invalide' });
+    }
+    const existing = await db.prepare('SELECT owner_id FROM animals WHERE id = ?').get(id);
+    if (!existing) return res.status(404).json({ message: 'Animal introuvable' });
+    if (existing.owner_id !== req.user.id && req.user.role !== 'admin') {
+      return res.status(403).json({ message: 'Suppression non autorisée' });
+    }
+    await db.prepare('DELETE FROM animals WHERE id = ?').run(id);
+    res.status(204).end();
+  } catch (err) {
+    next(err);
   }
-  const existing = db.prepare('SELECT owner_id FROM animals WHERE id = ?').get(id);
-  if (!existing) return res.status(404).json({ message: 'Animal introuvable' });
-  if (existing.owner_id !== req.user.id && req.user.role !== 'admin') {
-    return res.status(403).json({ message: 'Suppression non autorisée' });
-  }
-  db.prepare('DELETE FROM animals WHERE id = ?').run(id);
-  res.status(204).end();
 });
 
 export default router;

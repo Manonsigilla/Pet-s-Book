@@ -1,6 +1,6 @@
 // Annonces perdus/retrouvés avec workflow d'approbation par un admin.
 import { Router } from 'express';
-import { db } from '../db/database.js';
+import { db } from '../db/index.js';
 import { requireAuth, requireAdmin, attachUser } from '../middlewares/auth.js';
 
 const router = Router();
@@ -18,60 +18,72 @@ const SELECT_FIELDS = `
 // -----------------------------------------------------------------------------
 // Listing public — uniquement les annonces approuvées par un admin
 // -----------------------------------------------------------------------------
-router.get('/', (req, res) => {
-  const rows = db.prepare(
-    `SELECT ${SELECT_FIELDS}
-     FROM lost_reports l
-     LEFT JOIN users u ON u.id = l.reporter_id
-     WHERE l.is_approved = 1
-     ORDER BY l.lost_date DESC, l.id DESC`
-  ).all();
-  res.json(rows);
+router.get('/', async (req, res, next) => {
+  try {
+    const rows = await db.prepare(
+      `SELECT ${SELECT_FIELDS}
+       FROM lost_reports l
+       LEFT JOIN users u ON u.id = l.reporter_id
+       WHERE l.is_approved = 1
+       ORDER BY l.lost_date DESC, l.id DESC`
+    ).all();
+    res.json(rows);
+  } catch (err) {
+    next(err);
+  }
 });
 
 // -----------------------------------------------------------------------------
 // File d'attente admin — uniquement les annonces NON encore approuvées
 // -----------------------------------------------------------------------------
-router.get('/pending', requireAdmin, (req, res) => {
-  const rows = db.prepare(
-    `SELECT ${SELECT_FIELDS}
-     FROM lost_reports l
-     LEFT JOIN users u ON u.id = l.reporter_id
-     WHERE l.is_approved = 0
-     ORDER BY l.created_at ASC`
-  ).all();
-  res.json(rows);
+router.get('/pending', requireAdmin, async (req, res, next) => {
+  try {
+    const rows = await db.prepare(
+      `SELECT ${SELECT_FIELDS}
+       FROM lost_reports l
+       LEFT JOIN users u ON u.id = l.reporter_id
+       WHERE l.is_approved = 0
+       ORDER BY l.created_at ASC`
+    ).all();
+    res.json(rows);
+  } catch (err) {
+    next(err);
+  }
 });
 
 // -----------------------------------------------------------------------------
 // Détail public — restreint aux approuvées sauf si admin
 // -----------------------------------------------------------------------------
-router.get('/:id', attachUser, (req, res) => {
-  const id = Number(req.params.id);
-  if (!Number.isInteger(id) || id < 1) {
-    return res.status(400).json({ message: 'Identifiant invalide' });
+router.get('/:id', attachUser, async (req, res, next) => {
+  try {
+    const id = Number(req.params.id);
+    if (!Number.isInteger(id) || id < 1) {
+      return res.status(400).json({ message: 'Identifiant invalide' });
+    }
+
+    const row = await db.prepare(
+      `SELECT ${SELECT_FIELDS}
+       FROM lost_reports l
+       LEFT JOIN users u ON u.id = l.reporter_id
+       WHERE l.id = ?`
+    ).get(id);
+
+    if (!row) return res.status(404).json({ message: 'Annonce introuvable' });
+
+    const isAdmin = req.user?.role === 'admin';
+    if (!row.isApproved && !isAdmin) {
+      return res.status(404).json({ message: 'Annonce introuvable' });
+    }
+    res.json(row);
+  } catch (err) {
+    next(err);
   }
-
-  const row = db.prepare(
-    `SELECT ${SELECT_FIELDS}
-     FROM lost_reports l
-     LEFT JOIN users u ON u.id = l.reporter_id
-     WHERE l.id = ?`
-  ).get(id);
-
-  if (!row) return res.status(404).json({ message: 'Annonce introuvable' });
-
-  const isAdmin = req.user?.role === 'admin';
-  if (!row.isApproved && !isAdmin) {
-    return res.status(404).json({ message: 'Annonce introuvable' });
-  }
-  res.json(row);
 });
 
 // -----------------------------------------------------------------------------
 // Création par un utilisateur connecté — créée en attente d'approbation
 // -----------------------------------------------------------------------------
-router.post('/', requireAuth, (req, res, next) => {
+router.post('/', requireAuth, async (req, res, next) => {
   try {
     const { animalName, species, description, location, lostDate, status, contact, imageUrl } = req.body ?? {};
 
@@ -95,7 +107,7 @@ router.post('/', requireAuth, (req, res, next) => {
       return res.status(400).json({ message: 'Un contact est requis' });
     }
 
-    const result = db.prepare(
+    const result = await db.prepare(
       `INSERT INTO lost_reports
         (reporter_id, animal_name, species, description, location, lost_date, status, contact, image_url, is_approved)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0)`
@@ -120,28 +132,36 @@ router.post('/', requireAuth, (req, res, next) => {
 // -----------------------------------------------------------------------------
 // Approbation admin
 // -----------------------------------------------------------------------------
-router.post('/:id/approve', requireAdmin, (req, res) => {
-  const id = Number(req.params.id);
-  if (!Number.isInteger(id) || id < 1) {
-    return res.status(400).json({ message: 'Identifiant invalide' });
+router.post('/:id/approve', requireAdmin, async (req, res, next) => {
+  try {
+    const id = Number(req.params.id);
+    if (!Number.isInteger(id) || id < 1) {
+      return res.status(400).json({ message: 'Identifiant invalide' });
+    }
+    const info = await db.prepare(
+      `UPDATE lost_reports
+       SET is_approved = 1, approved_by = ?, approved_at = CURRENT_TIMESTAMP
+       WHERE id = ?`
+    ).run(req.user.id, id);
+    if (info.changes === 0) return res.status(404).json({ message: 'Annonce introuvable' });
+    res.json({ id, isApproved: true });
+  } catch (err) {
+    next(err);
   }
-  const info = db.prepare(
-    `UPDATE lost_reports
-     SET is_approved = 1, approved_by = ?, approved_at = CURRENT_TIMESTAMP
-     WHERE id = ?`
-  ).run(req.user.id, id);
-  if (info.changes === 0) return res.status(404).json({ message: 'Annonce introuvable' });
-  res.json({ id, isApproved: true });
 });
 
-router.post('/:id/reject', requireAdmin, (req, res) => {
-  const id = Number(req.params.id);
-  if (!Number.isInteger(id) || id < 1) {
-    return res.status(400).json({ message: 'Identifiant invalide' });
+router.post('/:id/reject', requireAdmin, async (req, res, next) => {
+  try {
+    const id = Number(req.params.id);
+    if (!Number.isInteger(id) || id < 1) {
+      return res.status(400).json({ message: 'Identifiant invalide' });
+    }
+    const info = await db.prepare('DELETE FROM lost_reports WHERE id = ?').run(id);
+    if (info.changes === 0) return res.status(404).json({ message: 'Annonce introuvable' });
+    res.status(204).end();
+  } catch (err) {
+    next(err);
   }
-  const info = db.prepare('DELETE FROM lost_reports WHERE id = ?').run(id);
-  if (info.changes === 0) return res.status(404).json({ message: 'Annonce introuvable' });
-  res.status(204).end();
 });
 
 export default router;

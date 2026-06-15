@@ -1,7 +1,7 @@
 // Messages publics : formulaires Contact et Suggestions/Plaintes.
 // Création ouverte à tous ; lecture et traitement réservés à l'admin.
 import { Router } from 'express';
-import { db } from '../db/database.js';
+import { db } from '../db/index.js';
 import { requireAdmin } from '../middlewares/auth.js';
 
 const router = Router();
@@ -20,7 +20,7 @@ function isValidEmail(email) {
 }
 
 // Création publique d'un message.
-router.post('/', (req, res, next) => {
+router.post('/', async (req, res, next) => {
   try {
     const { type, name, email, subject, body } = req.body ?? {};
 
@@ -35,7 +35,7 @@ router.post('/', (req, res, next) => {
       return res.status(400).json({ message: 'Le message doit faire au moins 10 caractères' });
     }
 
-    const result = db.prepare(
+    const result = await db.prepare(
       `INSERT INTO messages (type, name, email, subject, body)
        VALUES (?, ?, ?, ?, ?)`
     ).run(
@@ -52,33 +52,45 @@ router.post('/', (req, res, next) => {
 });
 
 // Liste admin, filtrable par type (?type=contact|suggestion|plainte).
-router.get('/', requireAdmin, (req, res) => {
-  const { type } = req.query;
-  const rows = TYPES_ALLOWED.includes(type)
-    ? db.prepare(`SELECT ${SELECT_FIELDS} FROM messages WHERE type = ? ORDER BY created_at DESC`).all(type)
-    : db.prepare(`SELECT ${SELECT_FIELDS} FROM messages ORDER BY created_at DESC`).all();
-  res.json(rows);
+router.get('/', requireAdmin, async (req, res, next) => {
+  try {
+    const { type } = req.query;
+    const rows = TYPES_ALLOWED.includes(type)
+      ? await db.prepare(`SELECT ${SELECT_FIELDS} FROM messages WHERE type = ? ORDER BY created_at DESC`).all(type)
+      : await db.prepare(`SELECT ${SELECT_FIELDS} FROM messages ORDER BY created_at DESC`).all();
+    res.json(rows);
+  } catch (err) {
+    next(err);
+  }
 });
 
 // Marque un message comme traité.
-router.post('/:id/handle', requireAdmin, (req, res) => {
-  const id = Number(req.params.id);
-  if (!Number.isInteger(id) || id < 1) {
-    return res.status(400).json({ message: 'Identifiant invalide' });
+router.post('/:id/handle', requireAdmin, async (req, res, next) => {
+  try {
+    const id = Number(req.params.id);
+    if (!Number.isInteger(id) || id < 1) {
+      return res.status(400).json({ message: 'Identifiant invalide' });
+    }
+    const info = await db.prepare('UPDATE messages SET is_handled = 1 WHERE id = ?').run(id);
+    if (info.changes === 0) return res.status(404).json({ message: 'Message introuvable' });
+    res.json({ id, isHandled: true });
+  } catch (err) {
+    next(err);
   }
-  const info = db.prepare('UPDATE messages SET is_handled = 1 WHERE id = ?').run(id);
-  if (info.changes === 0) return res.status(404).json({ message: 'Message introuvable' });
-  res.json({ id, isHandled: true });
 });
 
-router.delete('/:id', requireAdmin, (req, res) => {
-  const id = Number(req.params.id);
-  if (!Number.isInteger(id) || id < 1) {
-    return res.status(400).json({ message: 'Identifiant invalide' });
+router.delete('/:id', requireAdmin, async (req, res, next) => {
+  try {
+    const id = Number(req.params.id);
+    if (!Number.isInteger(id) || id < 1) {
+      return res.status(400).json({ message: 'Identifiant invalide' });
+    }
+    const info = await db.prepare('DELETE FROM messages WHERE id = ?').run(id);
+    if (info.changes === 0) return res.status(404).json({ message: 'Message introuvable' });
+    res.status(204).end();
+  } catch (err) {
+    next(err);
   }
-  const info = db.prepare('DELETE FROM messages WHERE id = ?').run(id);
-  if (info.changes === 0) return res.status(404).json({ message: 'Message introuvable' });
-  res.status(204).end();
 });
 
 export default router;

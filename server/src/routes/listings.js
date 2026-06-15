@@ -3,7 +3,7 @@
 import { Router } from 'express';
 import { unlink } from 'node:fs/promises';
 import { resolve, basename } from 'node:path';
-import { db } from '../db/database.js';
+import { db } from '../db/index.js';
 import { requireAuth } from '../middlewares/auth.js';
 import { uploadListingPhotos, UPLOAD_DIR } from '../lib/upload.js';
 
@@ -28,11 +28,11 @@ const LISTING_JOINS = `
   LEFT JOIN pages pg ON pg.id = l.seller_page_id
 `;
 
-function attachImages(listings) {
+async function attachImages(listings) {
   if (listings.length === 0) return listings;
   const ids = listings.map((l) => l.id);
   const placeholders = ids.map(() => '?').join(',');
-  const images = db.prepare(
+  const images = await db.prepare(
     `SELECT listing_id AS listingId, url FROM listing_images
      WHERE listing_id IN (${placeholders}) ORDER BY position ASC`
   ).all(...ids);
@@ -47,49 +47,61 @@ function attachImages(listings) {
 // -----------------------------------------------------------------------------
 // Listing public — annonces actives ou réservées (les vendues sont masquées)
 // -----------------------------------------------------------------------------
-router.get('/', (req, res) => {
-  const { category, q } = req.query;
-  let sql = `SELECT ${SELECT_FIELDS} ${LISTING_JOINS} WHERE l.status != 'sold'`;
-  const params = [];
-  if (CATEGORIES.includes(category)) {
-    sql += ' AND l.category = ?';
-    params.push(category);
+router.get('/', async (req, res, next) => {
+  try {
+    const { category, q } = req.query;
+    let sql = `SELECT ${SELECT_FIELDS} ${LISTING_JOINS} WHERE l.status != 'sold'`;
+    const params = [];
+    if (CATEGORIES.includes(category)) {
+      sql += ' AND l.category = ?';
+      params.push(category);
+    }
+    if (typeof q === 'string' && q.trim()) {
+      sql += ' AND (l.title LIKE ? OR l.description LIKE ? OR l.brand LIKE ?)';
+      const like = `%${q.trim()}%`;
+      params.push(like, like, like);
+    }
+    sql += ' ORDER BY l.created_at DESC';
+    res.json(await attachImages(await db.prepare(sql).all(...params)));
+  } catch (err) {
+    next(err);
   }
-  if (typeof q === 'string' && q.trim()) {
-    sql += ' AND (l.title LIKE ? OR l.description LIKE ? OR l.brand LIKE ?)';
-    const like = `%${q.trim()}%`;
-    params.push(like, like, like);
-  }
-  sql += ' ORDER BY l.created_at DESC';
-  res.json(attachImages(db.prepare(sql).all(...params)));
 });
 
 // Mes annonces (toutes, y compris vendues) — pour « Gérer mes ventes ».
-router.get('/mine', requireAuth, (req, res) => {
-  const rows = db.prepare(
-    `SELECT ${SELECT_FIELDS} ${LISTING_JOINS}
-     WHERE l.seller_id = ? ORDER BY l.created_at DESC`
-  ).all(req.user.id);
-  res.json(attachImages(rows));
+router.get('/mine', requireAuth, async (req, res, next) => {
+  try {
+    const rows = await db.prepare(
+      `SELECT ${SELECT_FIELDS} ${LISTING_JOINS}
+       WHERE l.seller_id = ? ORDER BY l.created_at DESC`
+    ).all(req.user.id);
+    res.json(await attachImages(rows));
+  } catch (err) {
+    next(err);
+  }
 });
 
-router.get('/:id', (req, res) => {
-  const id = Number(req.params.id);
-  if (!Number.isInteger(id) || id < 1) {
-    return res.status(400).json({ message: 'Identifiant invalide' });
+router.get('/:id', async (req, res, next) => {
+  try {
+    const id = Number(req.params.id);
+    if (!Number.isInteger(id) || id < 1) {
+      return res.status(400).json({ message: 'Identifiant invalide' });
+    }
+    const listing = await db.prepare(
+      `SELECT ${SELECT_FIELDS} ${LISTING_JOINS} WHERE l.id = ?`
+    ).get(id);
+    if (!listing) return res.status(404).json({ message: 'Annonce introuvable' });
+    res.json((await attachImages([listing]))[0]);
+  } catch (err) {
+    next(err);
   }
-  const listing = db.prepare(
-    `SELECT ${SELECT_FIELDS} ${LISTING_JOINS} WHERE l.id = ?`
-  ).get(id);
-  if (!listing) return res.status(404).json({ message: 'Annonce introuvable' });
-  res.json(attachImages([listing])[0]);
 });
 
 // -----------------------------------------------------------------------------
 // Création — multipart (champs + photos), réservée aux connectés
 // -----------------------------------------------------------------------------
 router.post('/', requireAuth, (req, res, next) => {
-  uploadListingPhotos(req, res, (uploadErr) => {
+  uploadListingPhotos(req, res, async (uploadErr) => {
     if (uploadErr) {
       return res.status(400).json({ message: uploadErr.message || 'Téléversement refusé' });
     }
@@ -116,7 +128,7 @@ router.post('/', requireAuth, (req, res, next) => {
         return res.status(400).json({ message: 'Ajoutez au moins une photo' });
       }
 
-      const result = db.prepare(
+      const result = await db.prepare(
         `INSERT INTO listings (seller_id, title, description, category, brand, condition, price_cents)
          VALUES (?, ?, ?, ?, ?, ?, ?)`
       ).run(
@@ -128,9 +140,9 @@ router.post('/', requireAuth, (req, res, next) => {
       const insertImage = db.prepare(
         'INSERT INTO listing_images (listing_id, url, position) VALUES (?, ?, ?)'
       );
-      req.files.forEach((file, index) => {
-        insertImage.run(result.lastInsertRowid, `/uploads/${file.filename}`, index);
-      });
+      for (const [index, file] of req.files.entries()) {
+        await insertImage.run(result.lastInsertRowid, `/uploads/${file.filename}`, index);
+      }
 
       res.status(201).json({ id: result.lastInsertRowid });
     } catch (err) {
@@ -148,12 +160,12 @@ router.delete('/:id', requireAuth, async (req, res, next) => {
     if (!Number.isInteger(id) || id < 1) {
       return res.status(400).json({ message: 'Identifiant invalide' });
     }
-    const listing = db.prepare('SELECT seller_id, status FROM listings WHERE id = ?').get(id);
+    const listing = await db.prepare('SELECT seller_id, status FROM listings WHERE id = ?').get(id);
     if (!listing) return res.status(404).json({ message: 'Annonce introuvable' });
     if (listing.seller_id !== req.user.id && req.user.role !== 'admin') {
       return res.status(403).json({ message: 'Suppression non autorisée' });
     }
-    const activeOrder = db.prepare(
+    const activeOrder = await db.prepare(
       `SELECT id FROM orders WHERE listing_id = ? AND status IN ('paid', 'shipped')`
     ).get(id);
     if (activeOrder) {
@@ -161,8 +173,8 @@ router.delete('/:id', requireAuth, async (req, res, next) => {
     }
 
     // Supprime les fichiers photo du disque (best-effort), puis l'annonce (cascade).
-    const images = db.prepare('SELECT url FROM listing_images WHERE listing_id = ?').all(id);
-    db.prepare('DELETE FROM listings WHERE id = ?').run(id);
+    const images = await db.prepare('SELECT url FROM listing_images WHERE listing_id = ?').all(id);
+    await db.prepare('DELETE FROM listings WHERE id = ?').run(id);
     for (const { url } of images) {
       if (url.startsWith('/uploads/')) {
         await unlink(resolve(UPLOAD_DIR, basename(url))).catch(() => {});
