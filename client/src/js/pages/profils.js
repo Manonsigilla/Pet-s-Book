@@ -13,7 +13,7 @@ if (!auth.isAuthenticated()) {
 }
 
 // Pour la grille RNCP : démonstration de fetch async, manipulation DOM,
-// événements (input, click) et timers (debounce).
+// évènements (input, click) et timers (debounce).
 
 const ESPECES_CONNUES = new Set(['chat', 'chien', 'lapin', 'oiseau']);
 

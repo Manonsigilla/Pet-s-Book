@@ -180,7 +180,7 @@ function renderMessages(messages) {
 }
 
 // -----------------------------------------------------------------------------
-// Gestionnaires d'actions — délégation d'événements
+// Gestionnaires d'actions — délégation d'évènements
 // -----------------------------------------------------------------------------
 async function handleAction(target) {
   const action = target.dataset.action;

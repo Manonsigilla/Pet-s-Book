@@ -45,7 +45,7 @@
     box-shadow: $shadow-md;
   }
 
-  // Événements passés : visuellement atténués
+  // Évènements passés : visuellement atténués
   &--past {
     opacity: 0.7;
   }
@@ -102,5 +102,322 @@
   &__text {
     color: $color-text;
     @include line-clamp(4);
+  }
+
+  &__attendees {
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+    margin-top: auto;            // colle le compteur au bas de la carte
+    padding-top: $space-2;
+    font-size: $font-size-sm;
+    color: $color-text-muted;
+  }
+
+  // Carte cliquable : ouvre la modale de détail
+  &--clickable {
+    cursor: pointer;
+
+    &:focus-visible {
+      outline: 3px solid $color-brand-medium;
+      outline-offset: 2px;
+    }
+  }
+
+  &__badge--registered {
+    background-color: $color-brand-dark;
+    color: $color-text-inverse;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Modale de détail d'un évènement
+// -----------------------------------------------------------------------------
+.event-modal {
+  position: fixed;
+  inset: 0;
+  z-index: $z-modal;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $space-4;
+
+  &[hidden] {
+    display: none;
+  }
+
+  &__backdrop {
+    position: absolute;
+    inset: 0;
+    background-color: rgba($color-brand-dark, 0.55);
+  }
+
+  &__dialog {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 32rem;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: $space-5;
+    background-color: $color-surface;
+    border-radius: $radius-md;
+    box-shadow: $shadow-lg;
+  }
+
+  &__close {
+    @include button-reset;
+    position: absolute;
+    top: $space-3;
+    right: $space-3;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: $radius-full;
+    font-size: $font-size-lg;
+    color: $color-brand-dark;
+    transition: background-color $transition-base;
+
+    &:hover,
+    &:focus-visible {
+      background-color: rgba($color-brand-dark, 0.08);
+    }
+  }
+
+  &__media {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border-radius: $radius-md;
+    background-color: $color-brand-light;
+  }
+
+  &__title {
+    margin-top: $space-4;
+    font-size: $font-size-xl;
+    color: $color-brand-dark;
+  }
+
+  &__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-1 $space-3;
+    margin-top: $space-2;
+    font-size: $font-size-sm;
+    color: $color-text-muted;
+
+    time {
+      font-weight: $font-weight-medium;
+      color: $color-brand-medium;
+    }
+  }
+
+  &__attendees {
+    margin-top: $space-2;
+    font-size: $font-size-sm;
+    color: $color-text-muted;
+  }
+
+  &__registered {
+    color: $color-brand-dark;
+  }
+
+  &__text {
+    margin-top: $space-3;
+    color: $color-text;
+    line-height: $line-height-base;
+    white-space: pre-line;
+  }
+
+  &__actions {
+    margin-top: $space-5;
+  }
+
+  &__note {
+    font-size: $font-size-sm;
+    color: $color-text-muted;
+    text-align: center;
+  }
+
+  &__error {
+    margin-top: $space-2;
+    font-size: $font-size-sm;
+    color: $color-danger;
+    text-align: center;
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Avis sur un évènement (note + commentaires)
+// -----------------------------------------------------------------------------
+.stars {
+  color: $color-warning;
+  white-space: nowrap;
+}
+
+.event-card__rating {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  font-size: $font-size-sm;
+  color: $color-text-muted;
+}
+
+.event-reviews {
+  margin-top: $space-5;
+  padding-top: $space-5;
+  border-top: $border-width solid $color-brand-light;
+
+  &__title {
+    font-size: $font-size-lg;
+    color: $color-brand-dark;
+  }
+
+  &__summary {
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+    margin-top: $space-2;
+    color: $color-text-muted;
+
+    .stars { font-size: $font-size-md; }
+    strong { color: $color-brand-dark; }
+  }
+
+  &__empty,
+  &__loading,
+  &__note {
+    margin-top: $space-2;
+    font-size: $font-size-sm;
+    color: $color-text-muted;
+  }
+
+  &__list {
+    list-style: none;
+    margin: $space-4 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: $space-4;
+  }
+
+  &__form {
+    margin-top: $space-5;
+  }
+
+  &__warning {
+    margin-top: $space-2;
+    font-size: $font-size-sm;
+    color: $color-danger;
+  }
+}
+
+.event-review {
+  &__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: $space-1 $space-3;
+    font-size: $font-size-sm;
+  }
+
+  &__author {
+    font-weight: $font-weight-medium;
+    color: $color-brand-dark;
+  }
+
+  time {
+    color: $color-text-muted;
+  }
+
+  &__comment {
+    margin-top: $space-1;
+    color: $color-text;
+    white-space: pre-line;
+  }
+}
+
+// Formulaire d'avis : note en étoiles cliquables + commentaire facultatif
+.review-form {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+
+  &__stars {
+    margin: 0;
+    padding: 0;
+    border: 0;
+
+    legend {
+      margin-bottom: $space-1;
+      font-size: $font-size-sm;
+      font-weight: $font-weight-medium;
+      color: $color-brand-dark;
+    }
+  }
+
+  &__label {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: $color-brand-dark;
+  }
+
+  &__comment {
+    width: 100%;
+    padding: $space-2 $space-3;
+    font-family: $font-body;
+    font-size: $font-size-md;
+    color: $color-text;
+    border: $border-width solid $color-brand-light;
+    border-radius: $radius-md;
+    resize: vertical;
+
+    &:focus-visible {
+      outline: 2px solid $color-brand-medium;
+      outline-offset: 1px;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-3;
+  }
+}
+
+// Astuce « row-reverse + ~ » : étoiles en DOM 5→1, affichées 1→5, remplies
+// au survol et à la sélection (de la gauche jusqu'à l'étoile pointée).
+.star-input {
+  display: inline-flex;
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+
+  input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+  }
+
+  label {
+    padding: 0 $space-1;
+    font-size: $font-size-xl;
+    color: $color-brand-light;          // étoile vide
+    cursor: pointer;
+    transition: color $transition-fast;
+  }
+
+  input:checked ~ label,
+  label:hover,
+  label:hover ~ label {
+    color: $color-warning;              // étoile pleine
+  }
+
+  input:focus-visible + label {
+    outline: 2px solid $color-brand-medium;
+    outline-offset: 2px;
+    border-radius: $radius-sm;
   }
 }

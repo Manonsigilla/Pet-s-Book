@@ -76,7 +76,7 @@ async function loadAnimals() {
   }
 }
 
-// Prochain événement — remplace le bloc statique de l'accueil par la donnée réelle.
+// Prochain évènement — remplace le bloc statique de l'accueil par la donnée réelle.
 const dateFmt = new Intl.DateTimeFormat('fr-BE', { dateStyle: 'long' });
 const timeFmt = new Intl.DateTimeFormat('fr-BE', { hour: '2-digit', minute: '2-digit' });
 
@@ -92,12 +92,12 @@ async function loadNextEvent() {
   try {
     const upcoming = await api.get('/events/upcoming');
     const ev = upcoming[0];
-    if (!ev) return; // pas d'événement à venir : on garde le contenu statique
+    if (!ev) return; // pas d'évènement à venir : on garde le contenu statique
     container.innerHTML = `
       <img
         class="event-feature__media"
         src="${escapeHtml(ev.imageUrl || '/placeholder-pet.svg')}"
-        alt="Illustration de l'événement ${escapeHtml(ev.title)}"
+        alt="Illustration de l'évènement ${escapeHtml(ev.title)}"
         loading="lazy"
       />
       <div class="event-feature__body">
@@ -106,7 +106,7 @@ async function loadNextEvent() {
           <time datetime="${escapeHtml(ev.startsAt)}">${formatEventDate(ev.startsAt)}</time> · ${escapeHtml(ev.location)}
         </p>
         <p>${escapeHtml(ev.description)}</p>
-        <a class="btn btn--ghost" href="/evenements.html">Voir tous les événements</a>
+        <a class="btn btn--ghost" href="/evenements.html">Voir tous les évènements</a>
       </div>
     `;
   } catch {

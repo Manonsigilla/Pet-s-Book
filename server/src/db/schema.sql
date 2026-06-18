@@ -76,6 +76,35 @@ CREATE TABLE IF NOT EXISTS events (
   created_at  DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Inscriptions des membres aux évènements : une seule inscription par membre et
+-- par évènement (contrainte UNIQUE). Sert à « Mes évènements » et au compteur
+-- d'inscrits affiché sur l'agenda.
+CREATE TABLE IF NOT EXISTS event_registrations (
+  id         INTEGER PRIMARY KEY AUTOINCREMENT,
+  event_id   INTEGER NOT NULL REFERENCES events(id) ON DELETE CASCADE,
+  user_id    INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE (event_id, user_id)
+);
+CREATE INDEX IF NOT EXISTS idx_evreg_event ON event_registrations(event_id);
+CREATE INDEX IF NOT EXISTS idx_evreg_user  ON event_registrations(user_id);
+
+-- Avis sur les évènements passés : note 1–5 (obligatoire) + commentaire facultatif.
+-- Un seul avis par membre et par évènement (modifiable). Permet de juger un
+-- évènement récurrent avant d'y participer (utile s'il devient payant).
+CREATE TABLE IF NOT EXISTS event_reviews (
+  id         INTEGER PRIMARY KEY AUTOINCREMENT,
+  event_id   INTEGER NOT NULL REFERENCES events(id) ON DELETE CASCADE,
+  user_id    INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  rating     INTEGER NOT NULL CHECK (rating BETWEEN 1 AND 5),
+  comment    TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE (event_id, user_id)
+);
+CREATE INDEX IF NOT EXISTS idx_evreview_event ON event_reviews(event_id);
+CREATE INDEX IF NOT EXISTS idx_evreview_user  ON event_reviews(user_id);
+
 CREATE TABLE IF NOT EXISTS products (
   id          INTEGER PRIMARY KEY AUTOINCREMENT,
   name        TEXT NOT NULL,
