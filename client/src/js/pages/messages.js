@@ -4,6 +4,7 @@ import '../main.js';
 import { api } from '../api.js';
 import { auth } from '../auth.js';
 import { escapeHtml } from '../shop-view.js';
+import { showError } from '../error-display.js';
 
 if (!auth.isAuthenticated()) {
   window.location.replace(`/login.html?redirect=${encodeURIComponent('/messages.html')}`);
@@ -55,7 +56,7 @@ function renderInbox() {
       ${conversations.map((c) => `
         <li>
           <button type="button" class="inbox__item${c.id === openId ? ' is-active' : ''}" data-id="${c.id}">
-            <img class="inbox__thumb" src="${escapeHtml(c.listingImage || '/placeholder-pet.svg')}" alt="" />
+            <img class="inbox__thumb" src="${escapeHtml(c.listingImage || '/placeholder-pet.svg')}" alt="" loading="lazy" decoding="async" />
             <span class="inbox__text">
               <span class="inbox__name">${escapeHtml(c.otherName)}
                 ${c.unreadCount > 0 ? `<span class="inbox__unread">${c.unreadCount}</span>` : ''}
@@ -149,7 +150,7 @@ dom.composer.addEventListener('submit', async (event) => {
     await openConversation(openId, { silent: true });
     loadInbox();
   } catch (err) {
-    alert(`Erreur : ${err.message}`);
+    showError(dom.input, `Erreur : ${err.message}`);
   } finally {
     dom.send.disabled = false;
     dom.input.focus();

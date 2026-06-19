@@ -2,6 +2,7 @@
 import '../main.js';
 import { api } from '../api.js';
 import { auth } from '../auth.js';
+import { responsiveImage } from '../animal-view.js';
 
 const state = {
   reports: [],
@@ -72,7 +73,7 @@ function applyFilters() {
 
   const cards = filtered.map((r) => `
     <article class="lost-card">
-      <img class="lost-card__media" src="${escapeHtml(r.imageUrl || '/placeholder-pet.svg')}" alt="" loading="lazy" />
+      ${responsiveImage(r.imageUrl || '/placeholder-pet.svg', '', 'lost-card__media')}
       <div class="lost-card__body">
         <span class="lost-card__badge lost-card__badge--${escapeHtml(r.status)}">${escapeHtml(statusLabel(r.status))}</span>
         <h2 class="lost-card__title">${escapeHtml(r.animalName)}</h2>

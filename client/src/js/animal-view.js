@@ -90,6 +90,35 @@ export function gaugeHtml(animal) {
   `;
 }
 
+// Génère une balise <picture> (AVIF/WebP) pour les images statiques sous /images/.
+// Pour les autres (uploads, externes, SVG), garde un <img> avec lazy loading.
+// Le paramètre `dim` est optionnel : "WxH" pour ajouter width/height et éviter le CLS.
+export function responsiveImage(src, alt, className = '', dim = '', lazy = true) {
+  const url = src || '/placeholder-pet.svg';
+  const escapedSrc = escapeHtml(url);
+  const escapedAlt = escapeHtml(alt);
+  const cls = className ? ` class="${className}"` : '';
+  const loading = lazy ? ' loading="lazy"' : '';
+  let dims = '';
+  if (dim) {
+    const [w, h] = dim.split('x');
+    dims = ` width="${w}" height="${h}"`;
+  }
+
+  // SVG, placeholder, uploads, URLs externes → <img> simple
+  if (url.endsWith('.svg') || !url.startsWith('/images/')) {
+    return `<img src="${escapedSrc}" alt="${escapedAlt}"${cls}${dims}${loading} />`;
+  }
+
+  // Images statiques converties en WebP/AVIF → <picture>
+  const base = url.replace(/\.(jpg|jpeg|png)$/i, '');
+  return `<picture>
+    <source srcset="${base}.avif" type="image/avif" />
+    <source srcset="${base}.webp" type="image/webp" />
+    <img src="${escapedSrc}" alt="${escapedAlt}"${cls}${dims}${loading} />
+  </picture>`;
+}
+
 // Étiquettes HTML : volet sensibilisation — identification et stérilisation.
 // Vert quand l'animal est protégé, neutre sinon (le détail explique pourquoi).
 export function tagsHtml(animal) {

@@ -72,7 +72,7 @@ export function listingCardHtml(listing) {
   const img = listing.images?.[0] || '/placeholder-pet.svg';
   return `
     <a class="shop-card" href="/annonce.html?id=${listing.id}">
-      <img class="shop-card__media" src="${escapeHtml(img)}" alt="${escapeHtml(listing.title)}" loading="lazy" />
+      <img class="shop-card__media" src="${escapeHtml(img)}" alt="${escapeHtml(listing.title)}" loading="lazy" decoding="async" />
       <div class="shop-card__body">
         <div class="shop-card__badges">
           ${proBadge(listing.isPro)}

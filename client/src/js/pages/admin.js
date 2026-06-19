@@ -3,6 +3,8 @@
 import '../main.js';
 import { api } from '../api.js';
 import { auth } from '../auth.js';
+import { responsiveImage } from '../animal-view.js';
+import { showError, showConfirm } from '../error-display.js';
 
 const pendingList = document.getElementById('pending-list');
 const pendingCount = document.getElementById('pending-count');
@@ -64,11 +66,7 @@ function renderPending(reports) {
     <ul class="admin-list">
       ${reports.map((r) => `
         <li class="admin-item" data-id="${r.id}">
-          <img
-            class="admin-item__media"
-            src="${escapeHtml(r.imageUrl || '/placeholder-pet.svg')}"
-            alt=""
-          />
+          ${responsiveImage(r.imageUrl || '/placeholder-pet.svg', '', 'admin-item__media', '', true)}
           <div class="admin-item__info">
             <h3 class="admin-item__title">${escapeHtml(r.animalName)}</h3>
             <p class="admin-item__meta">
@@ -113,11 +111,7 @@ function renderAnimals(animals) {
     <ul class="admin-list">
       ${animals.map((a) => `
         <li class="admin-item" data-id="${a.id}">
-          <img
-            class="admin-item__media"
-            src="${escapeHtml(a.imageUrl || '/placeholder-pet.svg')}"
-            alt=""
-          />
+          ${responsiveImage(a.imageUrl || '/placeholder-pet.svg', '', 'admin-item__media', '', true)}
           <div class="admin-item__info">
             <h3 class="admin-item__title">${escapeHtml(a.name)}</h3>
             <p class="admin-item__meta">
@@ -203,7 +197,7 @@ async function handleAction(target) {
       await api.post(`/lost/${id}/approve`);
       await loadPending();
     } else if (action === 'reject') {
-      if (!confirm('Supprimer définitivement cette annonce ?')) {
+      if (!await showConfirm('Supprimer définitivement cette annonce ?', 'Supprimer')) {
         target.disabled = false;
         target.textContent = originalText;
         return;
@@ -211,7 +205,7 @@ async function handleAction(target) {
       await api.post(`/lost/${id}/reject`);
       await loadPending();
     } else if (action === 'delete-animal') {
-      if (!confirm('Supprimer définitivement ce profil ?')) {
+      if (!await showConfirm('Supprimer définitivement ce profil ?', 'Supprimer')) {
         target.disabled = false;
         target.textContent = originalText;
         return;
@@ -222,7 +216,7 @@ async function handleAction(target) {
       await api.post(`/messages/${id}/handle`);
       await loadMessages();
     } else if (action === 'delete-message') {
-      if (!confirm('Supprimer définitivement ce message ?')) {
+      if (!await showConfirm('Supprimer définitivement ce message ?', 'Supprimer')) {
         target.disabled = false;
         target.textContent = originalText;
         return;
@@ -231,13 +225,13 @@ async function handleAction(target) {
       await loadMessages();
     }
   } catch (err) {
-    alert(`Erreur : ${err.message}`);
+    showError(target, `Erreur : ${err.message}`);
     target.disabled = false;
     target.textContent = originalText;
   }
 }
 
-document.addEventListener('click', (event) => {
+document.addEventListener('click', async (event) => {
   const target = event.target.closest('button[data-action]');
   if (target) handleAction(target);
 });

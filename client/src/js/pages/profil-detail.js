@@ -4,7 +4,7 @@
 import '../main.js';
 import { api } from '../api.js';
 import { auth } from '../auth.js';
-import { escapeHtml, speciesLine, tagsHtml, sourceLabel, gaugeHtml, copainLabel, copainWord } from '../animal-view.js';
+import { escapeHtml, speciesLine, tagsHtml, sourceLabel, gaugeHtml, copainLabel, copainWord, responsiveImage } from '../animal-view.js';
 import { reactionBarHtml, bindReactions } from '../reactions.js';
 
 const container = document.getElementById('profil-detail');
@@ -61,7 +61,7 @@ async function renderPrivate(preview) {
 
   renderState(`
     <div class="profil-prive">
-      <img class="profil-prive__media" src="${escapeHtml(preview.imageUrl || '/placeholder-pet.svg')}" alt="" />
+      ${responsiveImage(preview.imageUrl || '/placeholder-pet.svg', '', 'profil-prive__media', '', false)}
       <h1>${escapeHtml(preview.name)}</h1>
       <p class="profil-prive__meta">${escapeHtml(preview.species)}</p>
       <p><i class="fa-solid fa-lock" aria-hidden="true"></i> Ce profil est privé : seuls ses copains et copines peuvent le découvrir.</p>
@@ -102,11 +102,7 @@ function renderAnimal(animal) {
 
   renderState(`
     <article class="profil-detail">
-      <img
-        class="profil-detail__media"
-        src="${escapeHtml(animal.imageUrl || '/placeholder-pet.svg')}"
-        alt="Photo de ${escapeHtml(animal.name)}"
-      />
+      ${responsiveImage(animal.imageUrl || '/placeholder-pet.svg', `Photo de ${escapeHtml(animal.name)}`, 'profil-detail__media', '', false)}
       <div class="profil-detail__info">
         ${tagsHtml(animal)}
         <h1>${escapeHtml(animal.name)}</h1>
@@ -147,7 +143,7 @@ async function loadPosts(animalId) {
       <article class="post-card">
         <p class="post-card__meta">${postTimeFmt.format(new Date(String(p.createdAt).replace(' ', 'T')))}</p>
         <p class="post-card__body">${escapeHtml(p.body)}</p>
-        ${p.imageUrl ? `<img class="post-card__media" src="${escapeHtml(p.imageUrl)}" alt="" loading="lazy" />` : ''}
+        ${p.imageUrl ? responsiveImage(p.imageUrl, '', 'post-card__media') : ''}
         ${reactionBarHtml(p)}
       </article>
     `).join('');

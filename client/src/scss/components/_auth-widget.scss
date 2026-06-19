@@ -183,6 +183,52 @@
   }
 }
 
+// =============================================================================
+// Dialogue de confirmation accessible (error-display.js) + erreur temporaire
+// =============================================================================
+.confirm-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  animation: fade-in 0.15s ease-out;
+}
+
+.confirm-dialog {
+  background-color: $color-surface;
+  border-radius: $radius-lg;
+  padding: $space-6;
+  max-width: 28rem;
+  width: 90%;
+  box-shadow: $shadow-lg;
+  text-align: center;
+
+  p {
+    margin-bottom: $space-5;
+    font-size: $font-size-md;
+    line-height: 1.6;
+    color: $color-text;
+  }
+
+  &__actions {
+    display: flex;
+    gap: $space-3;
+    justify-content: center;
+  }
+}
+
+.error-display {
+  margin-top: $space-3;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
 // Badge de messages non lus à côté du lien Messages.
 .auth-widget__badge {
   display: inline-flex;

@@ -4,7 +4,7 @@
 import '../main.js';
 import { api } from '../api.js';
 import { auth } from '../auth.js';
-import { escapeHtml, speciesLine, describe, tagsHtml } from '../animal-view.js';
+import { escapeHtml, speciesLine, describe, tagsHtml, responsiveImage } from '../animal-view.js';
 
 if (!auth.isAuthenticated()) {
   window.location.replace(`/login.html?redirect=${encodeURIComponent('/profils.html')}`);
@@ -78,12 +78,7 @@ function renderAnimals(animals) {
     const meta = [speciesLine(animal), animal.age].filter(Boolean).join(' · ');
     return `
     <article class="card">
-      <img
-        class="card__media"
-        src="${escapeHtml(animal.imageUrl || '/placeholder-pet.svg')}"
-        alt="Photo de ${escapeHtml(animal.name)}"
-        loading="lazy"
-      />
+      ${responsiveImage(animal.imageUrl || '/placeholder-pet.svg', `Photo de ${escapeHtml(animal.name)}`, 'card__media')}
       <div class="card__body">
         ${tagsHtml(animal)}
         <h2 class="card__title">${escapeHtml(animal.name)}</h2>

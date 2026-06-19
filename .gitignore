@@ -21,4 +21,11 @@ CREDENTIALS.local.md
 # Documentation locale (contient des identifiants de test) — NE JAMAIS commiter
 document/
 
+# Fichiers temporaires PowerPoint / LibreOffice
+presentation/
+**/~$*.pptx
+
+# Guide du code généré automatiquement
+GUIDE-DU-CODE.md
+
 

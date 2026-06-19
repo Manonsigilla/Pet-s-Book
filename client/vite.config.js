@@ -25,6 +25,7 @@ const pages = {
   suggestions:     resolve(__dirname, 'suggestions-plaintes.html'),
   mentionsLegales: resolve(__dirname, 'mentions-legales.html'),
   conditionsGenerales: resolve(__dirname, 'conditions-generales.html'),
+  page404:         resolve(__dirname, '404.html'),
 };
 
 export default defineConfig({

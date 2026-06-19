@@ -2,7 +2,8 @@
 import '../main.js';
 import { api } from '../api.js';
 import { auth } from '../auth.js';
-import { escapeHtml, speciesLine, tagsHtml, gaugeHtml } from '../animal-view.js';
+import { escapeHtml, speciesLine, tagsHtml, gaugeHtml, responsiveImage } from '../animal-view.js';
+import { showError, showConfirm } from '../error-display.js';
 
 if (!auth.isAuthenticated()) {
   window.location.replace(`/login.html?redirect=${encodeURIComponent('/mes-animaux.html')}`);
@@ -31,12 +32,7 @@ function render(animals) {
     <div class="grid-cards">
       ${animals.map((animal) => `
         <article class="card">
-          <img
-            class="card__media"
-            src="${escapeHtml(animal.imageUrl || '/placeholder-pet.svg')}"
-            alt="Photo de ${escapeHtml(animal.name)}"
-            loading="lazy"
-          />
+          ${responsiveImage(animal.imageUrl || '/placeholder-pet.svg', `Photo de ${escapeHtml(animal.name)}`, 'card__media')}
           <div class="card__body">
             ${tagsHtml(animal)}
             <h2 class="card__title">${escapeHtml(animal.name)}</h2>
@@ -131,13 +127,13 @@ container.addEventListener('click', async (event) => {
   }
 
   if (button.dataset.action === 'delete') {
-    if (!confirm('Supprimer définitivement ce profil ? Ses amitiés seront perdues.')) return;
+    if (!await showConfirm('Supprimer définitivement ce profil ? Ses amitiés seront perdues.', 'Supprimer')) return;
     button.disabled = true;
     try {
       await api.delete(`/animals/${button.dataset.id}`);
       await load();
     } catch (err) {
-      alert(`Erreur : ${err.message}`);
+      showError(button, `Erreur : ${err.message}`);
       button.disabled = false;
     }
   }

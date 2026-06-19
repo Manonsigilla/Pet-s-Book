@@ -7,6 +7,7 @@ import {
   escapeHtml, formatPrice, formatDate,
   listingBadge, orderBadge,
 } from '../shop-view.js';
+import { showError, showConfirm } from '../error-display.js';
 
 if (!auth.isAuthenticated()) {
   window.location.replace(`/login.html?redirect=${encodeURIComponent('/mes-ventes.html')}`);
@@ -40,7 +41,7 @@ function renderListings(listings) {
     <ul class="order-list">
       ${listings.map((l) => `
         <li class="order-item" data-id="${l.id}">
-          <img class="order-item__media" src="${escapeHtml(l.images?.[0] || '/placeholder-pet.svg')}" alt="" />
+          <img class="order-item__media" src="${escapeHtml(l.images?.[0] || '/placeholder-pet.svg')}" alt="" loading="lazy" decoding="async" />
           <div class="order-item__info">
             ${listingBadge(l.status)}
             <h2 class="order-item__title"><a href="/annonce.html?id=${l.id}">${escapeHtml(l.title)}</a></h2>
@@ -92,7 +93,7 @@ function orderItemHtml(order, role) {
 
   return `
     <li class="order-item" data-id="${order.id}">
-      <img class="order-item__media" src="${escapeHtml(order.imageUrl || '/placeholder-pet.svg')}" alt="" />
+      <img class="order-item__media" src="${escapeHtml(order.imageUrl || '/placeholder-pet.svg')}" alt="" loading="lazy" decoding="async" />
       <div class="order-item__info">
         ${orderBadge(order.status)}
         <h2 class="order-item__title"><a href="/annonce.html?id=${order.listingId}">${escapeHtml(order.title)}</a></h2>
@@ -169,7 +170,7 @@ content.addEventListener('click', async (event) => {
     cancel: 'Annuler cette commande ? L\'annonce sera remise en ligne.',
     confirm: 'Confirmer la réception ? Le paiement sera définitivement reversé au vendeur.',
   };
-  if (confirms[action] && !confirm(confirms[action])) return;
+  if (confirms[action] && !await showConfirm(confirms[action], 'Confirmer')) return;
 
   button.disabled = true;
   try {
@@ -179,7 +180,7 @@ content.addEventListener('click', async (event) => {
     else if (action === 'cancel') await api.post(`/orders/${id}/cancel`);
     await loadTab(currentTab);
   } catch (err) {
-    alert(`Erreur : ${err.message}`);
+    showError(button, `Erreur : ${err.message}`);
     button.disabled = false;
   }
 });

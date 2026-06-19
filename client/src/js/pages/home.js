@@ -4,7 +4,7 @@
 import '../main.js';
 import { api } from '../api.js';
 import { auth } from '../auth.js';
-import { escapeHtml, speciesLine, describe, tagsHtml } from '../animal-view.js';
+import { escapeHtml, speciesLine, describe, tagsHtml, responsiveImage } from '../animal-view.js';
 import { reactionBarHtml, bindReactions } from '../reactions.js';
 
 const FEATURED_COUNT = 3;
@@ -33,12 +33,7 @@ function renderAnimals(animals) {
     const desc = describe(animal);
     return `
     <article class="card">
-      <img
-        class="card__media"
-        src="${escapeHtml(animal.imageUrl || '/placeholder-pet.svg')}"
-        alt="Photo de ${escapeHtml(animal.name)}"
-        loading="lazy"
-      />
+      ${responsiveImage(animal.imageUrl || '/placeholder-pet.svg', `Photo de ${escapeHtml(animal.name)}`, 'card__media')}
       <div class="card__body">
         ${tagsHtml(animal)}
         <h3 class="card__title">${escapeHtml(animal.name)}</h3>
@@ -175,14 +170,14 @@ function postCardHtml(item) {
   return `
     <article class="post-card${isSponsored ? ' post-card--sponsored' : ''}">
       <header class="post-card__header">
-        <img class="post-card__avatar" src="${escapeHtml(authorImage || '/placeholder-pet.svg')}" alt="" loading="lazy" />
+        ${responsiveImage(authorImage || '/placeholder-pet.svg', '', 'post-card__avatar')}
         <div>
           <a class="post-card__author" ${link}>${escapeHtml(authorName || '')}</a>
           <p class="post-card__meta">${subtitle} · ${formatWhen(item.createdAt)}</p>
         </div>
       </header>
       <p class="post-card__body">${escapeHtml(item.body)}</p>
-      ${item.imageUrl ? `<img class="post-card__media" src="${escapeHtml(item.imageUrl)}" alt="" loading="lazy" />` : ''}
+      ${item.imageUrl ? responsiveImage(item.imageUrl, '', 'post-card__media') : ''}
       ${reactionBarHtml(item)}
     </article>
   `;
@@ -192,7 +187,7 @@ function feedEventHtml(ev) {
   return `
     <article class="post-card post-card--event">
       <header class="post-card__header">
-        <img class="post-card__avatar" src="${escapeHtml(ev.imageUrl || '/placeholder-pet.svg')}" alt="" loading="lazy" />
+        ${responsiveImage(ev.imageUrl || '/placeholder-pet.svg', '', 'post-card__avatar')}
         <div>
           <p class="post-card__author"><i class="fa-solid fa-calendar-days" aria-hidden="true"></i> ${escapeHtml(ev.title)}</p>
           <p class="post-card__meta">${formatWhen(ev.startsAt)} · ${escapeHtml(ev.location)}</p>

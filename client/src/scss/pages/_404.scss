@@ -1,0 +1,48 @@
+@use '../abstracts' as *;
+
+// =============================================================================
+// Page 404 — centrée, accessible, navigation de secours
+// =============================================================================
+
+.error-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  text-align: center;
+  padding: 4rem 1rem;
+}
+
+.error-page__content {
+  max-width: 32rem;
+}
+
+.error-page__code {
+  font-family: $font-display;
+  font-size: clamp(4rem, 10vw, 8rem);
+  font-weight: 700;
+  color: $color-brand;
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+
+.error-page__title {
+  font-family: $font-display;
+  font-size: clamp(1.25rem, 3vw, 1.75rem);
+  color: $color-text;
+  margin-bottom: 0.75rem;
+}
+
+.error-page__text {
+  color: $color-text-muted;
+  margin-bottom: 2rem;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.error-page__actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}

@@ -1,6 +1,6 @@
 # Pet's Book
 
-Plateforme de réseau social et d'entraide pour animaux domestiques. Projet de certification RNCP 37273 — Développeur web fullstack.
+Plateforme de réseau social et d'entraide pour animaux domestiques. Projet de certification RNCP 37273 — Développeur web fullstack. Conçu en éco-conception (images WebP/AVIF, lazy loading) et accessible WCAG AA.
 
 ## Stack technique
 
@@ -97,6 +97,7 @@ alimentent les *Profils* (`animals`).
 - `npm run dev` — serveur de développement
 - `npm run build` — build de production
 - `npm run preview` — preview du build
+- `npm run optimize-images` — convertit les images JPG/PNG en WebP + AVIF (lancé automatiquement avant le build)
 
 ### Server
 

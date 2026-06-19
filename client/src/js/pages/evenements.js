@@ -5,6 +5,7 @@
 import '../main.js';
 import { api } from '../api.js';
 import { auth } from '../auth.js';
+import { responsiveImage } from '../animal-view.js';
 
 const state = {
   events: [],
@@ -126,12 +127,7 @@ function eventCardHtml(ev) {
     <article class="event-card event-card--clickable${past ? ' event-card--past' : ''}"
       data-id="${ev.id}" role="button" tabindex="0"
       aria-label="Voir le détail de l'évènement ${escapeHtml(ev.title)}">
-      <img
-        class="event-card__media"
-        src="${escapeHtml(ev.imageUrl || '/placeholder-pet.svg')}"
-        alt=""
-        loading="lazy"
-      />
+      ${responsiveImage(ev.imageUrl || '/placeholder-pet.svg', '', 'event-card__media')}
       <div class="event-card__body">
         ${badges}
         <h2 class="event-card__title">${escapeHtml(ev.title)}</h2>
@@ -210,7 +206,7 @@ function renderModalContent(ev) {
     ? '<section class="event-reviews" id="event-reviews" aria-label="Avis sur l\'évènement"><p class="event-reviews__loading">Chargement des avis…</p></section>'
     : '';
   dom.modalContent.innerHTML = `
-    <img class="event-modal__media" src="${escapeHtml(ev.imageUrl || '/placeholder-pet.svg')}" alt="" />
+    ${responsiveImage(ev.imageUrl || '/placeholder-pet.svg', '', 'event-modal__media', '', false)}
     <h2 class="event-modal__title" id="event-modal-title">${escapeHtml(ev.title)}</h2>
     <p class="event-modal__meta">
       <time datetime="${escapeHtml(ev.startsAt)}">${formatDateTime(ev.startsAt)}</time>

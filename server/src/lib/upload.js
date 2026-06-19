@@ -16,6 +16,7 @@ const ALLOWED_TYPES = new Map([
   ['image/jpeg', '.jpg'],
   ['image/png', '.png'],
   ['image/webp', '.webp'],
+  ['image/avif', '.avif'],
 ]);
 
 const storage = multer.diskStorage({
@@ -29,7 +30,7 @@ const storage = multer.diskStorage({
 
 const imageFilter = (req, file, cb) => {
   if (!ALLOWED_TYPES.has(file.mimetype)) {
-    return cb(new Error('Format d\'image non supporté (JPEG, PNG ou WebP uniquement).'));
+    return cb(new Error('Format d\'image non supporté (JPEG, PNG, WebP ou AVIF uniquement).'));
   }
   cb(null, true);
 };

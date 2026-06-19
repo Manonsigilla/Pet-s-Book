@@ -111,12 +111,12 @@ function renderListing() {
   renderState(`
     <article class="annonce__layout">
       <div class="annonce__gallery">
-        <img class="annonce__main-photo" id="main-photo" src="${escapeHtml(images[0])}" alt="${escapeHtml(listing.title)}" />
+        <img class="annonce__main-photo" id="main-photo" src="${escapeHtml(images[0])}" alt="${escapeHtml(listing.title)}" loading="lazy" decoding="async" />
         ${images.length > 1 ? `
           <div class="annonce__thumbs" role="group" aria-label="Autres photos">
             ${images.map((url, i) => `
               <button type="button" class="annonce__thumb${i === 0 ? ' is-active' : ''}" data-url="${escapeHtml(url)}">
-                <img src="${escapeHtml(url)}" alt="Photo ${i + 1}" />
+                <img src="${escapeHtml(url)}" alt="Photo ${i + 1}" loading="lazy" decoding="async" />
               </button>
             `).join('')}
           </div>

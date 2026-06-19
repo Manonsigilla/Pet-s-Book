@@ -3,7 +3,8 @@
 import '../main.js';
 import { api } from '../api.js';
 import { auth } from '../auth.js';
-import { escapeHtml, capitalize, copainLabel, copainWord } from '../animal-view.js';
+import { escapeHtml, capitalize, copainLabel, copainWord, responsiveImage } from '../animal-view.js';
+import { showError } from '../error-display.js';
 
 if (!auth.isAuthenticated()) {
   window.location.replace(`/login.html?redirect=${encodeURIComponent('/copains.html')}`);
@@ -50,7 +51,7 @@ async function loadMyAnimals() {
 function miniCard(animal, extraHtml = '') {
   return `
     <div class="copain-card">
-      <img class="copain-card__media" src="${escapeHtml(animal.imageUrl || '/placeholder-pet.svg')}" alt="" loading="lazy" />
+      ${responsiveImage(animal.imageUrl || '/placeholder-pet.svg', '', 'copain-card__media')}
       <div class="copain-card__body">
         <p class="copain-card__name">${escapeHtml(animal.name)}</p>
         <p class="copain-card__meta">
@@ -195,7 +196,7 @@ document.addEventListener('click', async (event) => {
       button.innerHTML = 'Demande envoyée <i class="fa-solid fa-check" aria-hidden="true"></i>';
     }
   } catch (err) {
-    alert(`Erreur : ${err.message}`);
+    showError(button, `Erreur : ${err.message}`);
     button.disabled = false;
   }
 });

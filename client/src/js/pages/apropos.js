@@ -8,7 +8,7 @@
 import '../main.js';
 import { api } from '../api.js';
 import { auth } from '../auth.js';
-import { escapeHtml, speciesLine, tagsHtml, copainLabel } from '../animal-view.js';
+import { escapeHtml, speciesLine, tagsHtml, copainLabel, responsiveImage } from '../animal-view.js';
 
 const track = document.getElementById('gallery-track');
 const marquee = document.getElementById('gallery-marquee');
@@ -30,7 +30,7 @@ function itemHtml(animal, hidden = false) {
   return `
     <button type="button" class="gallery-marquee__item" data-id="${animal.id}"
       aria-label="Voir la fiche de ${name}"${hidden ? ' aria-hidden="true" tabindex="-1"' : ''}>
-      <img src="${escapeHtml(animal.imageUrl)}" alt="${hidden ? '' : `Photo de ${name}`}" loading="lazy" />
+      ${responsiveImage(animal.imageUrl || '/placeholder-pet.svg', hidden ? '' : `Photo de ${name}`, '', '', !hidden)}
     </button>`;
 }
 
@@ -119,7 +119,7 @@ function renderPreview(preview) {
   modalTitle.textContent = preview.name || 'Fiche animal';
   modalBody.innerHTML = `
     <div class="animal-modal__card">
-      <img class="animal-modal__media" src="${escapeHtml(preview.imageUrl || '/placeholder-pet.svg')}" alt="" />
+      ${responsiveImage(preview.imageUrl || '/placeholder-pet.svg', '', 'animal-modal__media', '', false)}
       <h3 class="animal-modal__name">${escapeHtml(preview.name)}</h3>
       <p class="animal-modal__meta">${escapeHtml(preview.species || '')}</p>
       <p><i class="fa-solid fa-lock" aria-hidden="true"></i> Ce profil est privé : devenez copains pour le découvrir !</p>
@@ -142,7 +142,7 @@ function renderFull(animal) {
 
   modalBody.innerHTML = `
     <div class="animal-modal__card">
-      <img class="animal-modal__media" src="${escapeHtml(animal.imageUrl || '/placeholder-pet.svg')}" alt="Photo de ${escapeHtml(animal.name)}" />
+      ${responsiveImage(animal.imageUrl || '/placeholder-pet.svg', `Photo de ${escapeHtml(animal.name)}`, 'animal-modal__media', '', false)}
       ${tagsHtml(animal)}
       <h3 class="animal-modal__name">${escapeHtml(animal.name)}</h3>
       ${animal.physicalDesc ? `<p>${escapeHtml(animal.physicalDesc)}</p>` : ''}

@@ -20,7 +20,7 @@
   <header class="site-header">
     <div class="site-header__inner">
       <a class="site-header__logo" href="/index.html" aria-label="Accueil Pet's Book">
-        <img src="/images/Pets_Book.png" alt="" width="80" height="80" />
+        <picture> <source srcset="/images/Pets_Book.avif" type="image/avif" /> <source srcset="/images/Pets_Book.webp" type="image/webp" /> <img src="/images/Pets_Book.png" alt="" width="80" height="80" /> </picture>
         <span class="visually-hidden">Pet's Book</span>
       </a>
 
@@ -109,15 +109,28 @@
           controls
           preload="metadata"
           poster="/images/balade-soliere.jpg"
+          width="640" height="360"
           aria-label="Vidéo de présentation de Pet's Book"
         >
           <source src="/media/intro.mp4" type="video/mp4" />
+          <source src="/media/intro.webm" type="video/webm" />
+          <track kind="subtitles" src="/media/intro.vtt" srclang="fr" label="Français" default />
           <p>
             Votre navigateur ne peut pas lire cette vidéo.
             <a href="/media/intro.mp4">Téléchargez-la</a> pour la visionner localement.
           </p>
         </video>
       </div>
+      <details class="video-transcript">
+        <summary>Transcription textuelle</summary>
+        <p>
+          Bienvenue sur Pet's Book, la plateforme communautaire pour les amoureux des animaux.
+          Notre mission : créer une communauté bienveillante autour des animaux domestiques.
+          Retrouvez des compagnons perdus, partagez les bons plans et découvrez des professionnels près de chez vous.
+          Créez le profil de votre animal, échangez avec d'autres membres et participez à des évènements.
+          Pet's Book — parce que chaque animal mérite une communauté qui prend soin de lui.
+        </p>
+      </details>
     </section>
 
     <section class="section container" aria-labelledby="featured-title">
@@ -132,12 +145,17 @@
       <h2 class="section__title" id="event-title">Prochain évènement</h2>
       <!-- Contenu statique = fallback ; home.js le remplace par le prochain évènement réel. -->
       <article class="event-feature" id="home-event">
-        <img
-          class="event-feature__media"
-          src="/images/balade-soliere.jpg"
-          alt="Sentier boisé de la vallée de la Solière"
-          loading="lazy"
-        />
+        <picture>
+          <source srcset="/images/balade-soliere.avif" type="image/avif" />
+          <source srcset="/images/balade-soliere.webp" type="image/webp" />
+          <img
+            class="event-feature__media"
+            src="/images/balade-soliere.jpg"
+            alt="Sentier boisé de la vallée de la Solière"
+            loading="lazy"
+            width="640" height="360"
+          />
+        </picture>
         <div class="event-feature__body">
           <h3>Balade dans la vallée de la Solière</h3>
           <p class="event-feature__meta">
@@ -158,27 +176,27 @@
       <ul class="partners-grid">
         <li>
           <a href="https://teamvetcare.be/" target="_blank" rel="noopener noreferrer">
-            <img src="/images/partner-vetcare.jpg" alt="VetCare" loading="lazy" />
+            <picture> <source srcset="/images/partner-vetcare.avif" type="image/avif" /> <source srcset="/images/partner-vetcare.webp" type="image/webp" /> <img src="/images/partner-vetcare.jpg" alt="VetCare" width="80" height="80" loading="lazy" /> </picture>
           </a>
         </li>
         <li>
           <a href="https://be.holidog.com/" target="_blank" rel="noopener noreferrer">
-            <img src="/images/partner-holidog.jpg" alt="Holidog" loading="lazy" />
+            <picture> <source srcset="/images/partner-holidog.avif" type="image/avif" /> <source srcset="/images/partner-holidog.webp" type="image/webp" /> <img src="/images/partner-holidog.jpg" alt="Holidog" width="80" height="80" loading="lazy" /> </picture>
           </a>
         </li>
         <li>
           <a href="https://www.comportementalisteduchien.com/" target="_blank" rel="noopener noreferrer">
-            <img src="/images/partner-comportementaliste.jpg" alt="Comportementaliste du chien" loading="lazy" />
+            <picture> <source srcset="/images/partner-comportementaliste.avif" type="image/avif" /> <source srcset="/images/partner-comportementaliste.webp" type="image/webp" /> <img src="/images/partner-comportementaliste.jpg" alt="Comportementaliste du chien" width="80" height="80" loading="lazy" /> </picture>
           </a>
         </li>
         <li>
           <a href="https://tipaw.com/" target="_blank" rel="noopener noreferrer">
-            <img src="/images/partner-tipaw.jpg" alt="Tipaw" loading="lazy" />
+            <picture> <source srcset="/images/partner-tipaw.avif" type="image/avif" /> <source srcset="/images/partner-tipaw.webp" type="image/webp" /> <img src="/images/partner-tipaw.jpg" alt="Tipaw" width="80" height="80" loading="lazy" /> </picture>
           </a>
         </li>
         <li>
           <a href="https://www.toutous.be/" target="_blank" rel="noopener noreferrer">
-            <img src="/images/partner-toutous.jpg" alt="Toutous" loading="lazy" />
+            <picture> <source srcset="/images/partner-toutous.avif" type="image/avif" /> <source srcset="/images/partner-toutous.webp" type="image/webp" /> <img src="/images/partner-toutous.jpg" alt="Toutous" width="80" height="80" loading="lazy" /> </picture>
           </a>
         </li>
       </ul>
@@ -216,10 +234,10 @@
       <div class="site-footer__column site-footer__column--payments">
         <h3>Moyens de paiement</h3>
         <ul class="site-footer__payments">
-          <li><img src="/images/payment-bancontact.png" alt="Bancontact" /></li>
-          <li><img src="/images/payment-visa.png" alt="Visa" /></li>
-          <li><img src="/images/payment-mastercard.jpg" alt="Mastercard" /></li>
-          <li><img src="/images/payment-maestro.png" alt="Maestro" /></li>
+          <li><picture> <source srcset="/images/payment-bancontact.avif" type="image/avif" /> <source srcset="/images/payment-bancontact.webp" type="image/webp" /> <img src="/images/payment-bancontact.png" alt="Bancontact" width="40" height="28" loading="lazy" /> </picture></li>
+          <li><picture> <source srcset="/images/payment-visa.avif" type="image/avif" /> <source srcset="/images/payment-visa.webp" type="image/webp" /> <img src="/images/payment-visa.png" alt="Visa" width="40" height="28" loading="lazy" /> </picture></li>
+          <li><picture> <source srcset="/images/payment-mastercard.avif" type="image/avif" /> <source srcset="/images/payment-mastercard.webp" type="image/webp" /> <img src="/images/payment-mastercard.jpg" alt="Mastercard" width="40" height="28" loading="lazy" /> </picture></li>
+          <li><picture> <source srcset="/images/payment-maestro.avif" type="image/avif" /> <source srcset="/images/payment-maestro.webp" type="image/webp" /> <img src="/images/payment-maestro.png" alt="Maestro" width="40" height="24" loading="lazy" /> </picture></li>
         </ul>
       </div>
     </div>
