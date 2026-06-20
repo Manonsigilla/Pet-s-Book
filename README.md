@@ -74,7 +74,10 @@ npm run dev               # http://localhost:5173
 
 Les animaux proviennent de **vraies données open data**, assemblées par **union
 verticale** de trois sources vers un schéma commun (18 colonnes, colonne `source`
-pour tracer l'origine) :
+pour tracer l'origine). Un module de **post-traitement** (`translate.js`) traduit
+ensuite tout le contenu en français : races, tempéraments, couleurs, âges,
+descriptions et localisations. Les annonces russes de Pet911 sont traduites et
+relocalisées en Belgique avec conservation des vraies photos.
 
 | Source | Apporte | Espèces |
 | --- | --- | --- |

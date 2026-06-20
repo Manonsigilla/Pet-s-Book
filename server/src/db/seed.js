@@ -75,8 +75,8 @@ const dataset = JSON.parse(readFileSync(datasetPath, 'utf-8'));
 // Répartition selon la nature de la donnée :
 //  - Pet911 = annonces perdu/trouvé  → table lost_reports (onglet Perdus/Retrouvés)
 //  - autres sources = profils d'animaux → table animals
-const animals = dataset.filter((a) => a.source !== 'pet911');
-const pet911Reports = dataset.filter((a) => a.source === 'pet911');
+const animals = dataset.filter((a) => a.source !== 'pet911' && a.source !== 'petsbook');
+const pet911Reports = dataset.filter((a) => a.source === 'pet911' || a.source === 'petsbook');
 
 // -----------------------------------------------------------------------------
 // Communauté fictive : les animaux importés deviennent de VRAIS profils.

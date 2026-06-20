@@ -13,6 +13,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
 import { COLUMNS, DATA_DIR, toCsv, withSnapshot } from './lib/common.js';
+import { translateRows } from './lib/translate.js';
 import { fetchDogCat } from './sources/dogcat.js';
 import { fetchAustin } from './sources/austin.js';
 import { fetchPet911 } from './sources/pet911.js';
@@ -28,7 +29,10 @@ async function main() {
   ]);
 
   // Union verticale : on empile, on trace l'origine via la colonne `source`.
-  const unified = [...dogcat, ...austin, ...pet911];
+  const raw = [...dogcat, ...austin, ...pet911];
+
+  // Post-traitement : traduction EN/RU → FR et remplacement des annonces russes.
+  const unified = translateRows(raw);
 
   await mkdir(DATA_DIR, { recursive: true });
   const jsonPath = resolve(DATA_DIR, 'animals.unified.json');
