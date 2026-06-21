@@ -19,7 +19,16 @@ const dom = {
   form: document.getElementById('report-form'),
   submitBtn: document.getElementById('report-submit-btn'),
   feedback: document.getElementById('form-feedback'),
+  // Tip
+  tipModal: document.getElementById('tip-modal'),
+  tipCloseBtn: document.getElementById('close-tip-btn'),
+  tipForm: document.getElementById('tip-form'),
+  tipSubmitBtn: document.getElementById('tip-submit-btn'),
+  tipFeedback: document.getElementById('tip-feedback'),
+  tipMessage: document.getElementById('tip-message'),
 };
+
+let currentTipId = null;
 
 function escapeHtml(str) {
   if (str == null) return '';
@@ -83,7 +92,12 @@ function applyFilters() {
           <span>${escapeHtml(r.location)}</span>
         </p>
         <p>${escapeHtml(r.description)}</p>
-        <p class="lost-card__contact"><strong>Contact :</strong> ${escapeHtml(r.contact)}</p>
+        <div class="lost-card__footer">
+          <button class="btn btn--ghost lost-card__tip-btn" data-id="${r.id}" data-tips="${r.tipsCount || 0}">
+            <i class="fa-solid fa-eye" aria-hidden="true"></i> J'ai des informations (${r.tipsCount || 0})
+          </button>
+          <p class="lost-card__contact"><strong>Contact :</strong> ${escapeHtml(r.contact)}</p>
+        </div>
       </div>
     </article>
   `).join('');
@@ -137,10 +151,83 @@ document.addEventListener('keydown', (event) => {
   if (event.key === 'Escape' && dom.modal.getAttribute('data-open') === 'true') {
     closeModal();
   }
+  if (event.key === 'Escape' && dom.tipModal.getAttribute('data-open') === 'true') {
+    closeTipModal();
+  }
 });
 
 // -----------------------------------------------------------------------------
-// Soumission du formulaire
+// Modal « J'ai des informations »
+// -----------------------------------------------------------------------------
+
+function openTipModal(id, _tipsCount) {
+  if (!auth.isAuthenticated()) {
+    window.location.href = `/login.html?redirect=${encodeURIComponent('/perdus-retrouves.html')}`;
+    return;
+  }
+  currentTipId = id;
+  dom.tipForm.reset();
+  dom.tipFeedback.textContent = '';
+  dom.tipFeedback.className = 'auth-feedback';
+  dom.tipModal.setAttribute('data-open', 'true');
+  dom.tipModal.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+  dom.tipMessage.focus();
+}
+
+function closeTipModal() {
+  dom.tipModal.setAttribute('data-open', 'false');
+  dom.tipModal.setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = '';
+  currentTipId = null;
+  dom.tipFeedback.textContent = '';
+  dom.tipFeedback.className = 'auth-feedback';
+}
+
+dom.tipCloseBtn.addEventListener('click', closeTipModal);
+dom.tipModal.addEventListener('click', (event) => {
+  if (event.target === dom.tipModal) closeTipModal();
+});
+
+// Délégation : boutons tip sur les cartes
+dom.results.addEventListener('click', (event) => {
+  const btn = event.target.closest('.lost-card__tip-btn');
+  if (!btn) return;
+  const id = Number(btn.dataset.id);
+  const tips = Number(btn.dataset.tips);
+  if (id) openTipModal(id, tips);
+});
+
+// Soumission du tip
+dom.tipForm.addEventListener('submit', async (event) => {
+  event.preventDefault();
+  dom.tipFeedback.textContent = '';
+  dom.tipSubmitBtn.disabled = true;
+
+  try {
+    const message = dom.tipMessage.value.trim();
+    const data = await api.post(`/lost/${currentTipId}/tip`, { message });
+    // Met à jour le compteur sur la carte
+    const btn = document.querySelector(`.lost-card__tip-btn[data-id="${currentTipId}"]`);
+    if (btn) {
+      btn.dataset.tips = data.tipsCount;
+      btn.textContent = ` J'ai des informations (${data.tipsCount})`;
+    }
+    dom.tipFeedback.textContent = message
+      ? 'Merci ! Votre message a été transmis.'
+      : 'Merci ! Votre signalement a été comptabilisé.';
+    dom.tipFeedback.className = 'auth-feedback auth-feedback--success';
+    setTimeout(closeTipModal, 2000);
+  } catch (err) {
+    dom.tipFeedback.textContent = err.message || 'Erreur lors de l\'envoi.';
+    dom.tipFeedback.className = 'auth-feedback auth-feedback--error';
+  } finally {
+    dom.tipSubmitBtn.disabled = false;
+  }
+});
+
+// -----------------------------------------------------------------------------
+// Soumission du formulaire (avec photo)
 // -----------------------------------------------------------------------------
 
 function clearFormErrors() {
@@ -155,27 +242,39 @@ function setFieldError(fieldId, message) {
   if (input) input.setAttribute('aria-invalid', 'true');
 }
 
-function validateReport(values) {
+function validateReport(values, file) {
   let ok = true;
-  if (values.animalName.length < 1) {
+  if (!values.get('animalName') || values.get('animalName').trim().length < 1) {
     setFieldError('animalName', 'Le nom est requis.');
     ok = false;
   }
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(values.lostDate)) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(values.get('lostDate'))) {
     setFieldError('lostDate', 'Date invalide.');
     ok = false;
   }
-  if (values.location.length < 2) {
+  if (!values.get('location') || values.get('location').trim().length < 2) {
     setFieldError('location', 'Précisez un lieu.');
     ok = false;
   }
-  if (values.description.length < 10) {
+  if (!values.get('description') || values.get('description').trim().length < 10) {
     setFieldError('description', 'Au moins 10 caractères.');
     ok = false;
   }
-  if (values.contact.length < 3) {
+  if (!values.get('contact') || values.get('contact').trim().length < 3) {
     setFieldError('contact', 'Contact requis.');
     ok = false;
+  }
+  // Validation du fichier (optionnel)
+  if (file && file.size > 0) {
+    const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/avif'];
+    if (!allowed.includes(file.type)) {
+      setFieldError('photo', 'Format non supporté (JPEG, PNG, WebP ou AVIF).');
+      ok = false;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setFieldError('photo', 'La photo ne doit pas dépasser 5 Mo.');
+      ok = false;
+    }
   }
   return ok;
 }
@@ -185,24 +284,17 @@ dom.form.addEventListener('submit', async (event) => {
   clearFormErrors();
   dom.feedback.textContent = '';
 
-  const values = {
-    status: document.getElementById('status').value,
-    animalName: document.getElementById('animalName').value.trim(),
-    species: document.getElementById('species').value,
-    lostDate: document.getElementById('lostDate').value,
-    location: document.getElementById('location').value.trim(),
-    description: document.getElementById('description').value.trim(),
-    contact: document.getElementById('contact').value.trim(),
-  };
+  const formData = new FormData(dom.form);
+  const file = document.getElementById('photo').files[0];
 
-  if (!validateReport(values)) return;
+  if (!validateReport(formData, file)) return;
 
   dom.submitBtn.disabled = true;
   const originalLabel = dom.submitBtn.textContent;
   dom.submitBtn.textContent = 'Envoi...';
 
   try {
-    await api.post('/lost', values);
+    await api.post('/lost', formData);
     dom.feedback.textContent = 'Annonce envoyée ! Elle sera publiée après validation par un administrateur.';
     dom.feedback.className = 'auth-feedback auth-feedback--success';
     dom.form.reset();

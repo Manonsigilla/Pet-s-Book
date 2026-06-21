@@ -21,6 +21,8 @@ db.exec('DROP TABLE IF EXISTS conversations');
 db.exec('DROP TABLE IF EXISTS orders');
 db.exec('DROP TABLE IF EXISTS listing_images');
 db.exec('DROP TABLE IF EXISTS listings');
+db.exec('DROP TABLE IF EXISTS lost_tips');
+db.exec('DROP TABLE IF EXISTS lost_reports');
 db.exec('DROP TABLE IF EXISTS pages');
 db.exec('DROP TABLE IF EXISTS animals');
 db.exec(readFileSync(resolve(__dirname, 'schema.sql'), 'utf-8'));
@@ -53,7 +55,6 @@ const truncate = db.transaction(() => {
   db.exec('DELETE FROM messages');
   db.exec('DELETE FROM products');
   db.exec('DELETE FROM events');
-  db.exec('DELETE FROM lost_reports');
   db.exec('DELETE FROM users');
 });
 truncate();

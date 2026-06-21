@@ -109,27 +109,56 @@ async function loadNextEvent() {
   }
 }
 
-// Bouton "Écouter le carillon" — joue l'audio importé en local.
-function initGreetingAudio() {
-  const audio = document.getElementById('greeting-audio');
-  const button = document.getElementById('play-greeting');
-  if (!audio || !button) return;
+// Bouton « Écouter un cri d'animal » — joue un son aléatoire parmi un petit
+// bestiaire. Les fichiers sont chargés à la demande (new Audio) pour ne rien
+// précharger inutilement (éco-conception).
+const ANIMAL_SOUNDS = [
+  { file: '/media/chat.mp3',   emoji: '🐱', label: 'Miaulement de chat' },
+  { file: '/media/chien.mp3',  emoji: '🐶', label: 'Aboiement de chien' },
+  { file: '/media/oiseau.mp3', emoji: '🐦', label: 'Chant d\'oiseau' },
+  { file: '/media/coq.mp3',    emoji: '🐓', label: 'Chant du coq' },
+  { file: '/media/vache.mp3',  emoji: '🐮', label: 'Meuglement de vache' },
+  { file: '/media/mouton.mp3', emoji: '🐑', label: 'Bêlement de mouton' },
+];
+
+let lastAnimalIndex = -1;
+let currentAudio = null;
+
+function initAnimalSound() {
+  const button = document.getElementById('play-animal-sound');
+  if (!button) return;
 
   button.addEventListener('click', () => {
-    if (audio.paused) {
-      audio.currentTime = 0;
-      audio.play().catch(() => {
-        // Lecture refusée par le navigateur (rare car déclenchée par un clic).
-      });
-      button.setAttribute('aria-pressed', 'true');
-    } else {
-      audio.pause();
+    // Si un son est déjà en cours, on l'arrête
+    if (currentAudio && !currentAudio.paused) {
+      currentAudio.pause();
+      currentAudio = null;
       button.setAttribute('aria-pressed', 'false');
+      return;
     }
-  });
 
-  audio.addEventListener('ended', () => {
-    button.setAttribute('aria-pressed', 'false');
+    // Choisit un animal différent du précédent
+    let index;
+    do {
+      index = Math.floor(Math.random() * ANIMAL_SOUNDS.length);
+    } while (index === lastAnimalIndex && ANIMAL_SOUNDS.length > 1);
+    lastAnimalIndex = index;
+
+    const sound = ANIMAL_SOUNDS[index];
+
+    // Créé à la demande : pas de préchargement, pas de gaspillage
+    currentAudio = new Audio(sound.file);
+    currentAudio.play().catch(() => {
+      // Lecture refusée par le navigateur
+    });
+    button.setAttribute('aria-pressed', 'true');
+    button.innerHTML = `<i class="fa-solid fa-volume-high" aria-hidden="true"></i> ${sound.emoji} ${sound.label}`;
+
+    currentAudio.addEventListener('ended', () => {
+      button.setAttribute('aria-pressed', 'false');
+      button.innerHTML = '<i class="fa-solid fa-paw" aria-hidden="true"></i> Écouter un cri d\'animal';
+      currentAudio = null;
+    });
   });
 }
 
@@ -272,7 +301,7 @@ async function initComposer() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  initGreetingAudio();
+  initAnimalSound();
 
   if (auth.isAuthenticated()) {
     // Membre connecté : l'accueil devient le feed.

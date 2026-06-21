@@ -2,6 +2,7 @@
 import { Router } from 'express';
 import { db } from '../db/index.js';
 import { requireAuth, requireAdmin, attachUser } from '../middlewares/auth.js';
+import { uploadReportPhoto } from '../lib/upload.js';
 
 const router = Router();
 
@@ -11,7 +12,8 @@ const STATUS_ALLOWED = ['lost', 'found', 'closed'];
 const SELECT_FIELDS = `
   l.id, l.animal_name AS animalName, l.species, l.description, l.location,
   l.lost_date AS lostDate, l.status, l.is_approved AS isApproved,
-  l.contact, l.image_url AS imageUrl, l.created_at AS createdAt,
+  l.contact, l.image_url AS imageUrl, l.tips_count AS tipsCount,
+  l.reporter_id AS reporterId, l.created_at AS createdAt,
   u.display_name AS reporterName
 `;
 
@@ -83,9 +85,10 @@ router.get('/:id', attachUser, async (req, res, next) => {
 // -----------------------------------------------------------------------------
 // Création par un utilisateur connecté — créée en attente d'approbation
 // -----------------------------------------------------------------------------
-router.post('/', requireAuth, async (req, res, next) => {
+router.post('/', requireAuth, uploadReportPhoto, async (req, res, next) => {
   try {
-    const { animalName, species, description, location, lostDate, status, contact, imageUrl } = req.body ?? {};
+    const { animalName, species, description, location, lostDate, status, contact } = req.body ?? {};
+    const imageUrl = req.file ? `/uploads/${req.file.filename}` : null;
 
     if (typeof animalName !== 'string' || animalName.trim().length < 1) {
       return res.status(400).json({ message: 'Le nom de l\'animal est requis' });
@@ -120,7 +123,7 @@ router.post('/', requireAuth, async (req, res, next) => {
       lostDate,
       reportStatus,
       contact.trim(),
-      imageUrl ?? null,
+      imageUrl,
     );
 
     res.status(201).json({ id: result.lastInsertRowid, isApproved: false });
@@ -145,6 +148,35 @@ router.post('/:id/approve', requireAdmin, async (req, res, next) => {
     ).run(req.user.id, id);
     if (info.changes === 0) return res.status(404).json({ message: 'Annonce introuvable' });
     res.json({ id, isApproved: true });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// -----------------------------------------------------------------------------
+// Bouton « J'ai des informations » — incrémente le compteur et stocke le message
+// -----------------------------------------------------------------------------
+router.post('/:id/tip', requireAuth, async (req, res, next) => {
+  try {
+    const id = Number(req.params.id);
+    if (!Number.isInteger(id) || id < 1) {
+      return res.status(400).json({ message: 'Identifiant invalide' });
+    }
+
+    const { message } = req.body ?? {};
+
+    // Incrémente le compteur
+    await db.prepare('UPDATE lost_reports SET tips_count = tips_count + 1 WHERE id = ?').run(id);
+
+    // Si un message est fourni, le stocke dans lost_tips
+    if (message && typeof message === 'string' && message.trim().length > 0) {
+      await db.prepare(
+        'INSERT INTO lost_tips (lost_report_id, user_id, message) VALUES (?, ?, ?)'
+      ).run(id, req.user.id, message.trim());
+    }
+
+    const row = await db.prepare('SELECT tips_count AS tipsCount FROM lost_reports WHERE id = ?').get(id);
+    res.json({ tipsCount: row?.tipsCount ?? 0 });
   } catch (err) {
     next(err);
   }

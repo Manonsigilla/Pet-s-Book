@@ -95,11 +95,10 @@
       </p>
       <div class="hero__cta">
         <a class="btn btn--primary" href="/apropos.html">En savoir plus</a>
-        <button class="btn btn--secondary" type="button" id="play-greeting">
-          <i class="fa-solid fa-music" aria-hidden="true"></i> Écouter le carillon
+        <button class="btn btn--secondary" type="button" id="play-animal-sound" aria-pressed="false">
+          <i class="fa-solid fa-paw" aria-hidden="true"></i> Écouter un cri d'animal
         </button>
       </div>
-      <audio id="greeting-audio" src="/media/welcome.wav" preload="metadata"></audio>
     </section>
 
     <section class="section container" aria-labelledby="video-title">
@@ -112,9 +111,9 @@
           width="640" height="360"
           aria-label="Vidéo de présentation de Pet's Book"
         >
-          <source src="/media/intro.mp4" type="video/mp4" />
-          <source src="/media/intro.webm" type="video/webm" />
-          <track kind="subtitles" src="/media/intro.vtt" srclang="fr" label="Français" default />
+          <source src="/media/intro.mp4" type="video/mp4">
+          <source src="/media/intro.webm" type="video/webm">
+          <track kind="subtitles" src="/media/intro.vtt" srclang="fr" label="Français" default>
           <p>
             Votre navigateur ne peut pas lire cette vidéo.
             <a href="/media/intro.mp4">Téléchargez-la</a> pour la visionner localement.

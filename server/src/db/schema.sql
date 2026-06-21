@@ -63,8 +63,20 @@ CREATE TABLE IF NOT EXISTS lost_reports (
   approved_at  DATETIME,
   contact      TEXT NOT NULL,
   image_url    TEXT,
+  tips_count   INTEGER NOT NULL DEFAULT 0,
   created_at   DATETIME DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Messages « J'ai des informations » liés aux annonces perdues/trouvées.
+CREATE TABLE IF NOT EXISTS lost_tips (
+  id              INTEGER PRIMARY KEY AUTOINCREMENT,
+  lost_report_id  INTEGER NOT NULL REFERENCES lost_reports(id) ON DELETE CASCADE,
+  user_id         INTEGER REFERENCES users(id) ON DELETE SET NULL,
+  message         TEXT NOT NULL,
+  created_at      DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_losttips_report ON lost_tips(lost_report_id);
 
 CREATE TABLE IF NOT EXISTS events (
   id          INTEGER PRIMARY KEY AUTOINCREMENT,

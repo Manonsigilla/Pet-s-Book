@@ -87,9 +87,24 @@
     gap: $space-2;
   }
 
-  &__contact {
+  &__footer {
     margin-top: auto;
-    padding-top: $space-3;
+    display: flex;
+    flex-direction: column;
+    gap: $space-2;
+  }
+
+  &__tip-btn {
+    align-self: flex-start;
+    font-size: $font-size-sm;
+
+    i {
+      margin-right: $space-1;
+    }
+  }
+
+  &__contact {
+    padding-top: $space-2;
     border-top: $border-width solid $color-brand-light;
     font-size: $font-size-sm;
     color: $color-text;

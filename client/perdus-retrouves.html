@@ -132,8 +132,15 @@
 
         <div class="form__field">
           <label class="form__label" for="contact">Contact (email ou téléphone)</label>
-          <input class="form__input" type="text" id="contact" name="contact" required minlength="3" maxlength="120" />
+          <input class="form__input" type="text" id="contact" name="contact" required minlength="3" maxlength="120">
           <p class="form__error" id="contact-error"></p>
+        </div>
+
+        <div class="form__field">
+          <label class="form__label" for="photo">Photo (optionnelle)</label>
+          <input class="form__input" type="file" id="photo" name="photo" accept="image/jpeg,image/png,image/webp,image/avif">
+          <p class="form__hint">Formats acceptés : JPEG, PNG, WebP, AVIF — 5 Mo max.</p>
+          <p class="form__error" id="photo-error"></p>
         </div>
 
         <button class="btn btn--primary btn--block" type="submit" id="report-submit-btn">Envoyer l'annonce</button>
@@ -142,10 +149,29 @@
     </div>
   </div>
 
+  <!-- Modale « J'ai des informations » -->
+  <div class="modal" id="tip-modal" role="dialog" aria-modal="true" aria-labelledby="tip-modal-title" hidden>
+    <div class="modal__dialog">
+      <div class="modal__header">
+        <h2 id="tip-modal-title">J'ai des informations</h2>
+        <button class="modal__close" type="button" id="close-tip-btn" aria-label="Fermer">&times;</button>
+      </div>
+      <div class="auth-feedback" id="tip-feedback" role="alert" aria-live="polite"></div>
+      <form class="form" id="tip-form" novalidate>
+        <p class="form__hint">Décrivez brièvement ce que vous avez vu. Si vous n'avez pas de message, cliquez simplement sur Envoyer pour signaler votre intérêt.</p>
+        <div class="form__field">
+          <label class="form__label" for="tip-message">Message (facultatif)</label>
+          <textarea class="form__textarea" id="tip-message" name="message" maxlength="500" rows="3" placeholder="J'ai aperçu cet animal près de..."></textarea>
+        </div>
+        <button class="btn btn--primary btn--block" type="submit" id="tip-submit-btn">Envoyer</button>
+      </form>
+    </div>
+  </div>
+
   <footer class="site-footer">
     <div class="site-footer__inner">
       <div class="site-footer__column">
-        <h3>Services</h3>
+        <h2>Services</h2>
         <ul class="site-footer__links">
           <li><a href="/evenements.html">Évènements</a></li>
           <li><a href="/petsshop.html">Pet's Shop</a></li>

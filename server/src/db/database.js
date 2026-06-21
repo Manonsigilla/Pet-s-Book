@@ -13,6 +13,16 @@ db.pragma('foreign_keys = ON');
 // (SQLite ne tolère qu'un écrivain à la fois — utile dès qu'il y a un peu de concurrence).
 db.pragma('busy_timeout = 5000');
 
-// Applique le schéma à la création
+// Applique le schéma à la création.
+// Les ALTER TABLE sur des colonnes déjà existantes lèvent une erreur SQLITE_ERROR
+// qu'on ignore volontairement (la base est déjà à jour).
 const schema = readFileSync(resolve(__dirname, 'schema.sql'), 'utf-8');
-db.exec(schema);
+try {
+  db.exec(schema);
+} catch (err) {
+  if (err.message.includes('duplicate column name') || err.message.includes('already exists')) {
+    // Colonne ou table déjà présente : rien à faire.
+  } else {
+    throw err;
+  }
+}

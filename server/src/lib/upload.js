@@ -48,3 +48,10 @@ export const uploadProfilePhoto = multer({
   limits: { fileSize: 5 * 1024 * 1024, files: 1 },
   fileFilter: imageFilter,
 }).single('photo');
+
+// Photo d'un signalement perdu/trouvé : une seule image (champ « photo »).
+export const uploadReportPhoto = multer({
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024, files: 1 },
+  fileFilter: imageFilter,
+}).single('photo');
