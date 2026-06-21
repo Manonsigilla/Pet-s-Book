@@ -232,7 +232,7 @@ alimentent les *Profils* (`animals`).
 Le site est **intégralement valide** selon les normes du W3C :
 
 | Langage | Outil | Résultat |
-|---|---|---|
+| --- | --- | --- |
 | **HTML** (22 pages) | [Validateur W3C Nu](https://validator.w3.org/nu/) | **0 erreur** |
 | **CSS** | [Validateur W3C CSS (Jigsaw)](https://jigsaw.w3.org/css-validator/) | **0 erreur** |
 | **JavaScript** | [ESLint](https://eslint.org/) | **0 erreur, 0 warning** |
