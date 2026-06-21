@@ -23,7 +23,7 @@
 }
 
 .site-footer__column {
-  h3 {
+  h2 {
     margin-bottom: $space-3;
     color: $color-text-inverse;
   }
@@ -85,6 +85,41 @@
     background-color: $color-surface;
     padding: $space-1;
     border-radius: $radius-sm;
+  }
+}
+
+// Badges de validation (W3C, ESLint).
+.site-footer__badges {
+  @include container;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: $space-4;
+  margin-top: $space-5;
+}
+
+.site-footer__badge-link {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-1;
+  color: rgba($color-text-inverse, 0.8);
+  font-size: $font-size-sm;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color $transition-fast;
+
+  &:hover,
+  &:focus-visible {
+    color: $color-text-inverse;
+  }
+
+  .badge-icon {
+    color: $color-success;
+  }
+
+  img {
+    vertical-align: middle;
   }
 }
 

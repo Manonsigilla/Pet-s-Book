@@ -102,11 +102,30 @@ alimentent les *Profils* (`animals`).
 - `npm run preview` — preview du build
 - `npm run optimize-images` — convertit les images JPG/PNG en WebP + AVIF (lancé automatiquement avant le build)
 
+### Validation
+
+- `node scripts/validate-html.mjs` — validation HTML W3C (API officielle)
+- `node scripts/validate-css.mjs` — validation CSS W3C (API officielle)
+- `npx html-validate "dist/**/*.html"` — validation HTML rapide en local
+- `npx eslint "src/js/**/*.js"` — validation JavaScript (ESLint)
+
 ### Server
 
 - `npm run dev` — serveur Express en mode watch
 - `npm run dataset` — (re)génère le dataset unifié (`data/animals.unified.{json,csv}`) depuis les 3 sources
 - `npm run seed` — initialise la base SQLite à partir du dataset
+
+## ✅ Validation W3C
+
+Le site est **intégralement valide** selon les normes du W3C :
+
+| Langage | Outil | Résultat |
+|---|---|---|
+| **HTML** (22 pages) | [Validateur W3C Nu](https://validator.w3.org/nu/) | **0 erreur** |
+| **CSS** | [Validateur W3C CSS (Jigsaw)](https://jigsaw.w3.org/css-validator/) | **0 erreur** |
+| **JavaScript** | [ESLint](https://eslint.org/) | **0 erreur, 0 warning** |
+
+Les badges de validation sont visibles dans le pied de page de chaque page du site.
 
 ## Auteur
 

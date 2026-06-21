@@ -1,16 +1,15 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Pet's Book : la plateforme communautaire pour les amoureux des animaux. Profils, perdus/retrouvés, évènements et boutique." />
-  <meta name="theme-color" content="#BF8A6B" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Pet's Book : la plateforme communautaire pour les amoureux des animaux. Profils, perdus/retrouvés, évènements et boutique.">
+  <meta name="theme-color" content="#BF8A6B">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
     href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Quicksand:wght@400;500;700&display=swap"
-    rel="stylesheet"
-  />
+    rel="stylesheet">
   <title>Pet's Book — La plateforme des amis des animaux</title>
   <script src="https://kit.fontawesome.com/820b23ac92.js" crossorigin="anonymous"></script>
 </head>
@@ -20,7 +19,7 @@
   <header class="site-header">
     <div class="site-header__inner">
       <a class="site-header__logo" href="/index.html" aria-label="Accueil Pet's Book">
-        <picture> <source srcset="/images/Pets_Book.avif" type="image/avif" /> <source srcset="/images/Pets_Book.webp" type="image/webp" /> <img src="/images/Pets_Book.png" alt="" width="80" height="80" /> </picture>
+        <picture> <source srcset="/images/Pets_Book.avif" type="image/avif"> <source srcset="/images/Pets_Book.webp" type="image/webp"> <img src="/images/Pets_Book.png" alt="" width="80" height="80"> </picture>
         <span class="visually-hidden">Pet's Book</span>
       </a>
 
@@ -44,7 +43,7 @@
           <li><a class="nav__link" href="/evenements.html">Évènements</a></li>
           <li><a class="nav__link" href="/petsshop.html">Pet's Shop</a></li>
         </ul>
-        <div class="auth-widget" id="auth-widget" aria-label="Compte utilisateur"></div>
+        <section class="auth-widget" id="auth-widget" aria-label="Compte utilisateur"></section>
       </nav>
     </div>
   </header>
@@ -62,7 +61,7 @@
             <label class="visually-hidden" for="composer-animal">Qui publie ?</label>
             <select class="form__select" id="composer-animal"></select>
             <label class="btn btn--ghost feed__photo-label" for="composer-photo"><i class="fa-solid fa-camera" aria-hidden="true"></i> Photo</label>
-            <input type="file" id="composer-photo" accept="image/jpeg,image/png,image/webp" hidden />
+            <input type="file" id="composer-photo" accept="image/jpeg,image/png,image/webp" hidden>
           </div>
           <label class="visually-hidden" for="composer-body">Votre publication</label>
           <textarea class="form__textarea" id="composer-body" maxlength="2000" placeholder="Racontez sa dernière aventure..." required></textarea>
@@ -145,15 +144,14 @@
       <!-- Contenu statique = fallback ; home.js le remplace par le prochain évènement réel. -->
       <article class="event-feature" id="home-event">
         <picture>
-          <source srcset="/images/balade-soliere.avif" type="image/avif" />
-          <source srcset="/images/balade-soliere.webp" type="image/webp" />
+          <source srcset="/images/balade-soliere.avif" type="image/avif">
+          <source srcset="/images/balade-soliere.webp" type="image/webp">
           <img
             class="event-feature__media"
             src="/images/balade-soliere.jpg"
             alt="Sentier boisé de la vallée de la Solière"
             loading="lazy"
-            width="640" height="360"
-          />
+            width="640" height="360">
         </picture>
         <div class="event-feature__body">
           <h3>Balade dans la vallée de la Solière</h3>
@@ -175,27 +173,27 @@
       <ul class="partners-grid">
         <li>
           <a href="https://teamvetcare.be/" target="_blank" rel="noopener noreferrer">
-            <picture> <source srcset="/images/partner-vetcare.avif" type="image/avif" /> <source srcset="/images/partner-vetcare.webp" type="image/webp" /> <img src="/images/partner-vetcare.jpg" alt="VetCare" width="80" height="80" loading="lazy" /> </picture>
+            <picture> <source srcset="/images/partner-vetcare.avif" type="image/avif"> <source srcset="/images/partner-vetcare.webp" type="image/webp"> <img src="/images/partner-vetcare.jpg" alt="VetCare" width="80" height="80" loading="lazy"> </picture>
           </a>
         </li>
         <li>
           <a href="https://be.holidog.com/" target="_blank" rel="noopener noreferrer">
-            <picture> <source srcset="/images/partner-holidog.avif" type="image/avif" /> <source srcset="/images/partner-holidog.webp" type="image/webp" /> <img src="/images/partner-holidog.jpg" alt="Holidog" width="80" height="80" loading="lazy" /> </picture>
+            <picture> <source srcset="/images/partner-holidog.avif" type="image/avif"> <source srcset="/images/partner-holidog.webp" type="image/webp"> <img src="/images/partner-holidog.jpg" alt="Holidog" width="80" height="80" loading="lazy"> </picture>
           </a>
         </li>
         <li>
           <a href="https://www.comportementalisteduchien.com/" target="_blank" rel="noopener noreferrer">
-            <picture> <source srcset="/images/partner-comportementaliste.avif" type="image/avif" /> <source srcset="/images/partner-comportementaliste.webp" type="image/webp" /> <img src="/images/partner-comportementaliste.jpg" alt="Comportementaliste du chien" width="80" height="80" loading="lazy" /> </picture>
+            <picture> <source srcset="/images/partner-comportementaliste.avif" type="image/avif"> <source srcset="/images/partner-comportementaliste.webp" type="image/webp"> <img src="/images/partner-comportementaliste.jpg" alt="Comportementaliste du chien" width="80" height="80" loading="lazy"> </picture>
           </a>
         </li>
         <li>
           <a href="https://tipaw.com/" target="_blank" rel="noopener noreferrer">
-            <picture> <source srcset="/images/partner-tipaw.avif" type="image/avif" /> <source srcset="/images/partner-tipaw.webp" type="image/webp" /> <img src="/images/partner-tipaw.jpg" alt="Tipaw" width="80" height="80" loading="lazy" /> </picture>
+            <picture> <source srcset="/images/partner-tipaw.avif" type="image/avif"> <source srcset="/images/partner-tipaw.webp" type="image/webp"> <img src="/images/partner-tipaw.jpg" alt="Tipaw" width="80" height="80" loading="lazy"> </picture>
           </a>
         </li>
         <li>
           <a href="https://www.toutous.be/" target="_blank" rel="noopener noreferrer">
-            <picture> <source srcset="/images/partner-toutous.avif" type="image/avif" /> <source srcset="/images/partner-toutous.webp" type="image/webp" /> <img src="/images/partner-toutous.jpg" alt="Toutous" width="80" height="80" loading="lazy" /> </picture>
+            <picture> <source srcset="/images/partner-toutous.avif" type="image/avif"> <source srcset="/images/partner-toutous.webp" type="image/webp"> <img src="/images/partner-toutous.jpg" alt="Toutous" width="80" height="80" loading="lazy"> </picture>
           </a>
         </li>
       </ul>
@@ -206,7 +204,7 @@
   <footer class="site-footer">
     <div class="site-footer__inner">
       <div class="site-footer__column">
-        <h3>Services</h3>
+        <h2>Services</h2>
         <ul class="site-footer__links">
           <li><a href="/evenements.html">Évènements</a></li>
           <li><a href="/petsshop.html">Pet's Shop</a></li>
@@ -214,7 +212,7 @@
         </ul>
       </div>
       <div class="site-footer__column">
-        <h3>Informations</h3>
+        <h2>Informations</h2>
         <ul class="site-footer__links">
           <li><a href="/apropos.html">À propos</a></li>
           <li><a href="/suggestions-plaintes.html">Suggestions / Plaintes</a></li>
@@ -223,7 +221,7 @@
         </ul>
       </div>
       <div class="site-footer__column">
-        <h3>Suivez-nous</h3>
+        <h2>Suivez-nous</h2>
         <ul class="site-footer__social">
           <li><a href="https://facebook.com" rel="noopener noreferrer" target="_blank"><i class="fa-brands fa-facebook-f" aria-hidden="true"></i><span class="visually-hidden">Facebook</span></a></li>
           <li><a href="https://instagram.com" rel="noopener noreferrer" target="_blank"><i class="fa-brands fa-instagram" aria-hidden="true"></i><span class="visually-hidden">Instagram</span></a></li>
@@ -231,16 +229,28 @@
         </ul>
       </div>
       <div class="site-footer__column site-footer__column--payments">
-        <h3>Moyens de paiement</h3>
+        <h2>Moyens de paiement</h2>
         <ul class="site-footer__payments">
-          <li><picture> <source srcset="/images/payment-bancontact.avif" type="image/avif" /> <source srcset="/images/payment-bancontact.webp" type="image/webp" /> <img src="/images/payment-bancontact.png" alt="Bancontact" width="40" height="28" loading="lazy" /> </picture></li>
-          <li><picture> <source srcset="/images/payment-visa.avif" type="image/avif" /> <source srcset="/images/payment-visa.webp" type="image/webp" /> <img src="/images/payment-visa.png" alt="Visa" width="40" height="28" loading="lazy" /> </picture></li>
-          <li><picture> <source srcset="/images/payment-mastercard.avif" type="image/avif" /> <source srcset="/images/payment-mastercard.webp" type="image/webp" /> <img src="/images/payment-mastercard.jpg" alt="Mastercard" width="40" height="28" loading="lazy" /> </picture></li>
-          <li><picture> <source srcset="/images/payment-maestro.avif" type="image/avif" /> <source srcset="/images/payment-maestro.webp" type="image/webp" /> <img src="/images/payment-maestro.png" alt="Maestro" width="40" height="24" loading="lazy" /> </picture></li>
+          <li><picture> <source srcset="/images/payment-bancontact.avif" type="image/avif"> <source srcset="/images/payment-bancontact.webp" type="image/webp"> <img src="/images/payment-bancontact.png" alt="Bancontact" width="40" height="28" loading="lazy"> </picture></li>
+          <li><picture> <source srcset="/images/payment-visa.avif" type="image/avif"> <source srcset="/images/payment-visa.webp" type="image/webp"> <img src="/images/payment-visa.png" alt="Visa" width="40" height="28" loading="lazy"> </picture></li>
+          <li><picture> <source srcset="/images/payment-mastercard.avif" type="image/avif"> <source srcset="/images/payment-mastercard.webp" type="image/webp"> <img src="/images/payment-mastercard.jpg" alt="Mastercard" width="40" height="28" loading="lazy"> </picture></li>
+          <li><picture> <source srcset="/images/payment-maestro.avif" type="image/avif"> <source srcset="/images/payment-maestro.webp" type="image/webp"> <img src="/images/payment-maestro.png" alt="Maestro" width="40" height="24" loading="lazy"> </picture></li>
         </ul>
       </div>
     </div>
-    <p class="site-footer__bottom">&copy; 2026 Pet's Book — Manon Sigaud</p>
+        <div class="site-footer__badges" aria-label="Validations techniques">
+      <a href="https://validator.w3.org/nu/" rel="nofollow" target="_blank" class="site-footer__badge-link" title="HTML5 valide W3C">
+        <span class="visually-hidden">HTML5</span>
+        <span aria-hidden="true" class="badge-icon">&#10003;</span> HTML5
+      </a>
+      <a href="https://jigsaw.w3.org/css-validator/check/referer" rel="nofollow" target="_blank" class="site-footer__badge-link">
+        <img style="border:0;width:88px;height:31px" src="https://jigsaw.w3.org/css-validator/images/vcss-blue" alt="CSS Valide !" width="88" height="31" loading="lazy">
+      </a>
+      <span class="site-footer__badge-link" title="JavaScript : 0 erreur ESLint">
+        <span aria-hidden="true" class="badge-icon">&#10003;</span> JS
+      </span>
+    </div>
+      <p class="site-footer__bottom">&copy; 2026 Pet's Book — Manon Sigaud</p>
   </footer>
 
   <script type="module" src="/src/js/pages/home.js"></script>

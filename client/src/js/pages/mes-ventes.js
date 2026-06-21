@@ -151,7 +151,8 @@ async function loadTab(tab) {
 
 tabs.forEach((tab) => {
   tab.addEventListener('click', () => {
-    tabs.forEach((t) => t.setAttribute('aria-pressed', String(t === tab)));
+    tabs.forEach((t) => t.setAttribute('aria-selected', String(t === tab)));
+    content.setAttribute('aria-labelledby', tab.id);
     loadTab(tab.dataset.tab);
   });
 });
