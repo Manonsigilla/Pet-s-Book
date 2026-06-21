@@ -12,12 +12,124 @@ Plateforme de réseau social et d'entraide pour animaux domestiques. Projet de c
 
 ```text
 pets-book/
-├── client/              # Front-end Vite + SCSS
-├── server/              # Back-end Express + SQLite
-│   └── src/etl/         # Pipeline de données (sources, snapshots, build)
-├── data/                # Dataset unifié généré (animals.unified.json + .csv)
-└── _legacy/             # Ancien projet (référence uniquement)
+├── client/                              # Front-end — Vite MPA
+│   ├── *.html                           # 22 pages HTML (1 par page du site)
+│   ├── vite.config.js                   # Entrées MPA + proxy API
+│   ├── eslint.config.js                 # ESLint (0 erreur, 0 warning)
+│   │
+│   ├── public/                          # Fichiers statiques servis tels quels
+│   │   ├── images/                      # Images optimisées (AVIF + WebP + fallback)
+│   │   │   └── events/                  # Visuels de la page évènements
+│   │   ├── media/                       # Vidéo, sons d'animaux, sous-titres VTT
+│   │   ├── logo.svg                     # Logo du site
+│   │   └── placeholder-pet.svg          # Silhouette par défaut des profils
+│   │
+│   ├── scripts/                         # Scripts Node.js utilitaires
+│   │   ├── validate-html.mjs            # Validation HTML W3C (API officielle)
+│   │   ├── validate-css.mjs             # Validation CSS W3C (API officielle)
+│   │   ├── fix-html-validation.mjs      # Correction automatique des erreurs HTML
+│   │   └── optimize-images.mjs          # Conversion JPG/PNG → WebP + AVIF
+│   │
+│   └── src/
+│       ├── scss/                        # Architecture 7-1
+│       │   ├── main.scss                # Point d'entrée (@use toutes les couches)
+│       │   ├── abstracts/               # _variables, _mixins, _functions
+│       │   ├── base/                    # _reset, _typography, _a11y
+│       │   ├── layout/                  # _header, _footer, _grid, _container
+│       │   ├── components/              # _button, _form, _card, _nav, _carousel…
+│       │   ├── pages/                   # 1 fichier par page (_home, _profils, _perdus-retrouves…)
+│       │   ├── themes/                  # _default (thème clair)
+│       │   └── vendors/                 # Réservé aux styles tiers (vide)
+│       │
+│       └── js/                          # JavaScript vanilla (ES modules)
+│           ├── main.js                  # Point d'entrée commun (auth, nav, a11y)
+│           ├── api.js                   # Client HTTP pour l'API REST
+│           ├── auth.js                  # Authentification JWT (login, register, session)
+│           ├── auth-widget.js           # Widget de connexion dans la navigation
+│           ├── nav.js                   # Navigation responsive + menu mobile
+│           ├── carousel.js              # Carrousel d'images accessible
+│           ├── error-display.js         # Affichage des erreurs formulaire/API
+│           ├── message-form.js          # Logique d'envoi de message
+│           ├── reactions.js             # Réactions (likes) sur les publications
+│           ├── shop-view.js             # Composants partagés Pet's Shop
+│           ├── animal-view.js           # Composants partagés profils d'animaux
+│           └── pages/                   # 1 fichier JS par page HTML
+│               ├── home.js              # Feed + vitrine publique
+│               ├── profils.js           # Liste des profils avec filtres
+│               ├── profil-detail.js     # Fiche détaillée d'un animal
+│               ├── creer-profil.js      # Création de profil animal
+│               ├── copains.js           # Gestion des copains/copines
+│               ├── mes-animaux.js       # Gestion de ses propres animaux
+│               ├── perdus-retrouves.js  # Annonces perdu/trouvé + signalement
+│               ├── evenements.js        # Évènements avec carte interactive
+│               ├── petsshop.js          # Marketplace (liste des annonces)
+│               ├── vendre.js            # Déposer une annonce
+│               ├── annonce.js           # Détail d'une annonce + paiement
+│               ├── mes-ventes.js        # Gestion ventes/achats (3 onglets)
+│               ├── messages.js          # Messagerie + conversations
+│               ├── login.js             # Connexion
+│               ├── register.js          # Inscription
+│               ├── contact.js           # Formulaire de contact
+│               ├── suggestions-plaintes.js  # Suggestions / plaintes
+│               ├── apropos.js           # Page À propos + galerie
+│               └── admin.js             # Administration (validation annonces)
+│
+├── server/                              # Back-end — API REST
+│   ├── .env                             # Secrets et clés API (jamais commité)
+│   ├── .env.example                     # Modèle sans les secrets
+│   │
+│   └── src/
+│       ├── server.js                    # Point d'entrée Express
+│       │
+│       ├── db/                          # Base de données SQLite
+│       │   ├── database.js              # Connexion better-sqlite3
+│       │   ├── index.js                 # Façade async pour les requêtes
+│       │   ├── schema.sql               # Tables, index, contraintes
+│       │   └── seed.js                  # Remplissage initial depuis le dataset
+│       │
+│       ├── routes/                      # Routeurs Express (1 par domaine)
+│       │   ├── auth.js                  # Connexion, inscription, JWT
+│       │   ├── animals.js               # Profils d'animaux (CRUD)
+│       │   ├── friends.js               # Relations copains/copines
+│       │   ├── posts.js                 # Publications du feed
+│       │   ├── events.js                # Évènements
+│       │   ├── listings.js              # Annonces Pet's Shop
+│       │   ├── orders.js                # Commandes + séquestre simulé
+│       │   ├── conversations.js         # Fils de discussion
+│       │   ├── messages.js              # Messages
+│       │   ├── lost.js                  # Animaux perdus/trouvés
+│       │   └── products.js              # Produits (obsolète)
+│       │
+│       ├── middlewares/                 # Middlewares Express
+│       │   ├── auth.js                  # Protection JWT des routes
+│       │   └── error.js                 # Gestion globale des erreurs
+│       │
+│       ├── lib/                         # Bibliothèques internes
+│       │   ├── jwt.js                   # Création/vérification des tokens
+│       │   ├── password.js              # Hashage/vérification bcrypt
+│       │   └── upload.js                # Upload fichiers (multer)
+│       │
+│       └── etl/                         # Pipeline de données
+│           ├── build-dataset.js         # Orchestrateur
+│           ├── sources/                 # Extracteurs (dogcat, austin, pet911)
+│           ├── lib/                     # Traduction FR + utilitaires ETL
+│           └── snapshots/               # Données de secours (mode hors-ligne)
+│
+├── data/                                # Dataset unifié
+│   ├── animals.unified.json             # Données pour le seed
+│   └── animals.unified.csv              # Export CSV
+│
+├── presentation/                        # Support de soutenance Bloc 2
+└── README.md                            # Ce fichier
 ```
+
+### Conventions
+
+- **1 page HTML = 1 fichier** : `X.html` → `src/js/pages/X.js` → `src/scss/pages/_X.scss`
+- **JS vanilla** : pas de framework, ES modules natifs (`import`/`export`)
+- **SCSS 7-1** : `@use` plutôt que `@import`, namespace par dossier
+- **Routes Express** : 1 fichier par domaine métier, préfixé dans `server.js`
+- **Base de données** : façade async (`db/index.js`) pour découpler l'accès SQLite
 
 ## Prérequis
 
