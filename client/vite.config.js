@@ -30,6 +30,7 @@ const pages = {
 
 export default defineConfig({
   root: '.',
+  base: '/Pet-s-Book/',
   publicDir: 'public',
   server: {
     port: 5173,
