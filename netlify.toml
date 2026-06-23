@@ -1,0 +1,18 @@
+# Configuration Netlify — Frontend Pet's Book
+
+[build]
+  base = "client/"
+  command = "npm run build"
+  publish = "dist"
+
+# Proxies vers l'API Render.
+# ⚠️ Remplace TON-APP par le nom de ton app Render une fois créée.
+[[redirects]]
+  from = "/api/*"
+  to = "https://TON-APP.onrender.com/api/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/uploads/*"
+  to = "https://TON-APP.onrender.com/uploads/:splat"
+  status = 200
