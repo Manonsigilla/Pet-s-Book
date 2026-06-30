@@ -5,11 +5,12 @@ import '../main.js';
 import { api } from '../api.js';
 import { auth } from '../auth.js';
 import { escapeHtml, speciesLine, describe, tagsHtml, responsiveImage } from '../animal-view.js';
+import { appPath, BASE_URL } from '../utils/path-utils.js';
 
 if (!auth.isAuthenticated()) {
-  window.location.replace(`/login.html?redirect=${encodeURIComponent('/profils.html')}`);
+  window.location.replace(`${BASE_URL}login.html?redirect=${encodeURIComponent(BASE_URL + 'profils.html')}`);
 } else if (!auth.isAdmin()) {
-  window.location.replace('/copains.html');
+  window.location.replace(appPath('/copains.html'));
 }
 
 // Pour la grille RNCP : démonstration de fetch async, manipulation DOM,
@@ -86,7 +87,7 @@ function renderAnimals(animals) {
         ${desc ? `<p class="card__text">${escapeHtml(desc)}</p>` : ''}
         ${animal.ownerName ? `<p class="card__meta">Chez ${escapeHtml(animal.ownerName)}</p>` : ''}
         <div class="card__footer">
-          <a class="btn btn--ghost" href="/profil-detail.html?id=${animal.id}">Voir le profil</a>
+          <a class="btn btn--ghost" href="./profil-detail.html?id=${animal.id}">Voir le profil</a>
         </div>
       </div>
     </article>

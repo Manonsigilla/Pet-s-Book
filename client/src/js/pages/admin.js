@@ -38,7 +38,7 @@ function ensureAdmin() {
       <div class="state state--error" role="alert">
         <h1 class="state__title">Accès refusé</h1>
         <p class="state__text">Cette page est réservée aux administrateurs.</p>
-        <p><a class="btn btn--primary" href="/index.html">Retour à l'accueil</a></p>
+        <p><a class="btn btn--primary" href="./index.html">Retour à l'accueil</a></p>
       </div>
     `;
     return false;
@@ -123,7 +123,7 @@ function renderAnimals(animals) {
             <p>${escapeHtml(a.temperament || a.physicalDesc || '')}</p>
           </div>
           <div class="admin-item__actions">
-            <a class="btn btn--ghost btn--small" href="/profil-detail.html?id=${a.id}">Voir</a>
+            <a class="btn btn--ghost btn--small" href="./profil-detail.html?id=${a.id}">Voir</a>
             <button class="btn btn--danger btn--small" data-action="delete-animal" data-id="${a.id}">
               Supprimer
             </button>

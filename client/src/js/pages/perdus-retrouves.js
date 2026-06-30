@@ -3,6 +3,7 @@ import '../main.js';
 import { api } from '../api.js';
 import { auth } from '../auth.js';
 import { responsiveImage } from '../animal-view.js';
+import { appPath, BASE_URL } from '../utils/path-utils.js';
 
 const state = {
   reports: [],
@@ -121,12 +122,15 @@ dom.filters.forEach((chip) => {
 // Modal — ouverture / fermeture
 // -----------------------------------------------------------------------------
 
+let reportTrigger = null;
+
 function openModal() {
   // Si non connecté, redirige vers /login avec retour ici après
   if (!auth.isAuthenticated()) {
-    window.location.href = `/login.html?redirect=${encodeURIComponent('/perdus-retrouves.html')}`;
+    window.location.href = `${BASE_URL}login.html?redirect=${encodeURIComponent(BASE_URL + 'perdus-retrouves.html')}`;
     return;
   }
+  reportTrigger = document.activeElement;
   dom.modal.setAttribute('data-open', 'true');
   dom.modal.setAttribute('aria-hidden', 'false');
   document.body.style.overflow = 'hidden';
@@ -140,6 +144,10 @@ function closeModal() {
   document.body.style.overflow = '';
   dom.feedback.textContent = '';
   dom.feedback.className = 'auth-feedback';
+  if (reportTrigger && typeof reportTrigger.focus === 'function') {
+    reportTrigger.focus();
+    reportTrigger = null;
+  }
 }
 
 dom.openBtn.addEventListener('click', openModal);
@@ -160,11 +168,14 @@ document.addEventListener('keydown', (event) => {
 // Modal « J'ai des informations »
 // -----------------------------------------------------------------------------
 
+let tipTrigger = null;
+
 function openTipModal(id, _tipsCount) {
   if (!auth.isAuthenticated()) {
-    window.location.href = `/login.html?redirect=${encodeURIComponent('/perdus-retrouves.html')}`;
+    window.location.href = `${BASE_URL}login.html?redirect=${encodeURIComponent(BASE_URL + 'perdus-retrouves.html')}`;
     return;
   }
+  tipTrigger = document.activeElement;
   currentTipId = id;
   dom.tipForm.reset();
   dom.tipFeedback.textContent = '';
@@ -182,6 +193,10 @@ function closeTipModal() {
   currentTipId = null;
   dom.tipFeedback.textContent = '';
   dom.tipFeedback.className = 'auth-feedback';
+  if (tipTrigger && typeof tipTrigger.focus === 'function') {
+    tipTrigger.focus();
+    tipTrigger = null;
+  }
 }
 
 dom.tipCloseBtn.addEventListener('click', closeTipModal);

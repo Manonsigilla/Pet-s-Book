@@ -34,6 +34,7 @@
     &:hover,
     &:focus-visible {
       color: $color-text-inverse;
+      outline-color: $color-text-inverse;
     }
   }
 }
@@ -68,6 +69,7 @@
       background-color: $color-brand-dark;
       color: $color-text-inverse;
       transform: translateY(-2px);
+      outline-color: $color-text-inverse;
     }
   }
 }

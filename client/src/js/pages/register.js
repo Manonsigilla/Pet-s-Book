@@ -2,6 +2,7 @@
 import '../main.js';
 import { api } from '../api.js';
 import { auth } from '../auth.js';
+import { appPath } from '../utils/path-utils.js';
 
 const form = document.getElementById('register-form');
 const fields = {
@@ -20,7 +21,7 @@ const feedback = document.getElementById('auth-feedback');
 const submitBtn = document.getElementById('submit-btn');
 
 if (auth.isAuthenticated()) {
-  window.location.replace('/index.html');
+  window.location.replace(appPath('/index.html'));
 }
 
 function clearErrors() {
@@ -88,7 +89,7 @@ form.addEventListener('submit', async (event) => {
     auth.save(token, user);
     setFeedback('Compte créé ! Redirection en cours...', 'success');
     setTimeout(() => {
-      window.location.href = '/index.html';
+      window.location.href = appPath('/index.html');
     }, 800);
   } catch (err) {
     setFeedback(err.message || 'Erreur lors de l\'inscription.', 'error');

@@ -55,7 +55,7 @@ async function renderPrivate(preview) {
 
   const cta = myAnimals.length === 0
     ? `<p>Pour devenir ${copainWord(preview.gender)} de ${escapeHtml(preview.name)}, créez d'abord le profil de votre animal !</p>
-       <a class="btn btn--primary" href="/creer-profil.html"><i class="fa-solid fa-paw" aria-hidden="true"></i> Créer le profil de mon animal</a>`
+       <a class="btn btn--primary" href="./creer-profil.html"><i class="fa-solid fa-paw" aria-hidden="true"></i> Créer le profil de mon animal</a>`
     : `${selector}
        <button class="btn btn--primary" type="button" id="add-friend-btn">${copainLabel(preview.gender)}</button>`;
 

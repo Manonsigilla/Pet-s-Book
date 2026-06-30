@@ -50,7 +50,7 @@ function renderListing() {
   if (isOwner) {
     actions = `
       <p class="annonce__owner-note">C'est votre annonce.</p>
-      <a class="btn btn--ghost" href="/mes-ventes.html">Gérer mes ventes</a>
+      <a class="btn btn--ghost" href="./mes-ventes.html">Gérer mes ventes</a>
     `;
   } else if (isPro) {
     // Vente professionnelle : achat direct, sans séquestre.
@@ -104,7 +104,7 @@ function renderListing() {
     contactBlock = `
     <div class="annonce__contact">
       <h2>Contacter le vendeur</h2>
-      <p><a class="btn btn--ghost" href="/login.html?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}">Connectez-vous pour envoyer un message</a></p>
+      <p><a class="btn btn--ghost" href="./login.html?redirect=${encodeURIComponent(window.location.pathname + window.location.search)}">Connectez-vous pour envoyer un message</a></p>
     </div>`;
   }
 
@@ -159,8 +159,10 @@ function bindGallery() {
 // -----------------------------------------------------------------------------
 // Achat — modal « paiement sécurisé » (séquestre simulé, aucun débit réel)
 // -----------------------------------------------------------------------------
+let buyModalTrigger = null;
 
-function openModal() {
+function openModal(trigger) {
+  buyModalTrigger = trigger || document.activeElement;
   modal.setAttribute('data-open', 'true');
   modal.setAttribute('aria-hidden', 'false');
   document.body.style.overflow = 'hidden';
@@ -170,6 +172,10 @@ function closeModal() {
   modal.setAttribute('data-open', 'false');
   modal.setAttribute('aria-hidden', 'true');
   document.body.style.overflow = '';
+  if (buyModalTrigger && typeof buyModalTrigger.focus === 'function') {
+    buyModalTrigger.focus();
+    buyModalTrigger = null;
+  }
 }
 
 function bindBuy() {
@@ -208,7 +214,7 @@ function bindBuy() {
         </button>
       </div>
     `;
-    openModal();
+    openModal(document.activeElement);
 
     document.getElementById('confirm-buy-btn').addEventListener('click', async (event) => {
       const btn = event.currentTarget;
@@ -220,12 +226,12 @@ function bindBuy() {
           ? `<div class="buy-summary">
                <p class="buy-summary__success"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Commande confirmée auprès de ${escapeHtml(listing.sellerName)} !</p>
                <p>Retrouvez-la dans l'onglet « Mes achats » de votre espace ventes.</p>
-               <a class="btn btn--primary btn--block" href="/mes-ventes.html">Voir mes achats</a>
+               <a class="btn btn--primary btn--block" href="./mes-ventes.html">Voir mes achats</a>
              </div>`
           : `<div class="buy-summary">
                <p class="buy-summary__success"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Achat confirmé ! Le vendeur va préparer votre colis.</p>
                <p>Suivez votre commande depuis l'onglet « Mes achats » de votre espace ventes.</p>
-               <a class="btn btn--primary btn--block" href="/mes-ventes.html">Suivre ma commande</a>
+               <a class="btn btn--primary btn--block" href="./mes-ventes.html">Suivre ma commande</a>
              </div>`;
       } catch (err) {
         document.getElementById('buy-feedback').textContent = err.message || 'Erreur lors de l\'achat.';

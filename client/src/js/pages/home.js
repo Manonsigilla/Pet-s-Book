@@ -40,7 +40,7 @@ function renderAnimals(animals) {
         <p class="card__meta">${escapeHtml(speciesLine(animal))}</p>
         ${desc ? `<p class="card__text">${escapeHtml(desc)}</p>` : ''}
         <div class="card__footer">
-          <a class="btn btn--ghost" href="/profil-detail.html?id=${animal.id}">Voir le profil</a>
+          <a class="btn btn--ghost" href="./profil-detail.html?id=${animal.id}">Voir le profil</a>
         </div>
       </div>
     </article>
@@ -101,7 +101,7 @@ async function loadNextEvent() {
           <time datetime="${escapeHtml(ev.startsAt)}">${formatEventDate(ev.startsAt)}</time> · ${escapeHtml(ev.location)}
         </p>
         <p>${escapeHtml(ev.description)}</p>
-        <a class="btn btn--ghost" href="/evenements.html">Voir tous les évènements</a>
+        <a class="btn btn--ghost" href="./evenements.html">Voir tous les évènements</a>
       </div>
     `;
   } catch {
@@ -194,7 +194,7 @@ function postCardHtml(item) {
   const subtitle = isSponsored
     ? '<span class="post-card__sponsored">Sponsorisé</span>'
     : `<span>${escapeHtml(item.animalSpecies || '')}${item.ownerName ? ` · chez ${escapeHtml(item.ownerName)}` : ''}</span>`;
-  const link = !isSponsored && item.animalId ? `href="/profil-detail.html?id=${item.animalId}"` : '';
+  const link = !isSponsored && item.animalId ? `href="./profil-detail.html?id=${item.animalId}"` : '';
 
   return `
     <article class="post-card${isSponsored ? ' post-card--sponsored' : ''}">
@@ -223,7 +223,7 @@ function feedEventHtml(ev) {
         </div>
       </header>
       <p class="post-card__body">${escapeHtml(ev.description)}</p>
-      <a class="btn btn--ghost btn--small" href="/evenements.html">Voir l'agenda</a>
+      <a class="btn btn--ghost btn--small" href="./evenements.html">Voir l'agenda</a>
     </article>
   `;
 }
@@ -242,7 +242,7 @@ async function loadFeed() {
       ? items.map(postCardHtml).join('')
       : `<div class="state">
            <p class="state__text">Le fil est calme... Trouvez des copains à vos animaux pour le faire vivre !</p>
-           <p><a class="btn btn--primary" href="/copains.html">Découvrir des copains</a></p>
+           <p><a class="btn btn--primary" href="./copains.html">Découvrir des copains</a></p>
          </div>`;
     bindReactions(feedDom.items);
   } catch (err) {
@@ -259,7 +259,7 @@ async function initComposer() {
   if (myAnimals.length === 0) {
     feedDom.composerForm.innerHTML = `
       <p>Créez le profil de votre animal pour publier dans le fil !</p>
-      <a class="btn btn--primary" href="/creer-profil.html"><i class="fa-solid fa-paw" aria-hidden="true"></i> Créer son profil</a>
+      <a class="btn btn--primary" href="./creer-profil.html"><i class="fa-solid fa-paw" aria-hidden="true"></i> Créer son profil</a>
     `;
     return;
   }

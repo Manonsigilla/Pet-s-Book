@@ -51,7 +51,7 @@ function renderListings(listings) {
       <div class="state">
         <h2 class="state__title">Aucune annonce</h2>
         <p class="state__text">Soyez le premier à donner une seconde vie aux affaires de vos compagnons !</p>
-        <p><a class="btn btn--primary" href="/vendre.html">Vendre un article</a></p>
+        <p><a class="btn btn--primary" href="./vendre.html">Vendre un article</a></p>
       </div>
     `;
     return;

@@ -1,5 +1,14 @@
 // Helpers de présentation du marketplace Pet's Shop, partagés par les pages
 // boutique / annonce / vendre / mes-ventes / messages.
+import { BASE_URL } from './utils/path-utils.js';
+
+// Préfixe les chemins d'images locaux avec la base Vite en production.
+function assetUrl(path) {
+  if (path && path.startsWith('/') && !path.startsWith('//')) {
+    return BASE_URL + path.slice(1);
+  }
+  return path || '';
+}
 
 export function escapeHtml(str) {
   if (str == null) return '';
@@ -69,9 +78,9 @@ export function orderBadge(status) {
 
 // Carte d'annonce de la grille marketplace (lien vers le détail).
 export function listingCardHtml(listing) {
-  const img = listing.images?.[0] || '/placeholder-pet.svg';
+  const img = assetUrl(listing.images?.[0]) || assetUrl('/placeholder-pet.svg');
   return `
-    <a class="shop-card" href="/annonce.html?id=${listing.id}">
+    <a class="shop-card" href="./annonce.html?id=${listing.id}">
       <img class="shop-card__media" src="${escapeHtml(img)}" alt="${escapeHtml(listing.title)}" loading="lazy" decoding="async" />
       <div class="shop-card__body">
         <div class="shop-card__badges">

@@ -45,7 +45,7 @@ function renderInbox() {
     dom.list.innerHTML = `
       <div class="state">
         <p class="state__text">Aucune conversation. Contactez un vendeur depuis une annonce pour démarrer.</p>
-        <p><a class="btn btn--ghost" href="/petsshop.html">Voir la boutique</a></p>
+        <p><a class="btn btn--ghost" href="./petsshop.html">Voir la boutique</a></p>
       </div>
     `;
     return;
@@ -88,7 +88,7 @@ function renderThread(data) {
   const conv = conversations.find((c) => c.id === data.id);
   dom.header.innerHTML = conv ? `
     <strong>${escapeHtml(conv.otherName)}</strong>
-    ${conv.listingId ? `<a href="/annonce.html?id=${conv.listingId}">${escapeHtml(conv.listingTitle)}</a>` : ''}
+    ${conv.listingId ? `<a href="./annonce.html?id=${conv.listingId}">${escapeHtml(conv.listingTitle)}</a>` : ''}
   ` : '';
 
   const previousCount = dom.messages.childElementCount;

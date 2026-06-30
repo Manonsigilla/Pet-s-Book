@@ -56,6 +56,16 @@ ol {
 a {
   color: inherit;
   text-decoration: none;
+
+  // Les liens dans des blocs de texte (paragraphes, listes) gardent leur soulignement.
+  p &,
+  li &,
+  dd &,
+  figcaption &,
+  .legal-page &,
+  .video-transcript & {
+    text-decoration: underline;
+  }
 }
 
 h1,

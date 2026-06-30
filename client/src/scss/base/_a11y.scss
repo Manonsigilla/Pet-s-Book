@@ -39,3 +39,52 @@
 :focus-visible {
   @include focus-ring;
 }
+
+// Mode contraste élevé (Windows / préférences système)
+// Renforce les bordures et ajuste les couleurs pour les utilisateurs qui en ont besoin.
+// https://developer.mozilla.org/fr/docs/Web/CSS/@media/forced-colors
+@media (forced-colors: active) {
+  .btn {
+    border: 2px solid ButtonText;
+  }
+
+  .btn--primary {
+    background-color: Highlight;
+    color: HighlightText;
+    border-color: Highlight;
+  }
+
+  a {
+    text-decoration: underline;
+  }
+
+  img {
+    // Évite que les images soient remplacées par des blocs noirs en mode contraste élevé
+    forced-color-adjust: none;
+  }
+
+  .skip-link:focus {
+    outline: 3px solid Highlight;
+  }
+}
+
+@media (prefers-contrast: more) {
+  // Renforcer les bordures des inputs et cartes
+  .form__input,
+  .form__textarea,
+  .form__select {
+    border-width: 2px;
+  }
+
+  .card,
+  .shop-card,
+  .lost-card,
+  .event-card {
+    border: 2px solid currentColor;
+  }
+
+  // Assurer un soulignement visible sur tous les liens
+  a:not(.btn):not(.nav__link):not(.site-header__logo):not(.skip-link) {
+    text-decoration: underline;
+  }
+}

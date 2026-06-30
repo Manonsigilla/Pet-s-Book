@@ -59,6 +59,7 @@
   &:focus-visible {
     background-color: $color-brand-dark;
     color: $color-text-inverse;
+    outline-color: $color-text-inverse;
   }
 
   @include respond-to('xlarge') {
@@ -70,6 +71,7 @@
     &:focus-visible {
       background-color: rgba(0, 0, 0, 0.15);
       color: $color-text-inverse;
+      outline-color: $color-text-inverse;
     }
   }
 
@@ -98,6 +100,7 @@
   &:focus-visible {
     background-color: $color-brand-dark;
     color: $color-text-inverse;
+    outline-color: $color-text-inverse;
   }
 
   @include respond-to('xlarge') {
@@ -110,6 +113,7 @@
     &:focus-visible {
       background-color: rgba(0, 0, 0, 0.15);
       color: $color-text-inverse;
+      outline-color: $color-text-inverse;
     }
   }
 }

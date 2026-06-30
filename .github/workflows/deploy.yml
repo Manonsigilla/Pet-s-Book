@@ -35,6 +35,8 @@ jobs:
       - name: Build
         working-directory: client
         run: npm run build
+        env:
+          VITE_BASE: /Pet-s-Book/
 
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v4

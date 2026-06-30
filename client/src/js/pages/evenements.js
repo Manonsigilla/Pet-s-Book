@@ -187,7 +187,7 @@ function applyFilter() {
 
 function registerControlHtml(ev) {
   if (!state.user) {
-    return '<a class="btn btn--primary btn--block" href="/login.html">Connectez-vous pour vous inscrire</a>';
+    return '<a class="btn btn--primary btn--block" href="./login.html">Connectez-vous pour vous inscrire</a>';
   }
   if (isPast(ev)) {
     return '<p class="event-modal__note">Cet évènement est terminé, les inscriptions sont closes.</p>';
@@ -270,7 +270,7 @@ async function toggleRegister(id, on) {
 
 function reviewFormHtml(ev, myReview) {
   if (!state.user) {
-    return '<a class="btn btn--secondary" href="/login.html">Connectez-vous pour laisser un avis</a>';
+    return '<a class="btn btn--secondary" href="./login.html">Connectez-vous pour laisser un avis</a>';
   }
   if (!ev.isRegistered) {
     return '<p class="event-reviews__note">Seuls les participants inscrits peuvent laisser un avis.</p>';

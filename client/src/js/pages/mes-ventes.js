@@ -30,21 +30,21 @@ function renderListings(listings) {
           Un panier qui dort dans le garage, un collier devenu trop petit ?
           Donnez-leur une seconde vie et faites plaisir à un autre compagnon !
         </p>
-        <p><a class="btn btn--primary" href="/vendre.html">Vendre mon premier article</a></p>
+        <p><a class="btn btn--primary" href="./vendre.html">Vendre mon premier article</a></p>
       </div>
     `;
     return;
   }
 
   content.innerHTML = `
-    <p class="mes-ventes__cta"><a class="btn btn--primary" href="/vendre.html">+ Mettre un article en vente</a></p>
+    <p class="mes-ventes__cta"><a class="btn btn--primary" href="./vendre.html">+ Mettre un article en vente</a></p>
     <ul class="order-list">
       ${listings.map((l) => `
         <li class="order-item" data-id="${l.id}">
           <img class="order-item__media" src="${escapeHtml(l.images?.[0] || '/placeholder-pet.svg')}" alt="" loading="lazy" decoding="async" />
           <div class="order-item__info">
             ${listingBadge(l.status)}
-            <h2 class="order-item__title"><a href="/annonce.html?id=${l.id}">${escapeHtml(l.title)}</a></h2>
+            <h2 class="order-item__title"><a href="./annonce.html?id=${l.id}">${escapeHtml(l.title)}</a></h2>
             <p class="order-item__meta">${formatPrice(l.priceCents)} · publiée le ${formatDate(l.createdAt)}</p>
           </div>
           <div class="order-item__actions">
@@ -96,7 +96,7 @@ function orderItemHtml(order, role) {
       <img class="order-item__media" src="${escapeHtml(order.imageUrl || '/placeholder-pet.svg')}" alt="" loading="lazy" decoding="async" />
       <div class="order-item__info">
         ${orderBadge(order.status)}
-        <h2 class="order-item__title"><a href="/annonce.html?id=${order.listingId}">${escapeHtml(order.title)}</a></h2>
+        <h2 class="order-item__title"><a href="./annonce.html?id=${order.listingId}">${escapeHtml(order.title)}</a></h2>
         <p class="order-item__meta">${formatPrice(order.priceCents)} · ${other} · le ${formatDate(order.createdAt)}</p>
         <p class="order-item__escrow">${escrowNote}</p>
       </div>
@@ -111,12 +111,12 @@ function renderOrders(orders, role) {
       ? `<div class="state">
            <h2 class="state__title">Aucune vente pour le moment</h2>
            <p class="state__text">Vos articles attendent leur nouveau foyer : plus d'annonces, plus de chances de vendre !</p>
-           <p><a class="btn btn--primary" href="/vendre.html">Vendre un article</a></p>
+           <p><a class="btn btn--primary" href="./vendre.html">Vendre un article</a></p>
          </div>`
       : `<div class="state">
            <h2 class="state__title">Aucun achat pour le moment</h2>
            <p class="state__text">Faites un tour dans la boutique, votre compagnon mérite bien un petit cadeau.</p>
-           <p><a class="btn btn--primary" href="/petsshop.html">Parcourir la boutique</a></p>
+           <p><a class="btn btn--primary" href="./petsshop.html">Parcourir la boutique</a></p>
          </div>`;
     return;
   }

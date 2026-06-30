@@ -11,10 +11,13 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "optimize-images": "node scripts/optimize-images.mjs"
+    "optimize-images": "node scripts/optimize-images.mjs",
+    "a11y": "npx axe-cli http://localhost:5173 --exit --tags wcag2a,wcag2aa,wcag21a,wcag21aa",
+    "a11y:verbose": "npx axe-cli http://localhost:5173 --exit --verbose --tags wcag2a,wcag2aa,wcag21a,wcag21aa"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "axe-cli": "^4.10.0",
     "sass": "^1.80.0",
     "sharp": "^0.35.2",
     "vite": "^8.0.16"

@@ -4,9 +4,10 @@ import { api } from '../api.js';
 import { auth } from '../auth.js';
 import { escapeHtml, speciesLine, tagsHtml, gaugeHtml, responsiveImage } from '../animal-view.js';
 import { showError, showConfirm } from '../error-display.js';
+import { BASE_URL } from '../utils/path-utils.js';
 
 if (!auth.isAuthenticated()) {
-  window.location.replace(`/login.html?redirect=${encodeURIComponent('/mes-animaux.html')}`);
+  window.location.replace(`${BASE_URL}login.html?redirect=${encodeURIComponent(BASE_URL + 'mes-animaux.html')}`);
 }
 
 const container = document.getElementById('mes-animaux-list');
@@ -22,7 +23,7 @@ function render(animals) {
           Votre compagnon mérite sa place dans la communauté ! Créez son profil,
           faites grimper son score de protection et trouvez-lui des copains.
         </p>
-        <p><a class="btn btn--primary" href="/creer-profil.html"><i class="fa-solid fa-paw" aria-hidden="true"></i> Créer son premier profil</a></p>
+        <p><a class="btn btn--primary" href="./creer-profil.html"><i class="fa-solid fa-paw" aria-hidden="true"></i> Créer son premier profil</a></p>
       </div>
     `;
     return;
@@ -39,7 +40,7 @@ function render(animals) {
             <p class="card__meta">${escapeHtml(speciesLine(animal))}</p>
             ${gaugeHtml(animal)}
             <div class="card__footer">
-              <a class="btn btn--ghost" href="/profil-detail.html?id=${animal.id}">Voir le profil</a>
+              <a class="btn btn--ghost" href="./profil-detail.html?id=${animal.id}">Voir le profil</a>
               <button class="btn btn--ghost btn--small" data-action="settings" data-id="${animal.id}"
                 data-visibility="${escapeHtml(animal.visibility || 'private')}"
                 data-friend-policy="${escapeHtml(animal.friendPolicy || 'everyone')}"><i class="fa-solid fa-gear" aria-hidden="true"></i> Paramètres</button>
@@ -71,8 +72,10 @@ async function load() {
 const modal = document.getElementById('settings-modal');
 const settingsForm = document.getElementById('settings-form');
 const settingsFeedback = document.getElementById('settings-feedback');
+let settingsTrigger = null;
 
 function openSettings(button) {
+  settingsTrigger = button || document.activeElement;
   document.getElementById('settings-animal-id').value = button.dataset.id;
   document.getElementById('settings-visibility').value = button.dataset.visibility;
   document.getElementById('settings-friend-policy').value = button.dataset.friendPolicy;
@@ -86,6 +89,10 @@ function closeSettings() {
   modal.setAttribute('data-open', 'false');
   modal.setAttribute('aria-hidden', 'true');
   document.body.style.overflow = '';
+  if (settingsTrigger && typeof settingsTrigger.focus === 'function') {
+    settingsTrigger.focus();
+    settingsTrigger = null;
+  }
 }
 
 document.getElementById('close-settings').addEventListener('click', closeSettings);

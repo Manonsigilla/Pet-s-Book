@@ -64,6 +64,7 @@
   &:hover,
   &:focus-visible {
     background-color: $color-brand-dark;
+    outline-color: $color-text-inverse;
   }
 
   &--prev {

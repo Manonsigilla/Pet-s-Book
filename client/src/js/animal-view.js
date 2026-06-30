@@ -1,6 +1,7 @@
 // Helpers de présentation des animaux, partagés par les pages accueil / profils.
 // Les données viennent de sources hétérogènes : selon l'origine, certaines
 // colonnes sont vides — ces helpers choisissent ce qu'il y a de mieux à afficher.
+import { BASE_URL } from './utils/path-utils.js';
 
 export function escapeHtml(str) {
   if (str == null) return '';
@@ -94,7 +95,11 @@ export function gaugeHtml(animal) {
 // Pour les autres (uploads, externes, SVG), garde un <img> avec lazy loading.
 // Le paramètre `dim` est optionnel : "WxH" pour ajouter width/height et éviter le CLS.
 export function responsiveImage(src, alt, className = '', dim = '', lazy = true) {
-  const url = src || '/placeholder-pet.svg';
+  let url = src || '/placeholder-pet.svg';
+  // Préfixer les chemins locaux avec la base Vite (ex: /Pet-s-Book/ en production GitHub Pages)
+  if (url.startsWith('/') && !url.startsWith('//')) {
+    url = BASE_URL + url.slice(1);
+  }
   const escapedSrc = escapeHtml(url);
   const escapedAlt = escapeHtml(alt);
   const cls = className ? ` class="${className}"` : '';
@@ -106,7 +111,10 @@ export function responsiveImage(src, alt, className = '', dim = '', lazy = true)
   }
 
   // SVG, placeholder, uploads, URLs externes → <img> simple
-  if (url.endsWith('.svg') || !url.startsWith('/images/')) {
+  // Attention : certaines CDN ont /images/ dans leur chemin (ex. cdn2.thecatapi.com/images/…),
+  // il faut les traiter comme des URLs externes et pas comme des images statiques locales.
+  const isExternal = url.startsWith('http://') || url.startsWith('https://') || url.startsWith('//');
+  if (url.endsWith('.svg') || isExternal || !url.includes('/images/')) {
     return `<img src="${escapedSrc}" alt="${escapedAlt}"${cls}${dims}${loading} />`;
   }
 

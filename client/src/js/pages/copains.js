@@ -5,9 +5,10 @@ import { api } from '../api.js';
 import { auth } from '../auth.js';
 import { escapeHtml, capitalize, copainLabel, copainWord, responsiveImage } from '../animal-view.js';
 import { showError } from '../error-display.js';
+import { BASE_URL } from '../utils/path-utils.js';
 
 if (!auth.isAuthenticated()) {
-  window.location.replace(`/login.html?redirect=${encodeURIComponent('/copains.html')}`);
+  window.location.replace(`${BASE_URL}login.html?redirect=${encodeURIComponent(BASE_URL + 'copains.html')}`);
 }
 
 const dom = {
@@ -119,7 +120,7 @@ async function loadSuggestions() {
         <div class="state">
           <h3 class="state__title">D'abord, présentez votre compagnon !</h3>
           <p class="state__text">Créez le profil de votre animal pour qu'il puisse se faire des copains.</p>
-          <p><a class="btn btn--primary" href="/creer-profil.html"><i class="fa-solid fa-paw" aria-hidden="true"></i> Créer son profil</a></p>
+          <p><a class="btn btn--primary" href="./creer-profil.html"><i class="fa-solid fa-paw" aria-hidden="true"></i> Créer son profil</a></p>
         </div>
       `;
       return;
@@ -164,7 +165,7 @@ async function loadFriends() {
         ${friends.map((f) => miniCard(f, `
           <p class="copain-card__meta">${copainWord(f.gender) === 'copine' ? 'Copine' : 'Copain'} de <strong>${escapeHtml(f.withMyAnimalName ?? '')}</strong></p>
           <div class="copain-card__actions">
-            <a class="btn btn--ghost btn--small" href="/profil-detail.html?id=${f.id}">Voir le profil</a>
+            <a class="btn btn--ghost btn--small" href="./profil-detail.html?id=${f.id}">Voir le profil</a>
           </div>
         `)).join('')}
       </div>

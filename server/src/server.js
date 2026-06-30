@@ -2,6 +2,7 @@ import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
+import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
 
 import authRoutes from './routes/auth.js';
@@ -34,6 +35,10 @@ const app = express();
 const PORT = Number(process.env.PORT) || 3000;
 
 app.use(helmet());
+
+// Logging HTTP : 'dev' en développement (coloré, concis), 'combined' en production (détaillé).
+app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
+
 app.use(cors({
   origin: process.env.CLIENT_ORIGIN || 'http://localhost:5173',
   credentials: false,

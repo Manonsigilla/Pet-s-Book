@@ -30,7 +30,7 @@ const pages = {
 
 export default defineConfig({
   root: '.',
-  base: '/Pet-s-Book/',
+  base: process.env.VITE_BASE || '/',
   publicDir: 'public',
   server: {
     port: 5173,

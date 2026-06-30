@@ -9,6 +9,7 @@ import '../main.js';
 import { api } from '../api.js';
 import { auth } from '../auth.js';
 import { escapeHtml, speciesLine, tagsHtml, copainLabel, responsiveImage } from '../animal-view.js';
+import { BASE_URL } from '../utils/path-utils.js';
 
 const track = document.getElementById('gallery-track');
 const marquee = document.getElementById('gallery-marquee');
@@ -61,7 +62,10 @@ async function loadGallery() {
 // =============================================================================
 // Modale
 // =============================================================================
-function openModal() {
+let modalTrigger = null;
+
+function openModal(trigger) {
+  modalTrigger = trigger || document.activeElement;
   modal.setAttribute('data-open', 'true');
   modal.setAttribute('aria-hidden', 'false');
   document.body.style.overflow = 'hidden';
@@ -72,6 +76,10 @@ function closeModal() {
   modal.setAttribute('data-open', 'false');
   modal.setAttribute('aria-hidden', 'true');
   document.body.style.overflow = '';
+  if (modalTrigger && typeof modalTrigger.focus === 'function') {
+    modalTrigger.focus();
+    modalTrigger = null;
+  }
 }
 
 closeBtn?.addEventListener('click', closeModal);
@@ -87,7 +95,7 @@ track?.addEventListener('click', (event) => {
 });
 
 async function showAnimal(id) {
-  openModal();
+  openModal(document.activeElement);
   modalTitle.textContent = 'Fiche animal';
   modalBody.innerHTML = '<div class="skeleton-card" style="height:220px"></div>';
   try {
@@ -107,8 +115,8 @@ function renderGate() {
     <div class="animal-modal__gate">
       <p><i class="fa-solid fa-lock" aria-hidden="true"></i> Connectez-vous ou créez un compte pour découvrir la fiche de cet animal et l'ajouter en copain.</p>
       <div class="animal-modal__actions">
-        <a class="btn btn--primary" href="/login.html?redirect=${REDIRECT}">Se connecter</a>
-        <a class="btn btn--ghost" href="/register.html">Créer un compte</a>
+        <a class="btn btn--primary" href="./login.html?redirect=${REDIRECT}">Se connecter</a>
+        <a class="btn btn--ghost" href="./register.html">Créer un compte</a>
       </div>
     </div>
   `;
@@ -149,7 +157,7 @@ function renderFull(animal) {
       <dl class="animal-modal__facts">
         ${facts.map(([label, value]) => `<div><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd></div>`).join('')}
       </dl>
-      <a class="btn btn--ghost btn--small" href="/profil-detail.html?id=${animal.id}">Voir la fiche complète</a>
+      <a class="btn btn--ghost btn--small" href="./profil-detail.html?id=${animal.id}">Voir la fiche complète</a>
       <div class="auth-feedback" id="modal-friend-feedback" role="alert" aria-live="polite"></div>
       <div id="modal-friend-zone"></div>
     </div>
@@ -175,7 +183,7 @@ async function mountFriendZone(target) {
   if (myAnimals.length === 0) {
     zone.innerHTML = `
       <p>Créez d'abord le profil de votre animal pour pouvoir l'ajouter en copain !</p>
-      <a class="btn btn--primary" href="/creer-profil.html"><i class="fa-solid fa-paw" aria-hidden="true"></i> Créer le profil de mon animal</a>`;
+      <a class="btn btn--primary" href="./creer-profil.html"><i class="fa-solid fa-paw" aria-hidden="true"></i> Créer le profil de mon animal</a>`;
     return;
   }
 

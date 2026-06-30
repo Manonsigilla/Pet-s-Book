@@ -3,6 +3,7 @@
 // si déconnecté, ou prénom + déconnexion + lien admin (si rôle admin) sinon.
 import { auth } from './auth.js';
 import { api } from './api.js';
+import { appPath } from './utils/path-utils.js';
 
 function escapeHtml(str) {
   if (str == null) return '';
@@ -22,29 +23,29 @@ function render() {
 
   if (!user) {
     container.innerHTML = `
-      <a class="auth-widget__link" href="/login.html">Connexion</a>
-      <a class="auth-widget__link auth-widget__link--primary" href="/register.html">S'inscrire</a>
+      <a class="auth-widget__link" href="./login.html">Connexion</a>
+      <a class="auth-widget__link auth-widget__link--primary" href="./register.html">S'inscrire</a>
     `;
     return;
   }
 
   const adminLink = user.role === 'admin'
-    ? `<a class="auth-widget__link" href="/admin.html">Administration</a>`
+    ? `<a class="auth-widget__link" href="./admin.html">Administration</a>`
     : '';
 
   container.innerHTML = `
     <span class="auth-widget__greeting">
       Bonjour, <strong>${escapeHtml(user.displayName)}</strong>
     </span>
-    <a class="auth-widget__link" href="/mes-animaux.html">Mes animaux</a>
-    <a class="auth-widget__link" href="/messages.html">Messages<span class="auth-widget__badge" id="unread-badge" hidden></span></a>
+    <a class="auth-widget__link" href="./mes-animaux.html">Mes animaux</a>
+    <a class="auth-widget__link" href="./messages.html">Messages<span class="auth-widget__badge" id="unread-badge" hidden></span></a>
     ${adminLink}
     <button class="auth-widget__logout" type="button" id="logout-btn">Déconnexion</button>
   `;
 
   document.getElementById('logout-btn')?.addEventListener('click', () => {
     auth.clear();
-    window.location.href = '/index.html';
+    window.location.href = appPath('/index.html');
   });
 
   refreshUnreadBadge();

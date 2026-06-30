@@ -98,6 +98,7 @@
   &:focus-visible {
     background-color: $color-brand-dark;
     color: $color-text-inverse;
+    outline-color: $color-text-inverse;
   }
 
   &[aria-current='page'] {

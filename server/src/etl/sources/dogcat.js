@@ -19,7 +19,55 @@ export async function fetchDogCat() {
   const rows = [];
   rows.push(...(await fetchCats()));
   rows.push(...(await fetchDogs()));
+
+  // Validation éco-conception : vérifier que les URLs d'images sont accessibles.
+  // Certaines images CDN peuvent disparaître (ex. O3btzLlsO supprimée par CloudFront).
+  // On teste chaque URL avec un HEAD ; les cassées sont remplacées par une image
+  // valide de la même espèce piochée dans le même lot.
+  await validateImages(rows);
+
   return rows;
+}
+
+// Valide les URLs d'images et remplace les cassées (HTTP 403/404) par une image
+// valide de la même espèce. Deux passes : collecte des URLs valides, puis remplacement.
+async function validateImages(rows) {
+  // Passe 1 : collecter les URLs valides par espèce (HEAD en parallèle).
+  const imageRows = rows.filter((r) => r.image_url);
+  const checks = await Promise.all(
+    imageRows.map(async (row) => {
+      try {
+        const res = await fetch(row.image_url, { method: 'HEAD', signal: AbortSignal.timeout(5000) });
+        return { row, ok: res.ok };
+      } catch {
+        return { row, ok: false };
+      }
+    }),
+  );
+
+  const validBySpecies = {};
+  const broken = [];
+  for (const { row, ok } of checks) {
+    if (ok) {
+      if (!validBySpecies[row.species]) validBySpecies[row.species] = [];
+      validBySpecies[row.species].push(row.image_url);
+    } else {
+      broken.push(row);
+    }
+  }
+
+  if (broken.length === 0) return;
+  console.warn(`  [dogcat] ${broken.length} image(s) cassée(s) → remplacement`);
+
+  // Passe 2 : remplacer les cassées par une image valide de la même espèce.
+  for (const row of broken) {
+    const pool = validBySpecies[row.species];
+    if (pool && pool.length > 0) {
+      row.image_url = pool[Math.floor(Math.random() * pool.length)];
+    } else {
+      row.image_url = null;
+    }
+  }
 }
 
 // ---------------------------------------------------------------------------
