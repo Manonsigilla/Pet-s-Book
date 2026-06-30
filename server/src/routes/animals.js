@@ -14,6 +14,7 @@ const SELECT_FIELDS = `
   a.image_url AS imageUrl, a.date_listed AS dateListed,
   a.identified, a.identified_reason AS identifiedReason,
   a.sterilized, a.sterilized_reason AS sterilizedReason,
+  a.vaccinated, a.vaccinated_reason AS vaccinatedReason,
   a.visibility, a.friend_policy AS friendPolicy,
   a.owner_id AS ownerId
 `;
@@ -132,6 +133,7 @@ router.post('/', requireAuth, (req, res, next) => {
       const {
         name, species, breed, age, gender, temperament,
         identified, identifiedReason, sterilized, sterilizedReason,
+        vaccinated, vaccinatedReason,
       } = req.body ?? {};
 
       if (typeof name !== 'string' || name.trim().length < 1) {
@@ -152,17 +154,25 @@ router.post('/', requireAuth, (req, res, next) => {
       if (sterilized === '0' && (typeof sterilizedReason !== 'string' || sterilizedReason.trim().length < 3)) {
         return res.status(400).json({ message: 'Indiquez la raison pour laquelle l\'animal n\'est pas stérilisé' });
       }
+      if (vaccinated !== '0' && vaccinated !== '1') {
+        return res.status(400).json({ message: 'Précisez si l\'animal est vacciné' });
+      }
+      if (vaccinated === '0' && (typeof vaccinatedReason !== 'string' || vaccinatedReason.trim().length < 3)) {
+        return res.status(400).json({ message: 'Expliquez pourquoi l\'animal n\'est pas encore vacciné' });
+      }
 
       const result = await db.prepare(
         `INSERT INTO animals
            (owner_id, source, name, species, breed, age, gender, temperament,
-            identified, identified_reason, sterilized, sterilized_reason, image_url)
-         VALUES (?, 'petsbook', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+            identified, identified_reason, sterilized, sterilized_reason,
+            vaccinated, vaccinated_reason, image_url)
+         VALUES (?, 'petsbook', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
       ).run(
         req.user.id, name.trim(), species.trim(), breed?.trim() || null,
         age?.trim() || null, gender?.trim() || null, temperament?.trim() || null,
         Number(identified), identified === '0' ? identifiedReason.trim() : null,
         Number(sterilized), sterilized === '0' ? sterilizedReason.trim() : null,
+        Number(vaccinated), vaccinated === '0' ? vaccinatedReason.trim() : null,
         req.file ? `/uploads/${req.file.filename}` : null,
       );
       res.status(201).json({ id: result.lastInsertRowid });
@@ -191,6 +201,7 @@ router.put('/:id', requireAuth, async (req, res, next) => {
     const {
       name, species, breed, age, gender, color, physicalDesc, temperament, location, imageUrl,
       identified, identifiedReason, sterilized, sterilizedReason,
+      vaccinated, vaccinatedReason,
     } = req.body ?? {};
     await db.prepare(
       `UPDATE animals
@@ -207,7 +218,9 @@ router.put('/:id', requireAuth, async (req, res, next) => {
            identified = ?,
            identified_reason = ?,
            sterilized = ?,
-           sterilized_reason = ?
+           sterilized_reason = ?,
+           vaccinated = ?,
+           vaccinated_reason = ?
        WHERE id = ?`
     ).run(
       typeof name === 'string' ? name.trim() : null,
@@ -216,6 +229,7 @@ router.put('/:id', requireAuth, async (req, res, next) => {
       physicalDesc ?? null, temperament ?? null, location ?? null, imageUrl ?? null,
       identified ?? null, identifiedReason ?? null,
       sterilized ?? null, sterilizedReason ?? null,
+      vaccinated ?? null, vaccinatedReason ?? null,
       id,
     );
 

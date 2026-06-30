@@ -30,6 +30,12 @@ function protectionHtml(animal) {
     rows.push(`<li class="protection__item protection__item--todo">Non stérilisé${animal.sterilizedReason ? ` — <em>${escapeHtml(animal.sterilizedReason)}</em>` : ''}</li>`);
   }
 
+  if (animal.vaccinated === 1) {
+    rows.push('<li class="protection__item protection__item--ok"><i class="fa-solid fa-syringe" aria-hidden="true"></i> Vacciné — protégé contre les principales maladies.</li>');
+  } else if (animal.vaccinated === 0) {
+    rows.push(`<li class="protection__item protection__item--todo">Non vacciné${animal.vaccinatedReason ? ` — <em>${escapeHtml(animal.vaccinatedReason)}</em>` : ''}</li>`);
+  }
+
   if (rows.length === 0) return '';
   return `
     <section class="protection" aria-labelledby="protection-title">

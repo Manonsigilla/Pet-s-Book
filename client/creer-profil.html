@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Créez le profil de votre animal sur Pet's Book : photo, race, âge, identification et stérilisation.">
+  <meta name="description" content="Créez le profil de votre animal sur Pet's Book : photo, race, âge, identification, stérilisation et vaccination.">
   <meta name="theme-color" content="#BF8A6B">
   <link rel="icon" type="image/svg+xml" href="./favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -122,8 +122,9 @@
       <fieldset class="creer-profil__section">
         <legend>Sa protection <i class="fa-solid fa-shield-halved" aria-hidden="true"></i></legend>
         <p class="creer-profil__intro">
-          Deux petites questions qui comptent beaucoup pour lui : un animal identifié rentre
-          plus vite à la maison s'il se perd, et la stérilisation le protège de nombreuses maladies.
+          Trois petites questions qui comptent beaucoup pour lui : un animal identifié rentre
+          plus vite à la maison s'il se perd, la stérilisation le protège de nombreuses
+          maladies, et la vaccination prévient des infections graves.
         </p>
 
         <div class="form__field" role="radiogroup" aria-labelledby="identified-label">
@@ -174,6 +175,26 @@
             <label class="form__label" for="sterilizedReasonOther">Précisez</label>
             <textarea class="form__textarea" id="sterilizedReasonOther" maxlength="500" placeholder="Votre raison..."></textarea>
           </div>
+        </div>
+
+        <div class="form__field" role="radiogroup" aria-labelledby="vaccinated-label">
+          <p class="form__label" id="vaccinated-label">Est-il vacciné (rage, typhus, parvovirose…) ?</p>
+          <div class="creer-profil__choices">
+            <label class="creer-profil__choice"><input type="radio" name="vaccinated" value="1" required> Oui <i class="fa-solid fa-circle-check" aria-hidden="true"></i></label>
+            <label class="creer-profil__choice"><input type="radio" name="vaccinated" value="0"> Non</label>
+          </div>
+          <p class="form__error" id="vaccinated-error" aria-live="polite"></p>
+        </div>
+
+        <div class="form__field creer-profil__conditional" id="vaccinated-reason-block" hidden>
+          <p class="creer-profil__tip">
+            <i class="fa-solid fa-lightbulb" aria-hidden="true"></i> <strong>Le saviez-vous ?</strong> Les vaccins protègent votre compagnon contre des maladies
+            graves et souvent mortelles comme la rage, le typhus ou la parvovirose. La vaccination
+            est également obligatoire pour voyager dans de nombreux pays.
+          </p>
+          <label class="form__label" for="vaccinatedReason">Pourquoi n'est-il pas encore vacciné ?</label>
+          <textarea class="form__textarea" id="vaccinatedReason" name="vaccinatedReason" maxlength="500" placeholder="Expliquez en quelques mots..."></textarea>
+          <p class="form__error" id="vaccinatedReason-error" aria-live="polite"></p>
         </div>
       </fieldset>
 

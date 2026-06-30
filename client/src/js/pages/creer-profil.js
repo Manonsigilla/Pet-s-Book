@@ -18,6 +18,7 @@ const identifiedReasonBlock = document.getElementById('identified-reason-block')
 const sterilizedReasonBlock = document.getElementById('sterilized-reason-block');
 const sterilizedOtherBlock = document.getElementById('sterilized-other-block');
 const sterilizedSelect = document.getElementById('sterilizedReason');
+const vaccinatedReasonBlock = document.getElementById('vaccinated-reason-block');
 
 const MAX_SIZE = 5 * 1024 * 1024;
 let photoFile = null;
@@ -73,6 +74,9 @@ form.addEventListener('change', (event) => {
   if (event.target === sterilizedSelect) {
     sterilizedOtherBlock.hidden = sterilizedSelect.value !== 'autre';
   }
+  if (event.target.name === 'vaccinated') {
+    vaccinatedReasonBlock.hidden = radioValue('vaccinated') !== '0';
+  }
 });
 
 // -----------------------------------------------------------------------------
@@ -87,7 +91,9 @@ form.addEventListener('submit', async (event) => {
   const name = document.getElementById('name').value.trim();
   const identified = radioValue('identified');
   const sterilized = radioValue('sterilized');
+  const vaccinated = radioValue('vaccinated');
   const identifiedReason = document.getElementById('identifiedReason').value.trim();
+  const vaccinatedReason = document.getElementById('vaccinatedReason').value.trim();
   let sterilizedReason = sterilizedSelect.value;
   if (sterilizedReason === 'autre') {
     const other = document.getElementById('sterilizedReasonOther').value.trim();
@@ -104,6 +110,10 @@ form.addEventListener('submit', async (event) => {
   if (sterilized === '0' && sterilizedReason.length < 3) {
     setError('sterilizedReason', 'Choisissez une raison (ou précisez la vôtre).'); ok = false;
   }
+  if (vaccinated === null) { setError('vaccinated', 'Répondez oui ou non.'); ok = false; }
+  if (vaccinated === '0' && vaccinatedReason.length < 3) {
+    setError('vaccinatedReason', 'Expliquez en quelques mots (3 caractères minimum).'); ok = false;
+  }
   if (!ok) return;
 
   const formData = new FormData();
@@ -117,6 +127,8 @@ form.addEventListener('submit', async (event) => {
   if (identified === '0') formData.append('identifiedReason', identifiedReason);
   formData.append('sterilized', sterilized);
   if (sterilized === '0') formData.append('sterilizedReason', sterilizedReason);
+  formData.append('vaccinated', vaccinated);
+  if (vaccinated === '0') formData.append('vaccinatedReason', vaccinatedReason);
   if (photoFile) formData.append('photo', photoFile);
 
   submitBtn.disabled = true;

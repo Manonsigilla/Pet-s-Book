@@ -135,6 +135,13 @@ const STERILIZED_REASONS = [
   'Autre raison : en réflexion avec mon vétérinaire',
 ];
 
+const VACCINATED_REASONS = [
+  'Trop jeune pour la primo-vaccination',
+  'Contre-indication médicale temporaire',
+  'Pas encore eu le temps, c\'est prévu ce mois-ci',
+  'En réflexion avec mon vétérinaire',
+];
+
 // Comptes fictifs : personne ne s'y connecte → un seul hash partagé (mot de passe aléatoire).
 const fictionalHash = await hashPassword(`fictif-${Date.now()}-Zz9!`);
 const fictionalIds = FICTIONAL_OWNERS.map((fullName) => {
@@ -149,12 +156,14 @@ const insertAnimal = db.prepare(
      (owner_id, animal_id, source, species, breed, breed_secondary, name, age,
       gender, color, physical_desc, temperament, status, owner_name, adopted,
       intake_type, location, image_url, date_listed,
-      identified, identified_reason, sterilized, sterilized_reason)
+      identified, identified_reason, sterilized, sterilized_reason,
+      vaccinated, vaccinated_reason)
    VALUES
      (@owner_id, @animal_id, @source, @species, @breed, @breed_secondary, @name, @age,
       @gender, @color, @physical_desc, @temperament, @status, @owner_name, @adopted,
       @intake_type, @location, @image_url, @date_listed,
-      @identified, @identified_reason, @sterilized, @sterilized_reason)`
+      @identified, @identified_reason, @sterilized, @sterilized_reason,
+      @vaccinated, @vaccinated_reason)`
 );
 
 // IDs insérés (avec leur propriétaire) pour tisser ensuite le réseau d'amitiés.
@@ -174,6 +183,7 @@ const insertAnimals = db.transaction((rows) => {
     // Volet sensibilisation : statuts plausibles, justifiés quand c'est « non ».
     const identified = rand() < 0.7 ? 1 : 0;
     const sterilized = rand() < 0.6 ? 1 : 0;
+    const vaccinated = rand() < 0.65 ? 1 : 0;
 
     // Les deux premiers profils appartiennent au compte client de démo
     // (pour montrer un compte multi-animaux) ; le reste à la communauté fictive.
@@ -205,6 +215,8 @@ const insertAnimals = db.transaction((rows) => {
       identified_reason: identified ? null : pick(IDENTIFIED_REASONS),
       sterilized,
       sterilized_reason: sterilized ? null : pick(STERILIZED_REASONS),
+      vaccinated,
+      vaccinated_reason: vaccinated ? null : pick(VACCINATED_REASONS),
     });
     insertedAnimals.push({ id: info.lastInsertRowid, ownerId });
   });

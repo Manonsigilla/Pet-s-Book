@@ -60,18 +60,15 @@ export function copainWord(gender) {
 
 // -----------------------------------------------------------------------------
 // Score de protection — rend la sensibilisation ludique : plus le profil est
-// protégé et complet, plus la jauge monte.
-//   identification 35 % + stérilisation 35 % + photo 10 % + race/âge/sexe/caractère 5 % chacun
+// protégé et complet, plus la jauge monte. Les 3 piliers (identification,
+// stérilisation, vaccination) valent 30 % chacun, la photo 10 %.
 // -----------------------------------------------------------------------------
 export function protectionScore(animal) {
   let score = 0;
-  if (animal.identified === 1) score += 35;
-  if (animal.sterilized === 1) score += 35;
+  if (animal.identified === 1) score += 30;
+  if (animal.sterilized === 1) score += 30;
+  if (animal.vaccinated === 1) score += 30;
   if (animal.imageUrl) score += 10;
-  if (animal.breed) score += 5;
-  if (animal.age) score += 5;
-  if (animal.gender) score += 5;
-  if (animal.temperament) score += 5;
   return score;
 }
 
@@ -142,6 +139,12 @@ export function tagsHtml(animal) {
     tags.push('<span class="card__tag card__tag--protected"><i class="fa-solid fa-heart" aria-hidden="true"></i> Stérilisé</span>');
   } else if (animal.sterilized === 0) {
     tags.push('<span class="card__tag card__tag--todo">Non stérilisé</span>');
+  }
+
+  if (animal.vaccinated === 1) {
+    tags.push('<span class="card__tag card__tag--protected"><i class="fa-solid fa-syringe" aria-hidden="true"></i> Vacciné</span>');
+  } else if (animal.vaccinated === 0) {
+    tags.push('<span class="card__tag card__tag--todo">Non vacciné</span>');
   }
 
   return tags.length ? `<div class="card__tags">${tags.join('')}</div>` : '';

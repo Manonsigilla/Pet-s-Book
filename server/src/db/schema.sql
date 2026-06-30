@@ -14,8 +14,9 @@ CREATE TABLE IF NOT EXISTS users (
 -- Profils d'animaux — l'objet central du réseau social : chaque membre (humain)
 -- inscrit ses animaux ; un compte peut porter plusieurs profils (owner_id 1-N).
 -- Les données importées (The Cat/Dog API, Austin) servent de communauté fictive.
--- Volet sensibilisation : identification et stérilisation, avec justification
--- lorsque la réponse est non (protéger juridiquement et médicalement l'animal).
+-- Volet sensibilisation : identification, stérilisation et vaccination, avec
+-- justification lorsque la réponse est non (protéger juridiquement et
+-- médicalement l'animal).
 CREATE TABLE IF NOT EXISTS animals (
   id                INTEGER PRIMARY KEY AUTOINCREMENT,
   owner_id          INTEGER REFERENCES users(id) ON DELETE SET NULL,
@@ -41,6 +42,8 @@ CREATE TABLE IF NOT EXISTS animals (
   identified_reason TEXT,                                 -- justification si non identifié
   sterilized        INTEGER,                              -- 1 = stérilisé, 0 = non, NULL = inconnu
   sterilized_reason TEXT,                                 -- justification si non stérilisé
+  vaccinated        INTEGER,                              -- 1 = vacciné, 0 = non, NULL = inconnu
+  vaccinated_reason TEXT,                                 -- justification si non vacciné
   -- Paramètres du profil (choisis par le propriétaire)
   visibility        TEXT NOT NULL DEFAULT 'private'
                     CHECK (visibility IN ('private', 'public')),   -- private = copains uniquement
